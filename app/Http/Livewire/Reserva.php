@@ -12,13 +12,14 @@ use App\Rules\HoraValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 
-class Reserva extends Component
+class Reserva extends Component 
 {
     public $horaInicio, $horaFin, $firstDayMonth, $lastDayMonth, $cantDaysMonth,
         $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto,
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
-        $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId;
+        $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
+        $diasRestantesMesActual, $fechaActual, $diasMesesAnt;
 
     public $arrMonthDisplay;
 
@@ -32,45 +33,58 @@ class Reserva extends Component
         $user = Auth::user();
         $this->userName = $user->name;
         $this->idUser = $user->id;
-        $this->getReservas();
+        $this->getCalendarMonth(Carbon::now()->month);
+        $this->diasMesesAnt = 0;
+    }
 
-        //Inicio Calculo Despliege de 60 dias
-        $fechaActual = Carbon::now();
+    public function calculoDespliegue60Dias() {
+         //Inicio Calculo Despliege de 60 dias
+         $this->fechaActual = Carbon::now();
        
-       //dd($fechaActual->firstOfMonth()->dayOfWeek);                                          
+         //dd($this->fechaActual->firstOfMonth()->dayOfWeek);                                          
+        
+          $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaActual->month, ['mes'=>$this->arrMeses[$this->fechaActual->month-1], 'agno' => $this->fechaActual->year, 'primerDiaSemana' => $this->fechaActual->firstOfMonth()->dayOfWeek == 0?7:$this->fechaActual->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaActual->lastOfMonth()->dayOfWeek == 0?7:$this->fechaActual->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $this->fechaActual->daysInMonth]);  
+          
+          $this->mesSel = $this->fechaActual->month;
+          $this->mesActual = $this->fechaActual->month;
+         
+          $this->mesSelStr = $this->arrMeses[$this->fechaActual->month];
+          $this->agnoSel = $this->fechaActual->year;
+          $this->cantDaysMonth = $this->fechaActual->daysInMonth;
+          $this->firstDayMonth = $this->fechaActual->firstOfMonth()->dayOfWeek; 
+          $this->lastDayMonth = $this->fechaActual->lastOfMonth()->dayOfWeek;
+  
+          $fechaSiguiente = Carbon::now()->addMonth();
+          $diasSiguienteMes = $fechaSiguiente->daysInMonth;
+          $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaSiguiente->month, ['mes'=>$this->arrMeses[$fechaSiguiente->month-1], 'agno' => $fechaSiguiente->year, 'primerDiaSemana' => $fechaSiguiente->firstOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaSiguiente->lastOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->lastOfMonth()->dayOfWeek,'cantDiasMes' => $fechaSiguiente->daysInMonth]);  
+                  
+          $this->diasRestantesMesActual = $this->fechaActual->daysInMonth - Carbon::now()->format('d') * 1 + 1;//Calculo de los dias restantes para que termine el mes, se le suma uno para incluir el dia actual
       
-        $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaActual->month, ['mes'=>$this->arrMeses[$fechaActual->month-1], 'agno' => $fechaActual->year, 'primerDiaSemana' => $fechaActual->firstOfMonth()->dayOfWeek == 0?7:$fechaActual->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaActual->lastOfMonth()->dayOfWeek == 0?7:$fechaActual->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaActual->daysInMonth]);  
-        
-        $this->mesSel = $fechaActual->month;
-        $this->mesActual = $fechaActual->month;
-       
-        $this->mesSelStr = $this->arrMeses[$fechaActual->month];
-        $this->agnoSel = $fechaActual->year;
-        $this->cantDaysMonth = $fechaActual->daysInMonth;
-        $this->firstDayMonth = $fechaActual->firstOfMonth()->dayOfWeek; 
-        $this->lastDayMonth = $fechaActual->lastOfMonth()->dayOfWeek;
-        
-        // dd("jkdbhwvd", $this->arrMonthDisplay,  $fechaActual->month);
-
-        $fechaSiguiente = Carbon::now()->addMonth();
-        $diasSiguienteMes = $fechaSiguiente->daysInMonth;
-        $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaSiguiente->month, ['mes'=>$this->arrMeses[$fechaSiguiente->month-1], 'agno' => $fechaSiguiente->year, 'primerDiaSemana' => $fechaSiguiente->firstOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaSiguiente->lastOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->lastOfMonth()->dayOfWeek,'cantDiasMes' => $fechaSiguiente->daysInMonth]);  
-        
-        
-        $difDiasMes = $fechaActual->daysInMonth - $fechaSiguiente->month + 1;//Calculo de los dias restantes para que termine el mes, se le suma uno para incluir el dia actual
-       
-      //Si los dos meses no suman 60 dias se agrega otro mes
-        if (($difDiasMes+$diasSiguienteMes) < 61) {
-            $fechaUltima = Carbon::now()->addMonths(2);
-            $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaUltima->month, ['mes'=>$this->arrMeses[$fechaUltima->month-1], 'agno' => $fechaUltima->year, 'primerDiaSemana' => $fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaUltima->daysInMonth]);     
-        }      
-      //Fin Calculo Despliege de 60 dias    
-
-      $this->getCalendarMonth($fechaActual->month);
+        //Si los dos meses no suman 60 dias se agrega otro mes
+          if (( $this->diasRestantesMesActual+$diasSiguienteMes) < 60) {
+              $fechaUltima = Carbon::now()->addMonths(2); 
+              $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaUltima->month, ['mes'=>$this->arrMeses[$fechaUltima->month-1], 'agno' => $fechaUltima->year, 'primerDiaSemana' => $fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaUltima->daysInMonth]);     
+          }
+        //Fin Calculo Despliege de 60 dias  
     }
     
     public function getCalendarMonth($mesSel)
     {
+        $this->calculoDespliegue60Dias();
+        $this->getReservas();
+
+          $this->diasMesesAnt = 0;
+        if ($this->arrMonthDisplay[$mesSel]['mes'] == last($this->arrMonthDisplay)['mes']) {
+            if (count($this->arrMonthDisplay) == 2) {
+                $this->diasMesesAnt = $this->diasRestantesMesActual;
+            } else { //Sino el array contiene 3 meses 
+                //Se suman los dias restantes del primer mes mas los del segundo
+                $this->diasMesesAnt = $this->diasRestantesMesActual + $this->arrMonthDisplay[$mesSel-1]['cantDiasMes'];
+            }
+        } 
+
+        //$diasMesesAnt 
+
         $itemMesSel = $this->arrMonthDisplay[$mesSel];
         $this->mesSelStr = $this->arrMeses[$mesSel-1];
         $this->mesSel = $mesSel;
@@ -78,22 +92,12 @@ class Reserva extends Component
         $this->cantDaysMonth = $itemMesSel['cantDiasMes'];
         $this->firstDayMonth = $itemMesSel['primerDiaSemana']; 
         $this->lastDayMonth = $itemMesSel['ultimoDiaSemana'];
-
-
-
-        // dd($this->mesSelStr,
-        // $this->mesSel,
-        // $this->agnoSel,
-        // $this->cantDaysMonth,
-        // $this->firstDayMonth,
-        // $this->lastDayMonth);
     }
-
 
     public function getReservas()
     {
     //Se obtienen las reservas para un rango de 60 dias a contar de la fecha actual 
-      $this->dayNow = Carbon::now()->day;
+      $this->dayNow = Carbon::now()->format('d')*1;
       $reservas = Reservavehiculo::groupBy('fechaSolicitud')
           ->selectRaw('count(*) as cantReservas, fechaSolicitud')
           ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addDays(60)->format('Y-m-d')])
@@ -112,7 +116,7 @@ class Reserva extends Component
    
 
     public function setFechaModal($fechaSel)
-    {        
+    {
         $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
 
         $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')

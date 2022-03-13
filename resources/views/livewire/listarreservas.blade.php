@@ -1,7 +1,7 @@
 <div>
   <div class="card m-2 mb-4 m-md-3 mb-md-5">
     <div class="card-header py-3 text-center h3">
-      Mis Reservas
+      Mis Reservas 
     </div>
 <div class="card-body">
     <div class="card p-0 mx-3 mt-3 mb-5 mx-md-4">
