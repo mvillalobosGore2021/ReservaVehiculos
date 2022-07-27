@@ -1,0 +1,72 @@
+ /* Ocultar Flechas input number */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* Type date onlick event hidden calendar icon  */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        background: transparent;
+        bottom: 0;
+        color: transparent;
+        cursor: pointer;
+        height: auto;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: auto;
+    }
+
+    /* Type date onlick event hidden time icon  */
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        background: transparent;
+        bottom: 0;
+        color: transparent;
+        cursor: pointer;
+        height: auto;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: auto;
+    }
+
+     /* Type date onlick event hidden time icon  */
+     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        background: transparent;
+        bottom: 0;
+        color: transparent;
+        cursor: pointer;
+        height: auto;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: auto;
+    }
+
+    .date-ini {
+        display:inline;
+    }
+
+    .date-fin {
+        display:inline;
+    }
+
+    .time-ini {
+        display:inline;
+    }
+
+    .time-fin {
+        display:inline;
+    }
+
+    
