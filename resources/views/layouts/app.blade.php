@@ -30,12 +30,21 @@
 </head>
 
 <body class="font-sans antialiased">
+<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">
+      Hello, world! This is a toast message.
+    </div>
+    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
+
     <div class="container-md px-4 px-md-5" id="headPage">
       
 
         <!-- Page Content -->
         <main>
-            <br><br><br><br>
+            <br><br><br><br><br><br><br><br><br>
             <div class="card shadow mt-5" id="headReservas">
                 <div class="card-header py-3 h3" align="center">
                     Reserva de Vehiculos
@@ -52,6 +61,7 @@
         
         @livewireScripts
     </div>
+    <br><br><br><br><br>
 </body>
 
 </html>

@@ -69,4 +69,12 @@
         display:inline;
     }
 
-    
+    .bgcolorday:hover {
+        background-color:#EDFBFE;
+        cursor:pointer;
+    }
+
+    .thDaysofweek {
+       width:45px;
+       text-align: center;
+    }
