@@ -75,6 +75,10 @@
     }
 
     .thDaysofweek {
-       width:45px;
+       width:25px;
        text-align: center;
     }
+
+    .displayNone {
+        display: none;
+     }
