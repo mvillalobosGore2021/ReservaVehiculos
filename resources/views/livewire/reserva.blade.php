@@ -15,12 +15,12 @@
             <div class="row">
               <div class="col-12 col-md-6 ps-4">
                 <div class="row">
-                  <div class="col-12 pb-2">
-                    Fecha Reserva: {{$fechaModal}}
+                  <div class="col-12 py-2 h5 text-success">
+                    Dia Reserva: {{$fechaModal}}
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12 pb-2 col-md-6 mt-md-0">
+                  <div class="col-12 pb-3 col-md-6 mt-md-0">
                     <div class="row">
                       <div class="col-12">
                         <label>Hora Inicio Reserva</label>
@@ -32,7 +32,7 @@
                         </div>
                       </div>
                       @error('horaInicio')
-                      <div class="col-12">
+                      <div class="col-12 pb-1">
                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
@@ -50,22 +50,29 @@
                         </div>
                       </div>
                       @error('horaFin')
-                      <div class="col-12">
+                      <div class="col-12 pb-1">
                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
                     </div>
                   </div>
                 </div>
-                <div class="row pb-2">
+                <div class="row pb-3">
                   <div class="col-12">
                     <textarea wire:model.debounce.500ms="motivo" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
                   </div>
+                  @error('motivo')
+                  <div class="col-12">
+                    <span class="colorerror">{{ $message }}</span>
+                  </div>
+                  @enderror
                 </div>
                 <div class="row">
                   <div class="col-12">
-                    <div class="form-check form-switch">
-                      <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">Usar Vehiculo Personal con pago de Viático</label>
+                    <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gasto de combustible">
+                      <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
+                        Usar Vehiculo Personal con Devolución de Combustible
+                      </label>
                       <input wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="firstStepSubmit" type="checkbox" id="flgUsoVehiculoPersonal">
                     </div>
                   </div>
@@ -78,6 +85,11 @@
                     <!-- table-bordered -->
                     <thead>
                       <tr>
+                        <th scope="col" colspan="4" class="text-center text-success">
+                          Reservas realizadas para el día {{$fechaModal}}
+                        </th>
+                      </tr>
+                      <tr>
                         <th scope="col">Nombre</th>
                         <th scope="col">Hora Inicio</th>
                         <th scope="col">Hora Fin</th>
@@ -85,7 +97,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @if(!empty($reservasFechaSel))
+                      @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                       @foreach($reservasFechaSel as $item)
                       <tr>
                         <th scope="row">{{$item->name}}</th>
@@ -94,18 +106,45 @@
                         <td>{{$item->codEstado}}</td>
                       </tr>
                       @endforeach
+                      @else
+                      <tr>
+                        <td colspan="4">
+                          <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
+                            <span class="fs-4 pe-2 pe-md-3">
+                              <i class="bi bi-info-circle-fill"></i></span>
+                            <span class="fs-6 fst-italic pt-1">
+                              No existen reservas para el día seleccionado
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
                       @endif
                     </tbody>
                   </table>
                 </div>
+
+                @if (session()->has('exceptionMessage'))
+                <div class="row">
+                  <div class="col-12">
+                    <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
+                      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill" />
+                      </svg>
+                      <div>
+                        {{ session('exceptionMessage') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @endif
+                
               </div>
             </div>
-
-
           </div>
           <div class="modal-footer bg-light pe-5">
             <button type="button" class="btn btn-danger" onclick="ocultarModal();">Cerrar</button>
-            <button type="button" class="btn btn-primary">Solicitar Reserva</button>
+            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()">Solicitar Reserva</button>
 
           </div>
         </div>

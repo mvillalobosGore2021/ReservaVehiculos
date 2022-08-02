@@ -145,6 +145,11 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+
+        'motivo' => [
+            'required' => 'Debe ingresar motivo de la reserva.',
+            'max' => 'El largo máximo para el motivo es de :max caracteres.',
+        ],
     ],
 
     /*
