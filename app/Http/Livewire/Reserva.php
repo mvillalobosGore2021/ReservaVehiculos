@@ -4,13 +4,16 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Reservavehiculo;
 
 class Reserva extends Component
 {
     public $horaInicio, $horaFin, $firstDayMonth, $lastDayMonth, $cantDaysMonth, 
     $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto, 
     $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
-    $motivo;
+    $motivo, $reservasFechaSel, $userName, $idUser;
 
     protected  $arrMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -18,6 +21,9 @@ class Reserva extends Component
         $this->openModal = true;
         $this->getCalendarMonth(1);
         $this->flgUsoVehiculoPersonal = false;
+        $user = Auth::user();
+        $this->userName = $user->name;
+        $this->idUser = $user->id;
     }
 
     public function render() 
@@ -69,10 +75,46 @@ class Reserva extends Component
 
 
     public function setFechaModal($fechaSel) {
-       $this->fechaModal = $fechaSel;  
-       $this->dispatchBrowserEvent('showModal');
+    
+       $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
+
+       $this->reservasFechaSel = Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
+        ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = ".$this->fechaModal) 
+        ->get(['reservavehiculos.*', 'users.name']);
+
+        $this->dispatchBrowserEvent('showModal');
        
     }
+
+    public function solicitarReserva($fechaSel) {
+        try {
+
+           // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
+
+            $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
+            $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
+
+            $reserva = Reservavehiculo::updateOrCreate(
+                ['idReserva' => $this->idReserva], 
+                [
+                    'idUser' => $this->idUser,
+                    'prioridad' => $prioridad,
+                    'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersonal, 
+                    'fechaSolicitud' => $this->fechaModal,
+                    'horaInicio' => $this->horaInicio,
+                    'horaFin' => $this->horaFin,
+                    'codEstado' => 1, //Crear tabla con los estados: Pendiente, Confirmada
+                    //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
+                ]
+            );
+
+
+        } catch (exception $e) {
+            session()->flash('exceptionMessage', $e->getMessage());
+            $this->currentStep = 1;
+        }
+        
+     }
 
 
 }

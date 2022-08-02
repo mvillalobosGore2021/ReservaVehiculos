@@ -53,7 +53,7 @@
                     Reserva de Vehiculos
                 </div>
                 <div class="card-body">
-                   <livewire:reserva />
+                   <livewire:reserva/>
                 </div>
             </div>
         </main>

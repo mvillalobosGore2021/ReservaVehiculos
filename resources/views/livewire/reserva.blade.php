@@ -3,7 +3,6 @@
     <x-menureserva />
 
     <!-- Modal -->
-
     <div wire:ignore.self class="modal fade pt-0" id="modalReserva" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
       <div class="modal-dialog modal-xl modal-dialog-scrollable pt-1">
         <div class="modal-content">
@@ -74,32 +73,31 @@
               </div>
 
               <div class="col-12 col-md-6 px-3">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Fecha Solicitud</th>
-                      <th scope="col">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Juanito Perez</td>
-                      <td>20/08/2022 11:40</td>
-                      <td>Confirmado</td>
-                    </tr>
-                    <tr>
-                      <td>Vivianne Bahre</td>
-                      <td>20/08/2022 11:40</td>
-                      <td>Sin Confirmar</td>
-                    </tr>
-                    <tr>
-                      <td>Gloria Callupe</td>
-                      <td>20/08/2022 12:40</td>
-                      <td>Sin Confirmar</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="table-responsive-sm mx-4">
+                  <table class="table">
+                    <!-- table-bordered -->
+                    <thead>
+                      <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Hora Inicio</th>
+                        <th scope="col">Hora Fin</th>
+                        <th scope="col">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @if(!empty($reservasFechaSel))
+                      @foreach($reservasFechaSel as $item)
+                      <tr>
+                        <th scope="row">{{$item->name}}</th>
+                        <td>{{$item->horaInicio}}</td>
+                        <td>{{$item->horaFin}}</td>
+                        <td>{{$item->codEstado}}</td>
+                      </tr>
+                      @endforeach
+                      @endif
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 
@@ -161,7 +159,7 @@
             @php($flgPrintDay = 1)
             @endif
 
-            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1))) <td class="bgcolorday thDaysofweek" wire:click="setFechaModal('{{$countDay}}/{{$monthSel}}/{{$yearSel}}')">
+            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1))) <td class="bgcolorday thDaysofweek" wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')">
               {{$countDay}}</td>
               @php($countDay++)
               @else
