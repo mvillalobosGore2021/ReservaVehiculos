@@ -150,6 +150,14 @@ return [
             'required' => 'Debe ingresar motivo de la reserva.',
             'max' => 'El largo máximo para el motivo es de :max caracteres.',
         ],
+        'horaInicio' => [
+            'required' => 'Debe ingresar hora inicio.',
+            // 'date_format' => 'El formato de hora inicio no es válido.',
+        ],
+        'horaFin' => [
+            'required' => 'Debe ingresar hora fin.',
+            // 'date_format' => 'El formato de hora fin no es válido.',
+        ],
     ],
 
     /*

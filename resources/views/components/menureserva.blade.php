@@ -1,5 +1,5 @@
 <nav id="menureserva" class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow mb-5">
-    <div class="container-fluid">
+    <div class="container-md">
         <a class="navbar-brand ps-0 pe-0 ps-md-4" href="#">
             <img src="{{ asset('images/logo-menu-001.png') }}" alt="" width="170" height="80">
         </a>
@@ -34,11 +34,11 @@
                         <li class="nav-item">
                             <a class="nav-link disabled">Disabled</a>
                         </li> -->
-            </ul>            
-            <form method="POST" action="{{ route('logout') }}" class="pe-1 pe-md-5 pb-4 pb-md-1">
+            </ul>     
+              <form method="POST" action="{{ route('logout') }}" class="pe-1 pe-md-5 pb-4 pb-md-1">
                 @csrf
                 <a href="{{ route('logout') }}" class="btn btn-outline-primary pt-1" role="button" onclick="event.preventDefault();
-                                    this.closest('form').submit();">
+                    this.closest('form').submit();">
                     Cerrar Sesi&oacute;n
                 </a>
             </form>

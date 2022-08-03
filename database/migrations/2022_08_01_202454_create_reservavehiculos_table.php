@@ -14,13 +14,13 @@ class CreateReservavehiculosTable extends Migration
     public function up()
     {
         Schema::create('reservavehiculos', function (Blueprint $table) {
-            $table->increments('idReserva')->index();
+            $table->increments('idReserva');
             $table->integer('idUser');
             $table->string('motivo', 500);
             $table->boolean('flgUsoVehiculoPersonal')->nullable();
             $table->date('fechaSolicitud');
-            $table->date('horaInicio');
-            $table->date('horaFin');
+            $table->time('horaInicio');
+            $table->time('horaFin');
             $table->dateTime('fechaConfirmacion')->nullable();
             $table->integer('codEstado');          
             $table->integer('prioridad');   

@@ -7,7 +7,7 @@
       <div class="modal-dialog modal-xl modal-dialog-scrollable pt-1">
         <div class="modal-content">
           <div class="modal-header bg-light">
-            <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">Ingrese los Datos de Su Reserva</h5>
+            <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">Ingrese los Datos de Su Reserva   {{$userName}}</h5>
             <button type="button" class="btn-close" onclick="ocultarModal()"></button>
           </div>
           <div class="modal-body">
@@ -38,7 +38,7 @@
                       @enderror
                     </div>
                   </div>
-                  <div class="col-12 mt-3 col-md-6 mt-md-0">
+                  <div class="col-12 col-md-6">
                     <div class="row">
                       <div class="col-12">
                         <label>Hora Fin Reserva</label>
@@ -57,21 +57,21 @@
                     </div>
                   </div>
                 </div>
-                <div class="row pb-3">
+                <div class="row pt-3 pt-md-0 pb-3">
                   <div class="col-12">
                     <textarea wire:model.debounce.500ms="motivo" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
                   </div>
                   @error('motivo')
                   <div class="col-12">
-                    <span class="colorerror">{{ $message }}</span>
+                    <span class="colorerror">{{$message}}</span>
                   </div>
                   @enderror
                 </div>
                 <div class="row">
                   <div class="col-12">
-                    <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gasto de combustible">
+                    <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gasto de combustible y peajes.">
                       <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
-                        Usar Vehiculo Personal con Devolución de Combustible
+                         Usar Vehiculo Personal con Devolución de Combustible y Peajes.
                       </label>
                       <input wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="firstStepSubmit" type="checkbox" id="flgUsoVehiculoPersonal">
                     </div>
@@ -79,14 +79,15 @@
                 </div>
               </div>
 
-              <div class="col-12 col-md-6 px-3">
+              <div class="col-12 col-md-6 px-3 pt-3 pt-md-1">
                 <div class="table-responsive-sm mx-4">
                   <table class="table">
                     <!-- table-bordered -->
                     <thead>
                       <tr>
-                        <th scope="col" colspan="4" class="text-center text-success">
+                        <th scope="col" colspan="4" class="text-center text-success pb-3">
                           Reservas realizadas para el día {{$fechaModal}}
+                          <input type="hidden" wire:model="fechaModal"> 
                         </th>
                       </tr>
                       <tr>
@@ -98,12 +99,16 @@
                     </thead>
                     <tbody>
                       @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
-                      @foreach($reservasFechaSel as $item)
+                      @foreach($reservasFechaSel as $index => $item)
                       <tr>
-                        <th scope="row">{{$item->name}}</th>
-                        <td>{{$item->horaInicio}}</td>
-                        <td>{{$item->horaFin}}</td>
-                        <td>{{$item->codEstado}}</td>
+                        <td>{{$item['name']}}</td>
+                        <td>
+                        {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
+                      </td>
+                        <td>
+                        {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
+                        </td>
+                        <td>{{$item['codEstado']}}</td>
                       </tr>
                       @endforeach
                       @else
@@ -138,14 +143,15 @@
                   </div>
                 </div>
                 @endif
-                
+
               </div>
             </div>
           </div>
           <div class="modal-footer bg-light pe-5">
             <button type="button" class="btn btn-danger" onclick="ocultarModal();">Cerrar</button>
-            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()">Solicitar Reserva</button>
-
+            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()">
+               {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
+            </button>
           </div>
         </div>
       </div>
@@ -191,15 +197,31 @@
           @php($countDay = 1)
           @php($flgPrintDay = 0)
 
-          @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + $lastDayMonth); $i++) @php($countDayWeek++) @if ($countDayWeek==1) <tr>
+          @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + $lastDayMonth); $i++) 
+          @php($countDayWeek++) 
+            @if ($countDayWeek==1) 
+              <tr>
             @endif
 
             @if ($i == $firstDayMonth)
-            @php($flgPrintDay = 1)
+               @php($flgPrintDay = 1)
             @endif
 
-            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1))) <td class="bgcolorday thDaysofweek" wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')">
-              {{$countDay}}</td>
+            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1))) 
+              <td class="bgcolorday thDaysofweek" wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')">
+                  <span class="pt-1 d-block">
+                     {{$countDay}}
+                  </span>
+                  <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
+                  @php($fechaKeyArr = \Carbon\Carbon::parse($yearSel."-".$monthSel."-".$countDay)->format('Y-m-d'))
+                  @if (!empty($arrCantReservasCount[$fechaKeyArr]))                    
+                      {{$arrCantReservasCount[$fechaKeyArr]}} Reservas          
+                  @else
+                    &nbsp;&nbsp;&nbsp;  
+                  @endif
+                  </span>
+                
+              </td>
               @php($countDay++)
               @else
               <td class="bg-light"></td>
@@ -229,12 +251,37 @@
     //   // myInput.focus() 
     // })
 
+    window.addEventListener('swal:information', event => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 5500,
+            timerProgressBar: false,
+            showCloseButton: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: event.detail.icon,
+            title: '',
+            html: event.detail.mensaje,
+        })
+    });
+
 
     const container = document.getElementById("modalReserva");
     const modal = new bootstrap.Modal(container);
 
     window.addEventListener('showModal', event => {
       modal.show();
+    });
+
+    window.addEventListener('closeModal', event => {
+      modal.hide();
     });
 
     function ocultarModal() {
