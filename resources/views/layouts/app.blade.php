@@ -12,36 +12,37 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
     <!-- Styles -->
-    <!-- <link rel="stylesheet" href="{{ mix('css/app.css') }}"> -->
-    <link rel="stylesheet" href="{{ asset('css/utils.css') }}">    
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+   
 
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale-extreme.css" />
+    <link rel="stylesheet" href="{{ asset('css/utils.css') }}">
     @livewireStyles
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}" defer></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>   
 </head>
 
-<body class="font-sans antialiased">
-    <div class="container-md px-3 px-md-4" id="headPage">  
+<body class="font-sans antialiased" style="margin-top:150px;background-color: #F5F8FF;">
+    <div class="container-md px-3 px-md-4" id="headPage">
         <!-- Page Content -->
         <main>
-            <br><br><br><br>
+            <livewire:menureserva />
             <div class="card shadow mt-5" id="headReservas">
-                <div class="card-header py-3 h3" align="center">
+                <div class="card-header py-3 h3 text-center">
                     Reserva de Vehiculos
                 </div>
                 <div class="card-body">
-                   <livewire:reserva/>
+                    {{$slot}}
                 </div>
             </div>
         </main>
@@ -49,18 +50,19 @@
         @stack('modals')
 
         <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script> -->
-        
+
         @livewireScripts
     </div>
     <br><br><br><br><br>
 </body>
 <script>
-  tippy('[data-tippy-content]', {
-            touch: true, //Habilita Toolstips para moviles
-            animation: 'scale-extreme',
-            placement: 'bottom',
-            duration: 450, //Tiempo que se demora el despliegue
-            delay: 500, //Tiempo que se demora en aparecer
-        });
+    tippy('[data-tippy-content]', {
+        touch: true, //Habilita Toolstips para moviles
+        animation: 'scale-extreme',
+        placement: 'bottom',
+        duration: 450, //Tiempo que se demora el despliegue
+        delay: 500, //Tiempo que se demora en aparecer
+    });
 </script>
+
 </html>

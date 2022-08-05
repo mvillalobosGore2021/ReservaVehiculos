@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Livewire\Reserva;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Livewire\Listarreservas;
+use App\Http\Livewire\Menureserva;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', function () {
-    return view('layouts.app');
+    return view('welcome');
 });
 
 // Route::get('/reserva', function () {
@@ -28,13 +31,41 @@ Route::get('/', function () {
 
 // Auth::routes(['reset' => false, 'verify' => false]);
 
+// Route::middleware([
+//     'auth:sanctum',
+//     config('jetstream.auth_session'),
+//     'verified'
+// ])->group(function () {
+//     Route::get('/reserva', function () {
+//         return view('layouts.app');
+//     })->name('reserva');
+// });
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->get('/reserva', Reserva::class)->name('reserva');
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->get('/listarreservas', Listarreservas::class)->name('listarreservas');
+
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/reserva', function () {
-        return view('layouts.app');
-    })->name('reserva');
+    Route::get('/menureserva', function () {
+        return view('livewire.menureserva');
+    })->name('menureserva');
+
+    // Route::get('/listarreservas', function () {
+    //     return view('livewire.listarreservas');
+    // })->name('listarreservas');
 });
 

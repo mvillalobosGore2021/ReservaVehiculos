@@ -1,3 +1,5 @@
+<br><br><br><br><br>
+
 <nav id="menureserva" class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow mb-5">
     <div class="container-md">
         <a class="navbar-brand ps-0 pe-0 ps-md-4" href="#">
@@ -9,11 +11,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <!--active--> text-primary" aria-current="page" href="reserva">Reservar Vehiculo</a>
+                    <a class="nav-link @if(request()->routeIs('reserva')) text-primary @else text-secondary @endif" aria-current="page" href="{{ route('reserva') }}">
+                        Reservar Vehiculo
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <!--active--> text-primary" aria-current="page" href="#">Mis Reservas</a>
+                    <a class="nav-link @if(request()->routeIs('listarreservas')) text-primary @else text-secondary @endif" aria-current="page" href="{{ route('listarreservas') }}">
+                        Mis Reservas
+                    </a>
                 </li>
+               
 
                 <!-- <li class="nav-item">
                             <a class="nav-link" href="#">Link</a>

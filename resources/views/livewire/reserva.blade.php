@@ -1,7 +1,5 @@
 <div>
-  <form>
-    <x-menureserva />
-
+  <form>   
     <!-- Modal -->
     <div wire:ignore.self class="modal fade pt-0" id="modalReserva" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
       <div class="modal-dialog modal-xl modal-dialog-scrollable pt-1">
@@ -41,7 +39,7 @@
                   <div class="col-12 col-md-6">
                     <div class="row">
                       <div class="col-12">
-                        <label>Hora Fin Reserva</label>
+                        <label data-tippy-content="Hora estimada de regreso">Hora Fin Reserva</label>
                         <div class="input-group">
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
@@ -69,7 +67,7 @@
                 </div>
                 <div class="row">
                   <div class="col-12">
-                    <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gasto de combustible y peajes.">
+                    <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gastos de combustible y peajes.">
                       <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
                          Usar Vehiculo Personal con Devolución de Combustible y Peajes.
                       </label>
@@ -207,20 +205,19 @@
                @php($flgPrintDay = 1)
             @endif
 
-            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1))) 
-              <td class="bgcolorday thDaysofweek" wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')">
+            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) 
+              <td class="thDaysofweek @if($countDay > $dayNow-1) bgcolorday @else text-secondary  @endif" @if($countDay > $dayNow-1) wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')" @endif>
                   <span class="pt-1 d-block">
                      {{$countDay}}
                   </span>
                   <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
                   @php($fechaKeyArr = \Carbon\Carbon::parse($yearSel."-".$monthSel."-".$countDay)->format('Y-m-d'))
                   @if (!empty($arrCantReservasCount[$fechaKeyArr]))                    
-                      {{$arrCantReservasCount[$fechaKeyArr]}} Reservas          
+                      {{$arrCantReservasCount[$fechaKeyArr]}} {{$arrCantReservasCount[$fechaKeyArr] > 1 ? 'Reservas':'Reserva'}}          
                   @else
                     &nbsp;&nbsp;&nbsp;  
                   @endif
-                  </span>
-                
+                  </span>                
               </td>
               @php($countDay++)
               @else

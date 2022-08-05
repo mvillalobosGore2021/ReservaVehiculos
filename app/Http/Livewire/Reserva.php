@@ -18,43 +18,38 @@ class Reserva extends Component
         $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto,
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
-        $arrCantReservasCount;
+        $arrCantReservasCount, $dayNow;
 
     protected  $arrMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     public function mount()
     {
         $this->openModal = true;
-        $this->getCalendarMonth(1);
+        $this->getCalendarMonth(0);
         $this->flgUsoVehiculoPersonal = false;
         $user = Auth::user();
         $this->userName = $user->name;
-        $this->idUser = $user->id;
+        $this->idUser = $user->id;       
         $this->getReservas();
     }
 
-    public function getReservas() {
-        // $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
-        // // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
-        // ->where ('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
-        //  ->get(['reservavehiculos.*','users.id', 'users.name']));
-
-        
-        $fechaActual = Carbon::now();
+    public function getReservas()
+    {
+        $fechaActual = Carbon::now()->format('Y-m-01');
         $fechaActualNextMonth = Carbon::now()->addMonth();
+        $fechaActualNextMonth = $fechaActualNextMonth->format('Y-m-' . $fechaActualNextMonth->daysInMonth);
+        $this->dayNow = Carbon::now()->format('d');
 
-         $reservas = collect(Reservavehiculo::all()->groupBy('fechaSolicitud'));//->count('fechaSolicitud'); 
+     //Se obtienen las reservas para un rango de dos meses
+        $reservas = Reservavehiculo::groupBy('fechaSolicitud')
+            ->selectRaw('count(*) as cantReservas, fechaSolicitud')
+            ->whereBetween('fechaSolicitud', [$fechaActual, $fechaActualNextMonth])
+            ->get();
 
-         
-         $countPaso = "";
-         foreach ($reservas as $item) {
-            //$countPaso .= " ".$item[0]['fechaSolicitud'];
-            $this->arrCantReservasCount = Arr::add($this->arrCantReservasCount, $item[0]['fechaSolicitud'], $item->count()); 
+        //Tabla Hash con las reservas realizadas
+        foreach ($reservas as $item) {
+            $this->arrCantReservasCount = Arr::add($this->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
         }
-                
-       // dd($this->arrCantReservasCount);
-
-
     }
 
     public function render()
@@ -110,37 +105,38 @@ class Reserva extends Component
     {
         $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
 
-      
+
         $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
             // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
-            ->where ('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
-             ->get(['reservavehiculos.*','users.id', 'users.name']));
+            ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
+            ->get(['reservavehiculos.*', 'users.id', 'users.name']));
 
-             //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
-             $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
+        //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
+        $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
 
-             $this->reset(['idReserva', 'horaInicio', 'horaFin', 'motivo', 'flgUsoVehiculoPersonal']);
-             $this->resetValidation(['horaInicio', 'horaFin', 'motivo']);
-             $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo']);
+        $this->reset(['idReserva', 'horaInicio', 'horaFin', 'motivo', 'flgUsoVehiculoPersonal']);
+        $this->resetValidation(['horaInicio', 'horaFin', 'motivo']);
+        $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo']);
 
-             if (!empty($reservasFechaUser)) {
-                $this->idReserva = $reservasFechaUser['idReserva'];
-                $this->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');                
-                $this->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
-                $this->motivo = $reservasFechaUser['motivo'];
-                $this->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
-             }            
+        if (!empty($reservasFechaUser)) {
+            $this->idReserva = $reservasFechaUser['idReserva'];
+            $this->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
+            $this->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
+            $this->motivo = $reservasFechaUser['motivo'];
+            $this->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
+        }
 
-        $this->dispatchBrowserEvent('showModal');       
+        $this->dispatchBrowserEvent('showModal');
     }
 
-    public function updated($field) {
-        if ($field == 'flgUsoVehiculoPersonal') {//Campo opcional no se valida
+    public function updated($field)
+    {
+        if ($field == 'flgUsoVehiculoPersonal') { //Campo opcional no se valida
             return true;
         }
-       //dd($this->horaInicio, $this->horaFin);
+        //dd($this->horaInicio, $this->horaFin);
 
-       // dd($this->reservasFechaSel);
+        // dd($this->reservasFechaSel);
         //if ($field == 'horaInicio' || 'horaFin') {
         //    $this->resetValidation($field);
         //    $this->resetErrorBag($field);
@@ -151,20 +147,20 @@ class Reserva extends Component
 
     public function solicitarReserva()
     {
-       // dd($this->horaInicio, $this->horaFin);
-    $this->validate($this->getArrRules());
+        // dd($this->horaInicio, $this->horaFin);
+        $this->validate($this->getArrRules());
 
         try {
             // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
             $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
 
-           $reservaVehiculo =  Reservavehiculo::updateOrCreate(
+            $reservaVehiculo =  Reservavehiculo::updateOrCreate(
                 ['idReserva' => $this->idReserva],
                 [
                     'idUser' => $this->idUser,
                     'prioridad' => $prioridad,
                     'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersonal,
-                    'fechaSolicitud' => Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'),// Carbon::parse($this->fechaModal)->format('Y/m/d'),
+                    'fechaSolicitud' => Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'), // Carbon::parse($this->fechaModal)->format('Y/m/d'),
                     'horaInicio' => $this->horaInicio,
                     'horaFin' => $this->horaFin,
                     'motivo' => $this->motivo,
@@ -173,16 +169,16 @@ class Reserva extends Component
                 ]
             );
 
+            $this->getReservas();
 
-            $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.':'Su solicitud de reserva ha sido ingresada y enviada.';
-            
+            $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
+
             $this->dispatchBrowserEvent('swal:information', [
-                'icon' => '',//'info',
-                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">'.$mensaje.'</div>',
+                'icon' => '', //'info',
+                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</div>',
             ]);
 
             $this->dispatchBrowserEvent('closeModal');
-
         } catch (exception $e) {
             session()->flash('exceptionMessage', $e->getMessage());
         }
