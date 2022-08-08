@@ -20,8 +20,8 @@
                     </a>
                 </li>      
                 @if ($flgAdmin  == 1)
-                <li class="nav-item">
-                    <a class="nav-link link-secondary" aria-current="page" href="#">
+                <li class="nav-item"> 
+                <a class="nav-link @if(request()->routeIs('solicitudesreserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('solicitudesreserva') }}">
                         Solicitudes de Reservas
                     </a>
                 </li>
@@ -30,16 +30,18 @@
                     <button type="button" class="btn btn-link">Btn Link</button>
                 </li>             -->
             </ul>     
-              <form method="POST" action="{{ route('logout') }}" class="pe-1 pe-md-5 pb-4 pb-md-1">
+            <div class="d-flex justify-content-center pe-1 pe-md-5 mb-4 mb-md-2">
+              <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <span class="d-block pt-3 fst-italic text-secondary text-center pb-2" style="font-size:15px;">Bienvenido {{$userName}}</span>
-                <a href="{{ route('logout') }}" class="btn btn-outline-primary ms-4 mb-3" role="button" onclick="event.preventDefault();
+                <span class="d-block fst-italic text-secondary pb-2" style="font-size:15px;">
+                  <i class="bi bi-person-circle"></i> {{$userName}}
+                </span>
+                <a href="{{ route('logout') }}" class="btn btn-outline-primary ms-2" role="button" onclick="event.preventDefault();
                     this.closest('form').submit();">
                     Cerrar Sesi&oacute;n
-                </a>
-                
+                </a>                
             </form>
-
+            </div>
         </div>
     </div>
 </nav>

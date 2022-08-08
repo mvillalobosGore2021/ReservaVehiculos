@@ -107,9 +107,10 @@ class Reserva extends Component
 
 
         $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
+            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado' )
             // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
             ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
-            ->get(['reservavehiculos.*', 'users.id', 'users.name']));
+            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
 
         //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
         $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
@@ -169,7 +170,7 @@ class Reserva extends Component
                 ]
             );
 
-            $this->getReservas();
+            $this->getReservas(); 
 
             $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
 

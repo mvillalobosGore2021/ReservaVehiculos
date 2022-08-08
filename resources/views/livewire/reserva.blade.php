@@ -26,7 +26,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" wire:loading.attr="disabled" wire:target="thirdStepSubmit,back" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
+                          <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
                         </div>
                       </div>
                       @error('horaInicio')
@@ -44,7 +44,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" wire:loading.attr="disabled" wire:target="thirdStepSubmit,back" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
+                          <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
                         </div>
                       </div>
                       @error('horaFin')
@@ -57,7 +57,7 @@
                 </div>
                 <div class="row pt-3 pt-md-0 pb-3">
                   <div class="col-12">
-                    <textarea wire:model.debounce.500ms="motivo" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
+                    <textarea wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
                   </div>
                   @error('motivo')
                   <div class="col-12">
@@ -71,7 +71,7 @@
                       <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
                          Usar Vehiculo Personal con Devolución de Combustible y Peajes.
                       </label>
-                      <input wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="firstStepSubmit" type="checkbox" id="flgUsoVehiculoPersonal">
+                      <input wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="solicitarReserva" type="checkbox" id="flgUsoVehiculoPersonal">
                     </div>
                   </div>
                 </div>
@@ -106,7 +106,7 @@
                         <td>
                         {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
                         </td>
-                        <td>{{$item['codEstado']}}</td>
+                        <td>{{$item['descripcionEstado']}}</td> 
                       </tr>
                       @endforeach
                       @else
@@ -141,14 +141,17 @@
                   </div>
                 </div>
                 @endif
-
               </div>
             </div>
           </div>
           <div class="modal-footer bg-light pe-5">
-            <button type="button" class="btn btn-danger" onclick="ocultarModal();">Cerrar</button>
-            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()">
+            <button type="button" class="btn btn-danger" onclick="ocultarModal();"  wire:loading.attr="disabled" wire:target="solicitarReserva">
+            Cerrar <i class="bi bi-x-circle pt-1"></i>
+           </button>
+            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()"  wire:loading.attr="disabled" wire:target="solicitarReserva">
                {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
+               <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
+               <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
             </button>
           </div>
         </div>

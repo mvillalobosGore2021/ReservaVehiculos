@@ -2,9 +2,10 @@
 
 use App\Http\Livewire\Reserva;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\Listarreservas;
-use App\Http\Livewire\Menureserva;
+// use App\Http\Livewire\Menureserva;
+use App\Http\Livewire\SolicitudesReserva;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,12 @@ Route::middleware([
     'verified'
 ])->get('/listarreservas', Listarreservas::class)->name('listarreservas');
 
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->get('/solicitudesreserva', SolicitudesReserva::class)->name('solicitudesreserva');
 
 
 Route::middleware([

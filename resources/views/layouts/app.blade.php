@@ -32,7 +32,7 @@
     <script src="https://unpkg.com/tippy.js@6"></script>   
 </head>
 
-<body class="font-sans antialiased" style="margin-top:150px;background-color: #F5F8FF;">
+<body class="font-sans antialiased" style="margin-top:170px;background-color: #F5F8FF;">
     <div class="container-md px-3 px-md-4" id="headPage">
         <!-- Page Content -->
         <main>
