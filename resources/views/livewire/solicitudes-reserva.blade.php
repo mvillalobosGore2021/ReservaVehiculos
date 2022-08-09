@@ -3,7 +3,6 @@
     <div class="card-header py-3 text-center h5">
       Solicitudes de Reserva
     </div>
-
     <div class="card-body">
       <div class="card mx-2 mt-3 mb-3">
         <div class="card-header">
@@ -66,7 +65,7 @@
             <div class="col-12 mt-3">
               @if(!empty($fechaHoySearch)) 
             <button type="button" id="tipoBusqueda1" class="btn btn-dark btn-sm rounded-pill p-1" style="cursor:context-menu;">
-              Solicitudes Hoy <div class="d-inline" wire:click="resetSearch('fechaHoySearch')"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
+              Solicitudes Hoy <div class="d-inline" wire:click="resetSearch('fechaHoySearch')" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
             </button>
             @endif
             <!-- @if(!empty($nameSearch)) 
@@ -80,7 +79,7 @@
       </div>
       <div class="table-responsive card mx-2 mt-4">
         <table class="table">
-          <thead class="table-light">
+          <thead class="table-light"> 
             <tr class="text-center">
             <th scope="col">
                 Funcionario
@@ -94,8 +93,8 @@
               <th scope="col">
                 Estado Reserva
               </th>
-              <th scope="col" class="text-center">Motivo</th>
-              <th scope="col">Acción</th>
+              <th scope="col" class="text-left">Motivo</th>
+              <th scope="col" style="width:170px;">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -108,12 +107,14 @@
               <td>{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>
               <td>{{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}</td>
               <td nowrap>{{$item->descripcionEstado}}</td>
-              <td class="text-center">
-                   <i class="bi bi-eye-fill size-icon" data-tippy-content="{{$item->motivo}}"></i></td>
+              <td class="glosaTable">
+                   <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
+                   {{$item->motivo}} 
+              </td>
               <td>
 
                 <div class="input-group">
-                  <select id="codEstado" name="codEstado" wire:model="codEstado" class="form-select form-select-sm">
+                  <select id="codEstado{{$loop->index}}" wire:model.debounce.500ms="inputsTable.{{$loop->index}}.codEstado" class="form-select form-select-sm">
                     <option value="0">Sel.Estado</option>
                     @if (!empty( $estadosCmb))
                     @foreach($estadosCmb as $item)
@@ -122,7 +123,7 @@
                     @endforeach
                     @endif
                   </select>
-                  <button type="button" style="width:120px;" class="btn btn-sm btn-success" wire:click="cambiarEstado('{{$item['idReserva']}}')" wire:loading.attr="disabled" wire:target="cambiarEstado">
+                  <button type="button" class="btn btn-sm btn-success" wire:click="cambiarEstado('{{$item['idReserva']}}')" wire:loading.attr="disabled" wire:target="cambiarEstado">
                     Guardar
                     <!-- <span wire:loading.remove wire:target="cambiarEstado"><i class="bi bi-check-circle"></i></span> 
                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="cambiarEstado" role="status" aria-hidden="true"></span> -->

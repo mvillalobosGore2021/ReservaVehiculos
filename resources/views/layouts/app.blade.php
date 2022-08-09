@@ -62,13 +62,32 @@
 </div>
 </body>
 <script>
-    tippy('[data-tippy-content]', {
-        touch: true, //Habilita Toolstips para moviles
-        animation: 'scale-extreme',
-        placement: 'bottom',
-        duration: 450, //Tiempo que se demora el despliegue
-        delay: 500, //Tiempo que se demora en aparecer
-    });
+
+initToolTips();
+
+window.addEventListener('iniTooltips', event => {
+   initToolTips();
+});
+
+function initToolTips() {
+   tippy('[data-tippy-content]', {
+      touch: true, //Habilita Toolstips para moviles
+      animation: 'scale-extreme',
+      placement: 'bottom',
+      duration: 450, //Tiempo que se demora el despliegue
+      delay: 500, //Tiempo que se demora en aparecer
+   });
+}
+
+// tippy('[data-tippy-content]', {
+//     touch: true, //Habilita Toolstips para moviles
+//     animation: 'scale-extreme',
+//     placement: 'bottom',
+//     duration: 450, //Tiempo que se demora el despliegue
+//     delay: 500, //Tiempo que se demora en aparecer
+// });
+
+
 </script>
 
 </html>
