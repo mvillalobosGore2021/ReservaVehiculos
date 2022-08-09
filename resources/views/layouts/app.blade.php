@@ -53,7 +53,13 @@
 
         @livewireScripts
     </div>
-    <br><br><br><br><br>
+    <br><br><br><br><br><br>
+    <div class="text-center mx-5 mb-4 text-secondary">
+        <hr>
+        <span class="d-block">© {{ \Carbon\Carbon::parse(Carbon\Carbon::now())->format('Y')}} Reserva de Vehículos - Desarrollo Interno Unidad de Informática.</span>
+        <span class="d-block py-2">Gobierno Regional del Biobío - Avenida Prat 525 - Mesa Central 56-41-2405700 - Concepción, Región del Biobío, Chile.</span>
+    <hr>
+</div>
 </body>
 <script>
     tippy('[data-tippy-content]', {

@@ -15,7 +15,7 @@ class SolicitudesReserva extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $fechaSolSearch, $codEstadoSearch;
+    public $fechaSolSearch, $codEstadoSearch, $nameSearch, $fechaHoySearch;
 
     public function mount() {
       
@@ -29,8 +29,10 @@ class SolicitudesReserva extends Component
 
          //Se obtienen las reservas para un rango de dos meses
          $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
+          ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
           ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaNextMonth])
-          ->where('fechaSolicitud', 'like', '%' . $this->fechaSolSearch . '%')
+          ->where('fechaSolicitud', 'like', '%' . $this->fechaHoySearch . '%')
+          ->where('users.name', 'like', '%' . $this->nameSearch . '%')
           ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
           ->orderBy('fechaSolicitud', 'desc')
           ->paginate(10);
@@ -42,6 +44,27 @@ class SolicitudesReserva extends Component
 
          // dd($reservasTotales);
         return view('livewire.solicitudes-reserva', compact(['reservasTotales', 'estadosCmb', 'estadosCmbSearch']));
+    }
+
+    public function setFechaHoySearch() {
+        $this->fechaHoySearch = Carbon::now()->format('Y-m-d');
+        $this->resetPage();
+    }
+
+    public function mostrarTodo() {
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaHoySearch']);
+        $this->resetPage();
+    }
+
+    public function resetSearch($field) {
+        $this->reset($field);
+        $this->resetPage();
+    } 
+
+
+
+    public function updated() {
+        $this->resetPage();
     }
 
     public function cambiarEstado($idEstado) {
