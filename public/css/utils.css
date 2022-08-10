@@ -101,7 +101,22 @@
         transition: 0.1s;      
     }
 
-    /* .link-nav {
+    /* .link-azul {
+        color:#0B5ED7;
+    }
+
+    .link-gris {
+        color:#828b9a;
+    }
+
+
+    a:hover {
+        background-color: yellow;
+        color:#0B5ED7;
+        color:yellow;
+      }
+
+    .link-nav {
         text-decoration: none;
     }
 
@@ -127,7 +142,7 @@
         position: relative;
         color:#0B5ED7;
         /* ; */
-      }
+      }      
       
       .hover-underline-animation:after {
         content: '';
@@ -146,3 +161,5 @@
         transform: scaleX(1);
         transform-origin: bottom left;
       }
+
+     

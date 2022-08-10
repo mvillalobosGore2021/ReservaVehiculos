@@ -16,6 +16,7 @@ class CreateReservavehiculosTable extends Migration
         Schema::create('reservavehiculos', function (Blueprint $table) {
             $table->increments('idReserva');
             $table->integer('idUser');
+            $table->integer('codVehiculo')->nullable();
             $table->string('motivo', 500);
             $table->boolean('flgUsoVehiculoPersonal')->nullable();
             $table->date('fechaSolicitud');

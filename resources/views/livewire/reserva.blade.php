@@ -209,7 +209,7 @@
             @endif
 
             @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) 
-              <td class="thDaysofweek @if($countDay > $dayNow-1) bgcolorday @else text-secondary bg-light @endif" @if($countDay > $dayNow-1) wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')" @endif>
+              <td class="thDaysofweek @if($countDay > $dayNow-1 && $countDay < 61) bgcolorday @else text-secondary bg-light @endif" @if($countDay > $dayNow-1 && $countDay < 61) wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')" @endif>
                   <span class="pt-1 d-block">
                      {{$countDay}}
                   </span>

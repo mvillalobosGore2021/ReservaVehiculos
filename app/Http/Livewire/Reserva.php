@@ -67,7 +67,7 @@ class Reserva extends Component
         $this->yearNow = $fechaActual->year;
 
         $this->monthNowStr = $this->arrMeses[$this->monthNow - 1];
-        if ($this->monthNow == 12) { //Si es diciembre el proximo mes se pasa a Enero (array de 0 a 11)
+        if ($this->monthNow == 12) { //Si es diciembre el proximo mes se pasa a Enero y se cambia el año (array de 0 a 11)
             $this->nextMontStr = $this->arrMeses[0];
             $this->yearNextMont = $this->yearNow + 1;
         } else {

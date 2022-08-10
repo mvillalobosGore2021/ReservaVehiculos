@@ -11,5 +11,5 @@ class Reservavehiculo extends Model
 
     protected $primaryKey = 'idReserva';
 
-    protected $fillable = ['idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'horaInicio', 'horaFin'];
+    protected $fillable = ['idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'codVehiculo', 'horaInicio', 'horaFin'];
 }
