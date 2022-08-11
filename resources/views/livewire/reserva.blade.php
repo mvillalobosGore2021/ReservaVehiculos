@@ -1,11 +1,110 @@
 <div>
-  <form>   
+  <form>
+    <div class="card shadow mt-5" id="headReservas">
+        <div class="card-header py-3 h3 text-center">
+          Reserva de Vehiculos
+        </div>
+      <div class="card-body" id="card{{$randId}}">
+          <input wire:model="mesSelStr" type="hidden">     
+          <input wire:model="mesSel" type="hidden">        
+          <input wire:model="agnoSel" type="hidden">       
+          <input wire:model="cantDaysMonth" type="hidden"> 
+          <input wire:model="firstDayMonth" type="hidden"> 
+          <input wire:model="lastDayMonth" type="hidden">  
+        <div class="table-responsive-sm mx-4">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col" colspan="7">
+                  <div class="row">
+                    <div class="col-12 col-md-5 ps-md-0">
+                      <div class="input-group py-3 justify-content-center"> 
+                        @foreach($arrMonthDisplay as $mesIndex => $item) 
+                          <button wire:click="getCalendarMonth({{$mesIndex}})" class="btn {{$mesSel == $mesIndex ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$item['mes']}}</button>
+                        @endforeach
+                        <!-- <button wire:click="getCalendarMonth(0)" class="btn {{$flgNextMonth == 0 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$monthNowStr}}</button>
+                        <button wire:click="getCalendarMonth(1)" class="btn {{$flgNextMonth == 1 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$nextMontStr}}</button> -->
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-3 py-3 text-center ps-md-0">
+                      <span class="h4">    
+                        {{$mesSelStr}} {{$agnoSel}}
+                      </span>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <th scope="col" class="thDaysofweek">Lun</th>
+                <th scope="col" class="thDaysofweek">Mar</th>
+                <th scope="col" class="thDaysofweek">Mie</th>
+                <th scope="col" class="thDaysofweek">Jue</th>
+                <th scope="col" class="thDaysofweek">Vie</th>
+                <th scope="col" class="thDaysofweek">Sab</th>
+                <th scope="col" class="thDaysofweek">Dom</th>
+              </tr>
+            </thead>
+            <tbody>
+              @php($countDayWeek = 0)
+              @php($countWeek = 0)
+              @php($countDay = 1)
+              @php($flgPrintDay = 0)
+
+              @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + $lastDayMonth+1); $i++) 
+                @php($countDayWeek++) 
+                @if ($countDayWeek==1) 
+                   <tr id="fila{{rand(0,100)}}">
+                @endif
+
+                @if ($i == $firstDayMonth)
+                @php($flgPrintDay = 1)
+                @endif
+
+                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) 
+                <td id="day{{$countDay}}" class="thDaysofweek @if(($countDay > $dayNow-1 || $mesSel != $mesActual) && $countDay < 61) bgcolorday @else text-secondary bg-light @endif ">
+                <div id="divDay{{$countDay}}" @if(($countDay > $dayNow-1 || $mesSel != $mesActual) && $countDay < 61) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')"  class="bg-primary" @endif >
+                <span class="pt-1 d-block">
+                      {{$countDay}}
+                    </span>
+                    <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
+                      @php($fechaKeyArr = \Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
+                      @if (!empty($arrCantReservasCount[$fechaKeyArr]))
+                      {{$arrCantReservasCount[$fechaKeyArr]}} {{$arrCantReservasCount[$fechaKeyArr] > 1 ? 'Reservas':'Reserva'}}
+                      @else
+                      &nbsp;&nbsp;&nbsp;
+                      @endif
+                    </span>
+                    </div>
+                    </td>
+
+                    @php($countDay++)
+                    @else
+                    <td class="bg-light"></td>
+                    @endif
+
+                    @if ($countDayWeek == 7)
+                    @php($countDayWeek = 0)
+                    @php($countWeek++)
+                    </tr>
+                    @endif
+
+                    @if ($countWeek > 4)
+                    @php($i = ($cantDaysMonth + $firstDayMonth + $lastDayMonth))
+                    @endif
+
+                    @endfor
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal -->
     <div wire:ignore.self class="modal fade pt-0" id="modalReserva" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
       <div class="modal-dialog modal-xl modal-dialog-scrollable pt-1">
         <div class="modal-content">
           <div class="modal-header bg-light">
-            <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">Ingrese los Datos de Su Reserva   {{$userName}}</h5>
+            <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">Ingrese los Datos de Su Reserva {{$userName}}</h5>
             <button type="button" class="btn-close" onclick="ocultarModal()"></button>
           </div>
           <div class="modal-body">
@@ -69,7 +168,7 @@
                   <div class="col-12">
                     <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gastos de combustible y peajes.">
                       <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
-                         Usar Vehiculo Personal con Devolución de Combustible y Peajes.
+                        Usar Vehiculo Personal con Devolución de Combustible y Peajes.
                       </label>
                       <input wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="solicitarReserva" type="checkbox" id="flgUsoVehiculoPersonal">
                     </div>
@@ -85,7 +184,7 @@
                       <tr>
                         <th scope="col" colspan="4" class="text-center text-success pb-3">
                           Reservas realizadas para el día {{$fechaModal}}
-                          <input type="hidden" wire:model="fechaModal"> 
+                          <input type="hidden" wire:model="fechaModal">
                         </th>
                       </tr>
                       <tr>
@@ -101,12 +200,12 @@
                       <tr>
                         <td>{{$item['name']}}</td>
                         <td>
-                        {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
-                      </td>
-                        <td>
-                        {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
+                          {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
                         </td>
-                        <td>{{$item['descripcionEstado']}}</td> 
+                        <td>
+                          {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
+                        </td>
+                        <td>{{$item['descripcionEstado']}}</td>
                       </tr>
                       @endforeach
                       @else
@@ -145,102 +244,19 @@
             </div>
           </div>
           <div class="modal-footer bg-light pe-5">
-            <button type="button" class="btn btn-danger" onclick="ocultarModal();"  wire:loading.attr="disabled" wire:target="solicitarReserva">
-            Cerrar <i class="bi bi-x-circle pt-1"></i>
-           </button>
-            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()"  wire:loading.attr="disabled" wire:target="solicitarReserva">
-               {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
-               <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
-               <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
+            <button type="button" class="btn btn-danger" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva">
+              Cerrar <i class="bi bi-x-circle pt-1"></i>
+            </button>
+            <button type="button" class="btn btn-primary" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva">
+              {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
+              <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
+              <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
             </button>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="table-responsive-sm mx-4">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col" colspan="7">
-              <div class="row">
-                <div class="col-12 col-md-5 ps-md-0">
-                  <div class="input-group py-3 justify-content-center">
-                    <button wire:click="getCalendarMonth(0)" class="btn {{$flgNextMonth == 0 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$monthNowStr}}</button>
-                    <button wire:click="getCalendarMonth(1)" class="btn {{$flgNextMonth == 1 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$nextMontStr}}</button>
-                  </div>
-                </div>
-                <div class="col-12 col-md-3 py-3 text-center ps-md-0">
-                  <span class="h4">
-                    @if($flgNextMonth == 0)
-                    {{$monthNowStr}} {{$yearNow}}
-                    @else
-                    {{$nextMontStr}} {{$yearNextMont}}
-                    @endif
-                  </span>
-                </div>
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th scope="col" class="thDaysofweek">Lun</th>
-            <th scope="col" class="thDaysofweek">Mar</th>
-            <th scope="col" class="thDaysofweek">Mie</th>
-            <th scope="col" class="thDaysofweek">Jue</th>
-            <th scope="col" class="thDaysofweek">Vie</th>
-            <th scope="col" class="thDaysofweek">Sab</th>
-            <th scope="col" class="thDaysofweek">Dom</th>
-          </tr>
-        </thead>
-        <tbody>
-          @php($countDayWeek = 0)
-          @php($countWeek = 0)
-          @php($countDay = 1)
-          @php($flgPrintDay = 0)
-
-          @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + $lastDayMonth); $i++) 
-          @php($countDayWeek++) 
-            @if ($countDayWeek==1) 
-              <tr>
-            @endif
-
-            @if ($i == $firstDayMonth)
-               @php($flgPrintDay = 1)
-            @endif
-
-            @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) 
-              <td class="thDaysofweek @if($countDay > $dayNow-1 && $countDay < 61) bgcolorday @else text-secondary bg-light @endif" @if($countDay > $dayNow-1 && $countDay < 61) wire:click="setFechaModal('{{$countDay}}.{{$monthSel}}.{{$yearSel}}')" @endif>
-                  <span class="pt-1 d-block">
-                     {{$countDay}}
-                  </span>
-                  <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
-                  @php($fechaKeyArr = \Carbon\Carbon::parse($yearSel."-".$monthSel."-".$countDay)->format('Y-m-d'))
-                  @if (!empty($arrCantReservasCount[$fechaKeyArr]))                    
-                      {{$arrCantReservasCount[$fechaKeyArr]}} {{$arrCantReservasCount[$fechaKeyArr] > 1 ? 'Reservas':'Reserva'}}          
-                  @else
-                    &nbsp;&nbsp;&nbsp;  
-                  @endif
-                  </span>                
-              </td>
-              @php($countDay++)
-              @else
-              <td class="bg-light"></td>
-              @endif
-
-              @if ($countDayWeek == 7)
-              @php($countDayWeek = 0)
-              @php($countWeek++)
-              </tr>
-              @endif
-
-              @if ($countWeek > 4)
-              @php($i = ($cantDaysMonth + $firstDayMonth + $lastDayMonth))
-              @endif
-
-              @endfor
-        </tbody>
-      </table>
-    </div>
+    <!-- Fin Modal -->
   </form>
 
 
@@ -252,24 +268,24 @@
     // })
 
     window.addEventListener('swal:information', event => {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'center',
-            showConfirmButton: false,
-            timer: 5500,
-            timerProgressBar: false,
-            showCloseButton: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        })
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 5500,
+        timerProgressBar: false,
+        showCloseButton: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
 
-        Toast.fire({
-            icon: event.detail.icon,
-            title: '',
-            html: event.detail.mensaje,
-        })
+      Toast.fire({
+        icon: event.detail.icon,
+        title: '',
+        html: event.detail.mensaje,
+      })
     });
 
 

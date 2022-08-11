@@ -19,12 +19,15 @@ class SolicitudesReserva extends Component
 
     public $fechaSolSearch, $codEstadoSearch, $nameSearch, $fechaHoySearch, $idVehiculo, $codEstadoSel;
 
-    public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel, 
-           $motivoSel, $nameSel, $cmbVehiculos, $estadosCmb;
+    public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
+        $motivoSel, $nameSel, $cmbVehiculos, $estadosCmb;
 
     public Collection $inputsTable;
 
-    public function mount() {
+    public $reservasFechaSelPaso;
+
+    public function mount()
+    {
         $this->cmbVehiculos = Vehiculo::all();
     }
 
@@ -34,35 +37,46 @@ class SolicitudesReserva extends Component
         $fechaNextMonth = Carbon::now()->addMonth();
         $fechaNextMonth = $fechaNextMonth->format('Y-m-' . $fechaNextMonth->daysInMonth);
 
-         //Se obtienen las reservas para un rango de dos meses
-         $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-          ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
-          ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaNextMonth])
-          ->where('fechaSolicitud', 'like', '%' . $this->fechaHoySearch . '%')
-          ->where('users.name', 'like', '%' . $this->nameSearch . '%')
-          ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
-          ->orderBy('fechaSolicitud', 'desc')
-          ->paginate(4); 
-          
-         // dd($reservasTotales->where('fechaSolicitud', 'like', '%2022-08-09%'));
+        //Se obtienen las reservas para un rango de dos meses
+        $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
+            ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
+            ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaNextMonth])
+            ->where('fechaSolicitud', 'like', '%' . $this->fechaHoySearch . '%')
+            ->where('users.name', 'like', '%' . $this->nameSearch . '%')
+            ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
+            ->orderBy('fechaSolicitud', 'desc')
+            ->paginate(4);
+
+        // dd($reservasTotales->where('fechaSolicitud', 'like', '%2022-08-09%'));
 
         //   $estadosCmb = Estado::where('codEstado', '>', 1)->get();
-   
-          $estadosCmbSearch = Estado::all();
-        
-          $this->inputsTable = new Collection();
-          foreach ($reservasTotales as $item) {
+
+        $estadosCmbSearch = Estado::all();
+
+        $this->inputsTable = new Collection();
+        foreach ($reservasTotales as $item) {
             $this->inputsTable->push([
-                'idReserva' => $item->idReserva, 'codEstado' => '']);
-          }
-          
-        return view('livewire.solicitudes-reserva', compact(['reservasTotales', 'estadosCmbSearch']));
+                'idReserva' => $item->idReserva, 'codEstado' => ''
+            ]);
+        }
+
+        //Lista de reservas realizadas el mismo dia de la reserva seleccionada
+        $reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
+            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
+            ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)
+            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
+
+        return view('livewire.solicitudes-reserva', compact(['reservasTotales', 'reservasFechaSel', 'estadosCmbSearch']));
     }
 
-    public function reservaSel($idReservaSel) {
+    public function reservaSel($idReservaSel, $openModal)
+    {
+        // dd($idReservaSel, $openModal);
         $reservaSel = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-          ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
-          ->where('idReserva', '=', $idReservaSel)->first();
+            ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
+            ->where('idReserva', '=', $idReservaSel)->first();
+
+            //dd($reservaSel);
 
         $this->idReservaSel = $reservaSel->idReserva;
         $this->fechaSolicitudSel = $reservaSel->fechaSolicitud;
@@ -74,35 +88,47 @@ class SolicitudesReserva extends Component
         $this->descripEstadoSel = $reservaSel->descripcionEstado;
 
         $this->estadosCmb = Estado::where('codEstado', '>', 1)
-        ->where('codestado', '!=', $reservaSel->codEstado)->get();       
+            ->where('codestado', '!=', $reservaSel->codEstado)->get();
 
-        $this->dispatchBrowserEvent('showModal');
+        // //Lista de reservas realizadas el mismo dia de la reserva seleccionada
+        // $this->reservasFechaSelPaso = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
+        //     ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
+        //     ->where('fechaSolicitud', '=', $reservaSel->fechaSolicitud)
+        //     ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
+
+        if ($openModal == 1) {
+            $this->dispatchBrowserEvent('showModal');
+        }
     }
 
-    public function setFechaHoySearch() {
-        $this->fechaHoySearch = Carbon::now()->format('Y-m-d');        
+    public function setFechaHoySearch()
+    {
+        $this->fechaHoySearch = Carbon::now()->format('Y-m-d');
         $this->dispatchBrowserEvent('iniTooltips');
         $this->resetPage();
     }
 
-    public function mostrarTodo() {
-        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaHoySearch']);        
+    public function mostrarTodo()
+    {
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaHoySearch']);
         // $this->dispatchBrowserEvent('iniTooltips');
         $this->resetPage();
     }
 
-    public function resetSearch($field) {
+    public function resetSearch($field)
+    {
         $this->reset($field);
         // $this->dispatchBrowserEvent('iniTooltips');
         $this->resetPage();
-    } 
+    }
 
-    public function updated() {
+    public function updated()
+    {
         // $this->dispatchBrowserEvent('iniTooltips');
         $this->resetPage();
     }
 
-    public function cambiarEstado($idEstado) {
-         
+    public function cambiarEstado($idEstado)
+    {
     }
 }

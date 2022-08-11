@@ -18,37 +18,90 @@ class Reserva extends Component
         $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto,
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
-        $arrCantReservasCount, $dayNow;
+        $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId;
+
+    public $arrMonthDisplay;
 
     protected  $arrMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     public function mount()
     {
-        $this->openModal = true;
-        $this->getCalendarMonth(0);
+        $this->openModal = true; 
+        $this->randId = rand(0, 100); 
         $this->flgUsoVehiculoPersonal = false;
         $user = Auth::user();
         $this->userName = $user->name;
-        $this->idUser = $user->id;       
+        $this->idUser = $user->id;
         $this->getReservas();
+
+        //Inicio Calculo Despliege de 60 dias
+        $fechaActual = Carbon::now();
+       
+       //dd($fechaActual->firstOfMonth()->dayOfWeek);                                          
+      
+        $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaActual->month, ['mes'=>$this->arrMeses[$fechaActual->month-1], 'agno' => $fechaActual->year, 'primerDiaSemana' => $fechaActual->firstOfMonth()->dayOfWeek == 0?7:$fechaActual->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaActual->lastOfMonth()->dayOfWeek == 0?7:$fechaActual->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaActual->daysInMonth]);  
+        
+        $this->mesSel = $fechaActual->month;
+        $this->mesActual = $fechaActual->month;
+       
+        $this->mesSelStr = $this->arrMeses[$fechaActual->month];
+        $this->agnoSel = $fechaActual->year;
+        $this->cantDaysMonth = $fechaActual->daysInMonth;
+        $this->firstDayMonth = $fechaActual->firstOfMonth()->dayOfWeek; 
+        $this->lastDayMonth = $fechaActual->lastOfMonth()->dayOfWeek;
+        
+        // dd("jkdbhwvd", $this->arrMonthDisplay,  $fechaActual->month);
+
+        $fechaSiguiente = Carbon::now()->addMonth();
+        $diasSiguienteMes = $fechaSiguiente->daysInMonth;
+        $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaSiguiente->month, ['mes'=>$this->arrMeses[$fechaSiguiente->month-1], 'agno' => $fechaSiguiente->year, 'primerDiaSemana' => $fechaSiguiente->firstOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaSiguiente->lastOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->lastOfMonth()->dayOfWeek,'cantDiasMes' => $fechaSiguiente->daysInMonth]);  
+        
+        
+        $difDiasMes = $fechaActual->daysInMonth - $fechaSiguiente->month + 1;//Calculo de los dias restantes para que termine el mes, se le suma uno para incluir el dia actual
+       
+      //Si los dos meses no suman 60 dias se agrega otro mes
+        if (($difDiasMes+$diasSiguienteMes) < 61) {
+            $fechaUltima = Carbon::now()->addMonths(2);
+            $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaUltima->month, ['mes'=>$this->arrMeses[$fechaUltima->month-1], 'agno' => $fechaUltima->year, 'primerDiaSemana' => $fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaUltima->daysInMonth]);     
+        }      
+      //Fin Calculo Despliege de 60 dias    
+
+      $this->getCalendarMonth($fechaActual->month);
     }
+    
+    public function getCalendarMonth($mesSel)
+    {
+        $itemMesSel = $this->arrMonthDisplay[$mesSel];
+        $this->mesSelStr = $this->arrMeses[$mesSel-1];
+        $this->mesSel = $mesSel;
+        $this->agnoSel = $itemMesSel['agno'];
+        $this->cantDaysMonth = $itemMesSel['cantDiasMes'];
+        $this->firstDayMonth = $itemMesSel['primerDiaSemana']; 
+        $this->lastDayMonth = $itemMesSel['ultimoDiaSemana'];
+
+
+
+        // dd($this->mesSelStr,
+        // $this->mesSel,
+        // $this->agnoSel,
+        // $this->cantDaysMonth,
+        // $this->firstDayMonth,
+        // $this->lastDayMonth);
+    }
+
 
     public function getReservas()
     {
-        $fechaActual = Carbon::now()->format('Y-m-01');
-        $fechaActualNextMonth = Carbon::now()->addMonth();
-        $fechaActualNextMonth = $fechaActualNextMonth->format('Y-m-' . $fechaActualNextMonth->daysInMonth);
-        $this->dayNow = Carbon::now()->format('d');
+    //Se obtienen las reservas para un rango de 60 dias a contar de la fecha actual 
+      $this->dayNow = Carbon::now()->day;
+      $reservas = Reservavehiculo::groupBy('fechaSolicitud')
+          ->selectRaw('count(*) as cantReservas, fechaSolicitud')
+          ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addDays(60)->format('Y-m-d')])
+          ->get();
 
-     //Se obtienen las reservas para un rango de dos meses
-        $reservas = Reservavehiculo::groupBy('fechaSolicitud')
-            ->selectRaw('count(*) as cantReservas, fechaSolicitud')
-            ->whereBetween('fechaSolicitud', [$fechaActual, $fechaActualNextMonth])
-            ->get();
-
-        //Tabla Hash con las reservas realizadas
+      //Tabla Hash con las reservas realizadas
         foreach ($reservas as $item) {
-            $this->arrCantReservasCount = Arr::add($this->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
+           $this->arrCantReservasCount = Arr::add($this->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
         }
     }
 
@@ -57,57 +110,17 @@ class Reserva extends Component
         return view('livewire.reserva', compact(['reservasFechaColl' => $this->reservasFechaSel]));
     }
 
-    public function getCalendarMonth($flgNextMonth)
-    {
-        $this->flgNextMonth = $flgNextMonth;
-        $fechaActual = Carbon::now();
-        // $fechaActual = Carbon::parse("01.12.2022");
 
-        $this->monthNow = $fechaActual->month;
-        $this->yearNow = $fechaActual->year;
 
-        $this->monthNowStr = $this->arrMeses[$this->monthNow - 1];
-        if ($this->monthNow == 12) { //Si es diciembre el proximo mes se pasa a Enero y se cambia el año (array de 0 a 11)
-            $this->nextMontStr = $this->arrMeses[0];
-            $this->yearNextMont = $this->yearNow + 1;
-        } else {
-            $this->nextMontStr = $this->arrMeses[$this->monthNow];
-            $this->yearNextMont = $this->yearNow;
-        }
-
-        $fechaMonthActive = $fechaActual;
-        if ($flgNextMonth == 1) {
-            $fechaMonthActive = $fechaActual->addMonth();
-        }
-
-        $this->monthSel = $fechaMonthActive->month;
-        $this->yearSel = $fechaMonthActive->year;
-
-        $this->firstDayMonth = $fechaMonthActive->firstOfMonth()->dayOfWeek;
-        if ($this->firstDayMonth == 0) { //Si el dia es Domingo 
-            $this->firstDayMonth = 7;
-        }
-
-        $this->lastDayMonth = $fechaMonthActive->lastOfMonth()->dayOfWeek;
-        if ($this->lastDayMonth == 0) { //Si el dia es Domingo
-            $this->lastDayMonth = 7;
-        }
-
-        $this->cantDaysMonth = $fechaMonthActive->daysInMonth;
-        //$this->flgBisiesto = Carbon::parse("01.02".$this->yearNow)->daysInMonth == 28; 
-
-        //dd($this->firstDayMonth, $this->lastDayMonth, $this->cantDaysMonth);
-
-    }
-
+    
 
     public function setFechaModal($fechaSel)
     {
+        dd($fechaSel);
         $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
 
-
         $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
-            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado' )
+            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
             // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
             ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
             ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
@@ -170,7 +183,7 @@ class Reserva extends Component
                 ]
             );
 
-            $this->getReservas(); 
+            $this->getReservas();
 
             $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
 

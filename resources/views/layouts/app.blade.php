@@ -36,15 +36,8 @@
     <div class="container-md px-3 px-md-4" id="headPage">
         <!-- Page Content -->
         <main>
-            <livewire:menureserva />
-            <div class="card shadow mt-5" id="headReservas">
-                <div class="card-header py-3 h3 text-center">
-                    Reserva de Vehiculos
-                </div>
-                <div class="card-body">
-                    {{$slot}}
-                </div>
-            </div>
+            <livewire:menureserva />         
+            {{$slot}}               
         </main>
 
         @stack('modals')

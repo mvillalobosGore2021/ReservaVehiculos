@@ -1,27 +1,30 @@
 <div>
   <div class="card m-2 mb-4 m-md-3 mb-md-5">
-    <div class="card-header py-3 text-center h5">
+    <div class="card-header py-3 text-center h3">
       Mis Reservas
     </div>
-
-    <div class="card-body">
-      <div class="table-responsive-sm mx-4">
-        <table class="table">
-          <thead>
+<div class="card-body">
+    <div class="card p-0 mx-3 mt-3 mb-5 mx-md-4">
+      <div class="table-responsive-sm">
+        <table class="table m-0">
+          <thead class="table-light">
+            <tr class="text-center fs-5" >
+              <th scope="col" colspan="6" class="py-3"><span class="text-primary">Listado de Reservas de</span> <span class="text-success">{{$userName}}</span></th> 
+            </tr>
             <tr class="text-center">
-              <th scope="col">Fecha Solicitud</th>
+              <th scope="col" class="ps-4">Fecha Solicitud</th>
               <th scope="col">Hora Inicio</th>
               <th scope="col">Hora Fin</th>
               <th scope="col">Fecha Confirmación</th>
               <th scope="col">Estado Reserva</th>    
-              <th scope="col">Motivo</th>   
+              <th scope="col" class="pe-4" style="text-align: left;">Motivo</th>   
             </tr>
           </thead>
           <tbody>
           @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
             @foreach($reservasUsuario as $item)
             <tr class="text-center">
-              <td>{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
+              <td class="ps-4">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
               <td>{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
               <td>{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>
               <td>
@@ -32,7 +35,7 @@
                 @endif                
               </td>
               <td>{{$item->descripcionEstado}}</td>
-              <td class="glosaTable">{{$item->motivo}}</td>
+              <td class="glosaTable pe-4">{{$item->motivo}}</td>
             </tr>
             @endforeach
             @else
@@ -56,6 +59,7 @@
           {{ $reservasUsuario->links()}}
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>
