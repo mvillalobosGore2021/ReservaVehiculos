@@ -37,7 +37,7 @@
         <!-- Page Content -->
         <main>
             <livewire:menureserva />
-
+ 
             {{$slot}}
         </main>
 
@@ -47,7 +47,7 @@
 
         @livewireScripts
     </div>
-    <br><br><br><br><br><br>
+    <br><br><br>
     <div class="text-center mx-5 mb-4 text-secondary">
         <hr>
         <span class="d-block">© {{ \Carbon\Carbon::parse(Carbon\Carbon::now())->format('Y')}} Reserva de Vehículos - Desarrollo Interno Unidad de Informática.</span>
@@ -71,6 +71,20 @@
             delay: 500, //Tiempo que se demora en aparecer
         });
     }
+
+    window.addEventListener('moveScroll', event => {
+            moveScrollById(event.detail.id);
+         });
+
+         function moveScrollById(id) {
+            const element = document.querySelector(id);
+            const topPos = element.getBoundingClientRect().top + window.pageYOffset;
+
+            window.scrollTo({
+               top: topPos,
+               behavior: 'smooth'
+            });
+         }
 
     // tippy('[data-tippy-content]', {
     //     touch: true, //Habilita Toolstips para moviles

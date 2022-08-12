@@ -4,14 +4,16 @@
       Solicitudes de Reserva
     </div>
     <div class="card-body">
-      <div class="card mx-2 mt-3 mb-3">
+      <div class="card mx-2 mt-3 mb-3 shadow">
         <div class="card-header">
           <div class="row">
             <div class="col-12 text-center py-2">Parámetros de Búsqueda
-              <button type="button" class="btn btn-primary btn-sm ms-5" wire:click="setFechaHoySearch">
-                <i class="bi bi-calendar-check"></i> Solicitudes Hoy
+              <button type="button" class="btn btn-primary btn-sm ms-5" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">                
+                <span wire:loading.remove wire:target="setFechaHoySearch"><i class="bi bi-calendar-check"></i> </span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch" role="status" aria-hidden="true"></span>
+                Solicitudes Hoy 
               </button>
-              <button type="button" class="btn btn-primary btn-sm ms-2" wire:click="mostrarTodo">
+              <button type="button" class="btn btn-primary btn-sm ms-2" wire:click="mostrarTodo" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <i class="bi bi-eye"></i> Mostrar Todo</button>
             </div>
           </div>
@@ -78,8 +80,8 @@
           </div>
         </div>
       </div>
-      <div class="table-responsive card mx-2 mt-4">
-        <table class="table table-hover">
+      <div class="table-responsive card mx-2 mt-4 shadow" id="listadoSolReservas"> 
+        <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif "> 
           <thead class="table-light">
             <tr class="text-center">
               <th scope="col">
@@ -118,7 +120,7 @@
             @else
             <tr>
               <td colspan="7">
-                <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
+              <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
                   <span class="fs-4 pe-2 pe-md-3">
                     <i class="bi bi-info-circle-fill"></i></span>
                   <span class="fs-6 fst-italic pt-1">
@@ -131,8 +133,8 @@
           </tbody>
         </table>
       </div>
-      <div class="row mt-3">
-        <div class="col-7 offset-2 col-md-5 offset-md-5 ">
+      <div class="row mt-3 ">
+        <div class="col-7 offset-2 col-md-5 offset-md-5 mb-4 pt-2">
           {{ $reservasTotales->links()}}
         </div>
       </div>
@@ -433,6 +435,6 @@
     function ocultarModal() {
       //myModal2.show();
       modal.hide();
-    }
+    }    
   </script>
 </div>

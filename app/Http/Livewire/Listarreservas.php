@@ -23,16 +23,12 @@ class Listarreservas extends Component
         $this->idUser = $user->id;
        // $this->consultarRerservasUser();
     }
+    
     public function render()
-    {   
-        $fechaInicio = Carbon::now()->format('Y-m-01');
-        $fechaNextMonth = Carbon::now()->addMonth();
-        $fechaNextMonth = $fechaNextMonth->format('Y-m-' . $fechaNextMonth->daysInMonth);
-
-         //Se obtienen las reservas para un rango de dos meses
+    {   //Se obtienen las reservas para un rango de tres meses
          $reservasUsuario = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
           ->where('idUser', '=', $this->idUser)
-          ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaNextMonth])
+          ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addMonths(2)->format('Y-m-d')])
           ->orderBy('fechaSolicitud', 'desc')
           ->paginate(10);
 

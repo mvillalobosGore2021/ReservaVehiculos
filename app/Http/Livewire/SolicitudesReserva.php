@@ -105,6 +105,7 @@ class SolicitudesReserva extends Component
     {
         $this->fechaHoySearch = Carbon::now()->format('Y-m-d');
         $this->dispatchBrowserEvent('iniTooltips');
+       // $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
     }
 

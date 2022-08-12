@@ -4,11 +4,11 @@
                         <span class="fs-4 pe-2 pe-md-3">
                           <i class="bi bi-info-circle-fill"></i></span>
                         <span class="fs-6 fst-italic pt-1">
-                            Las solicitudes de reserva de vehiculos se encuentra habilitadas dentro en un rango de 60 días.
+                            Las solicitudes de reserva de vehiculos se encuentran habilitadas dentro en un rango de 60 días.
                         </span>
       </div>
 
-    <div class="card shadow mt-5" id="headReservas">
+    <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
         Reserva de Vehiculos 
       </div>

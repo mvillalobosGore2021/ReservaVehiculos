@@ -1,4 +1,4 @@
-<div>
+<div id="menureserva002">
 <nav id="menureserva" class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow mb-5 ps-2">
     <div class="container-md">
             <!-- <img src="{{ asset('images/logo-menu-001.png') }}" alt="" width="170" height="80"> -->

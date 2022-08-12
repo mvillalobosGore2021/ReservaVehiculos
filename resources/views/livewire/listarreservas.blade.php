@@ -1,10 +1,20 @@
 <div>
-  <div class="card m-2 mb-4 m-md-3 mb-md-5">
-    <div class="card-header py-3 text-center h3">
-      Mis Reservas 
+  <form>
+  
+
+      <div class="card shadow mt-4" id="headReservas">
+      <div class="card-header py-3 h3 text-center">
+         Mis Reservas 
     </div>
 <div class="card-body">
-    <div class="card p-0 mx-3 mt-3 mb-5 mx-md-4">
+<div class="alert alert-info border border-info d-flex justify-content-center shadow mx-3 mx-md-4 my-3" role="alert">
+                        <span class="fs-4 pe-2 pe-md-3">
+                          <i class="bi bi-info-circle-fill"></i></span>
+                        <span class="fs-6 fst-italic pt-1">
+                           Listado de sus solicitudes de reserva en un rango de tres meses.
+                        </span>
+      </div>
+    <div class="card p-0 mx-3 mt-4 mb-5 mx-md-4 shadow">    
       <div class="table-responsive-sm">
         <table class="table m-0">
           <thead class="table-light">
@@ -41,9 +51,9 @@
             @else
             <tr>
               <td colspan="6">
-                <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
+                <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
                   <span class="fs-4 pe-2 pe-md-3">
-                    <i class="bi bi-info-circle-fill"></i></span>
+                    <i class="bi bi-info-circle-fill"></i></span>   
                   <span class="fs-6 fst-italic pt-1">
                     No existen reservas para mostrar
                   </span>
@@ -62,4 +72,5 @@
     </div>
     </div>
   </div>
+  </form>
 </div>
