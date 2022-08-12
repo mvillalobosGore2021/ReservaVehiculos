@@ -109,14 +109,10 @@ class Reserva extends Component
     {
         return view('livewire.reserva', compact(['reservasFechaColl' => $this->reservasFechaSel]));
     }
-
-
-
-    
+   
 
     public function setFechaModal($fechaSel)
-    {
-        dd($fechaSel);
+    {        
         $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
 
         $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')

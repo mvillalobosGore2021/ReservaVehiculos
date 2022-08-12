@@ -37,7 +37,7 @@
         <!-- Page Content -->
         <main>
             <livewire:menureserva />         
-            {{$slot}}               
+            {{$slot}}       
         </main>
 
         @stack('modals')

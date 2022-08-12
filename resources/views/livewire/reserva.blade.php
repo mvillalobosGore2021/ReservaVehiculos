@@ -49,11 +49,12 @@
               @php($countWeek = 0)
               @php($countDay = 1)
               @php($flgPrintDay = 0)
+              @php($flgCallModal = 0)
 
               @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + $lastDayMonth+1); $i++) 
                 @php($countDayWeek++) 
                 @if ($countDayWeek==1) 
-                   <tr id="fila{{rand(0,100)}}">
+                   <tr id="fila{{rand(0,1000)}}">
                 @endif
 
                 @if ($i == $firstDayMonth)
@@ -61,9 +62,14 @@
                 @endif
 
                 @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) 
-                <td id="day{{$countDay}}" class="thDaysofweek @if(($countDay > $dayNow-1 || $mesSel != $mesActual) && $countDay < 61) bgcolorday @else text-secondary bg-light @endif ">
-                <div id="divDay{{$countDay}}" @if(($countDay > $dayNow-1 || $mesSel != $mesActual) && $countDay < 61) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')"  class="bg-primary" @endif >
-                <span class="pt-1 d-block">
+                      @php($flgCallModal = 0)
+                    @if((($mesActual == $mesSel && $countDay > $dayNow-1) || $mesSel != $mesActual) && $countDay < 61)
+                        @php($flgCallModal = 1)
+                    @endif   
+
+                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal == 1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif>
+                    
+                    <span class="pt-1 d-block">
                       {{$countDay}}
                     </span>
                     <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
@@ -77,9 +83,9 @@
                     </div>
                     </td>
 
-                    @php($countDay++)
+                      @php($countDay++)
                     @else
-                    <td class="bg-light"></td>
+                        <td class="bg-light"></td>
                     @endif
 
                     @if ($countDayWeek == 7)

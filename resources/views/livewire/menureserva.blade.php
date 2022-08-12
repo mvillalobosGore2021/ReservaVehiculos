@@ -9,7 +9,7 @@
         </button>
         <div class="collapse navbar-collapse ps-md-4" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item pt-2">
+                <li class="nav-item pt-2">   
                     <!-- <a class="nav-link  @if(request()->routeIs('reserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('reserva') }}">
                         Reservar Vehiculo
                     </a> -->
