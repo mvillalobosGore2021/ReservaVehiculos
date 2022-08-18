@@ -6,17 +6,29 @@
     <div class="card-body">
       <div class="card mx-2 mt-3 mb-3 shadow">
         <div class="card-header">
-          <div class="row">
-            <div class="col-12 text-center py-2">Parámetros de Búsqueda
-              <button type="button" class="btn btn-primary btn-sm ms-5" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">                
+          <div class="row py-md-1 justify-content-center">
+          <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
+            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center"><button type="button" class="btn btn-primary btn-sm" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="setFechaHoySearch"><i class="bi bi-calendar-check"></i> </span>
                 <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch" role="status" aria-hidden="true"></span>
-                Solicitudes Hoy 
+                Solicitudes Hoy
               </button>
-              <button type="button" class="btn btn-primary btn-sm ms-2" wire:click="mostrarTodo" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
-                <i class="bi bi-eye"></i> Mostrar Todo</button>
+            </div>
+            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-4 text-center">
+              <button type="button" class="btn btn-primary btn-sm ms-md-2" wire:click="mostrarTodo" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+                <span wire:loading.remove wire:target="mostrarTodo"><i class="bi bi-eye"></i></span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="mostrarTodo" role="status" aria-hidden="true"></span>
+                Mostrar Todo
+              </button>
+            </div>
+            <div class="col-12 pb-2 col-md-1 pb-md-2 text-nowrap ms-md-5 text-center">
+            <button type="button" class="btn btn-danger btn-sm" wire:click="nuevaReserva" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+                <i class="bi bi-plus-circle"></i> Nueva Reserva
+              </button>
             </div>
           </div>
+
+
         </div>
         <div class="card-body">
           <div class="row ms-1">
@@ -57,7 +69,7 @@
                 </div>
                 <div class="col-3">
                   <div style="height:33px;">
-                    <div wire:loading wire:target="setFechaHoySearch,mostrarTodo"> 
+                    <div wire:loading wire:target="setFechaHoySearch,mostrarTodo">
                       <div class="spinner-grow text-primary" style="width: 1.2rem; height: 1.2rem;" role="status">
                         <span class="visually-hidden">Loading...</span>
                       </div>
@@ -80,8 +92,8 @@
           </div>
         </div>
       </div>
-      <div class="table-responsive card mx-2 mt-4 shadow" id="listadoSolReservas"> 
-        <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif "> 
+      <div class="table-responsive card mx-2 mt-4 shadow" id="listadoSolReservas">
+        <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif ">
           <thead class="table-light">
             <tr class="text-center">
               <th scope="col">
@@ -120,7 +132,7 @@
             @else
             <tr>
               <td colspan="7">
-              <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
+                <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
                   <span class="fs-4 pe-2 pe-md-3">
                     <i class="bi bi-info-circle-fill"></i></span>
                   <span class="fs-6 fst-italic pt-1">
@@ -143,25 +155,25 @@
       <div wire:ignore.self class="modal fade pt-0" id="modalReserva" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-xl modal-dialog-scrollable pt-1">
           <div class="modal-content">
-            <div class="modal-header bg-light">             
-                <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">
-                Datos Reserva
+            <div class="modal-header bg-light">
+              <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">
+                @if ($flgNuevaReserva == true) Nueva Reserva @else Datos Reserva @endif
               </h5>
-                <div style="margin:auto;" wire:loading wire:target="reservaSel"> 
-                      <div class="spinner-grow text-primary" style="width: 1.1rem; height: 1.1rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
-                      <div class="spinner-grow text-secondary" style="width: 1.1rem; height: 1.1rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
-                      <div class="spinner-grow text-success" style="width: 1.1rem; height: 1.1rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
-                      <div class="fst-italic d-inline" style="font-size:15px;">
-                        Cargando...
-                      </div>              
-                </div>             
-             
+              <div style="margin:auto;" wire:loading wire:target="reservaSel">
+                <div class="spinner-grow text-primary" style="width: 1.1rem; height: 1.1rem;" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-secondary" style="width: 1.1rem; height: 1.1rem;" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="spinner-grow text-success" style="width: 1.1rem; height: 1.1rem;" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="fst-italic d-inline" style="font-size:15px;">
+                  Cargando...
+                </div>
+              </div>
+
               <button type="button" class="btn-close" onclick="ocultarModal()"></button>
             </div>
 
@@ -171,26 +183,98 @@
                 <div class="col-12 col-md-6 ps-4">
                   <div class="row mb-2">
                     <div class="col-12">
+                      @if ($flgNuevaReserva == true)
+                      <div class="row">
+                        <div class="col-12">
+                          <label>Funcionario(a)</label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="bi bi-person"></i>
+                            </span>
+                            <select wire:model="idUserSel" class="form-select">
+                              <option value="">Todos</option>
+                              @if (!empty( $userList))
+                              @foreach($userList as $item)
+                              <option value="{{$item->id}}">{{$item->name}}</option>
+                              @endforeach
+                              @endif
+                            </select>
+                          </div>
+                        </div>
+                        @error('idUserSel')
+                        <div class="col-12">
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
+                      @else
                       Funcionario(a):
                       <span class="text-success" style="font-weight:800;">
                         {{$nameSel}}
                       </span>
+                      @endif
                     </div>
                   </div>
                   <div class="row mb-2">
-                    <div class="col-5">
+                    <div class="col-12 col-md-5">
                       <input type="hidden" wire:model="idReservaSel">
+                      @if ($flgNuevaReserva == true)
+                      <div class="row">
+                        <div class="col-12">
+                          <label>Fecha Reserva</label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="bi bi-calendar4"></i>
+                            </span>
+                            <input type="date" wire:model.debounce.500ms="fechaSolicitudSel" class="date-ini form-control" autocomplete="off">
+                          </div>
+                        </div>
+                        @error('fechaSolicitudSel')
+                        <div class="col-12">
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
+                      @else
                       Fecha Reserva:
                       <span class="text-success" style="font-weight:800;">
                         {{\Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
                       </span>
+                      @endif
                     </div>
-                    <div class="col-6">
-                      <input type="hidden" wire:model="idReservaSel">
+                    <div class="col-12 col-md-6 mt-2 mt-md-0">
+                      @if ($flgNuevaReserva == true)
+                      <div class="row">
+                        <div class="col-12">
+                          <label>Estado Reserva</label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="bi bi-list-ul"></i>
+                            </span>
+                            <select wire:model="codEstadoSel" class="form-select">
+                              <option value="">Todos</option>
+                              @if (!empty( $estadosCmb))
+                              @foreach($estadosCmb as $item)
+                              <!-- No mostrar el estado actual   -->
+                              <option value="{{$item->codEstado}}">{{$item->descripcionEstado}}</option>
+                              @endforeach
+                              @endif
+                            </select>
+                          </div>
+                        </div>
+                        @error('codEstadoSel')
+                        <div class="col-12">
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
+                      @else
                       Estado:
                       <span class="text-success" style="font-weight:800;">
                         {{$descripEstadoSel}}
                       </span>
+                      @endif
+
                     </div>
                   </div>
 
@@ -233,6 +317,7 @@
                     </div>
                   </div>
                   <div class="row">
+                    @if ($flgNuevaReserva == false)
                     <div class="col-12 col-md-5 mb-3">
                       <div class="row">
                         <div class="col-12">
@@ -241,7 +326,7 @@
                             <span class="input-group-text">
                               <i class="bi bi-list-ul"></i>
                             </span>
-                            <select wire:model.defer="codEstadoSel" class="form-select">
+                            <select wire:model="codEstadoSel" class="form-select">
                               <option value="">Todos</option>
                               @if (!empty( $estadosCmb))
                               @foreach($estadosCmb as $itemEstado)
@@ -252,22 +337,23 @@
                             </select>
                           </div>
                         </div>
-                        @error('horaFinSel')
+                        @error('codEstadoSel')
                         <div class="col-12 pb-1">
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
                       </div>
                     </div>
-                    <div class="col-12 col-md-7 mb-3">
+                    @endif
+                    <div class="col-12 {{!$flgNuevaReserva ? 'col-md-7':'col-md-12'}} mb-3">
                       <div class="row">
                         <div class="col-12">
                           <label>Asignar Vehículo</label>
                           <div class="input-group">
                             <span class="input-group-text">
-                              <i class="bi bi-list-ul"></i>
+                              <i class="bi bi-list-ul"></i> 
                             </span>
-                            <select wire:model.defer="idVehiculo" class="form-select">
+                            <select wire:model="codVehiculoSel" class="form-select">
                               <option value="">Todos</option>
                               @if (!empty( $cmbVehiculos))
                               @foreach($cmbVehiculos as $item)
@@ -277,7 +363,7 @@
                             </select>
                           </div>
                         </div>
-                        @error('codVehiculo')
+                        @error('codVehiculoSel')
                         <div class="col-12 pb-1">
                           <span class="colorerror">{{ $message }}</span>
                         </div>
@@ -285,10 +371,9 @@
                       </div>
                     </div>
                   </div>
-
                   <div class="row pt-3 pt-md-0 pb-3">
                     <div class="col-12">
-                      <textarea wire:model.defer="motivoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
+                      <textarea wire:model.debounce.250ms="motivoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
                     </div>
                     @error('motivoSel')
                     <div class="col-12">
@@ -310,7 +395,7 @@
 
                 <div class="col-12 col-md-6 pt-3 pt-md-1">
                   <div class="table-responsive-sm mx-2">
-                    <table class="table table-hover">
+                    <table class="table @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0 && $flgNuevaReserva == false) table-hover @endif ">
                       <!-- table-bordered -->
                       <thead>
                         <tr>
@@ -328,7 +413,7 @@
                       <tbody>
                         @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                         @foreach($reservasFechaSel as $index => $item)
-                        <tr style="cursor:pointer;" id="fila{{$index}}" wire:click="reservaSel('{{$item->idReserva}}', '0')">
+                        <tr id="fila{{$index}}" @if ($flgNuevaReserva==false) style="cursor:pointer;" wire:click="reservaSel('{{$item->idReserva}}', '0')" @endif>
                           <td>{{$item['name']}}</td>
                           <td>
                             {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
@@ -432,9 +517,14 @@
       modal.hide();
     });
 
+    function mostrarModal() {
+      //myModal2.show();
+      modal.show();
+    }
+
     function ocultarModal() {
       //myModal2.show();
       modal.hide();
-    }    
+    }
   </script>
 </div>

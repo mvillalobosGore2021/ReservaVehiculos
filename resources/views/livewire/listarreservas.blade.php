@@ -7,7 +7,7 @@
          Mis Reservas 
     </div>
 <div class="card-body">
-<div class="alert alert-info border border-info d-flex justify-content-center shadow mx-3 mx-md-4 my-3" role="alert">
+<div class="alert alert-info border border-info d-flex justify-content-center shadow mx-3 mx-md-4 mt-2" role="alert">
                         <span class="fs-4 pe-2 pe-md-3">
                           <i class="bi bi-info-circle-fill"></i></span>
                         <span class="fs-6 fst-italic pt-1">

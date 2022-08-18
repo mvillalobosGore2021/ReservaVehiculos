@@ -1,13 +1,5 @@
 <div>
   <form> 
-  <div class="alert alert-info border border-info d-flex justify-content-center shadow" role="alert">
-                        <span class="fs-4 pe-2 pe-md-3">
-                          <i class="bi bi-info-circle-fill"></i></span>
-                        <span class="fs-6 fst-italic pt-1">
-                            Las solicitudes de reserva de vehiculos se encuentran habilitadas dentro en un rango de 60 días.
-                        </span>
-      </div>
-
     <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
         Reserva de Vehiculos 
@@ -19,7 +11,16 @@
         <input wire:model="cantDaysMonth" type="hidden">
         <input wire:model="firstDayMonth" type="hidden">
         <input wire:model="lastDayMonth" type="hidden">
-        <div class="table-responsive-sm mx-4">
+
+        <div class="alert alert-info border border-info d-flex justify-content-center mx-4 shadow" role="alert">
+                        <span class="fs-4 pe-2 pe-md-3">
+                          <i class="bi bi-info-circle-fill"></i></span>
+                        <span class="fs-6 fst-italic pt-1">
+                            Las solicitudes de reserva de vehiculos se encuentran habilitadas dentro de un rango de 60 días.
+                        </span>
+      </div>
+
+        <div class="table-responsive-sm mx-4 my-4">
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -27,8 +28,8 @@
                   <div class="row">
                     <div class="col-12 col-md-5 ps-md-0">
                       <div class="input-group py-3 justify-content-center">
-                        @foreach($arrMonthDisplay as $mesIndex => $item)
-                        <button wire:click="getCalendarMonth({{$mesIndex}})" class="btn {{$mesSel == $mesIndex ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$item['mes']}}</button>
+                        @foreach($arrMonthDisplay as $mesIndex => $item)                       
+                         <button wire:click="getCalendarMonth({{$mesIndex}})" class="btn {{$mesSel == $mesIndex ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$item['mes']}}</button>
                         @endforeach
                         <!-- <button wire:click="getCalendarMonth(0)" class="btn {{$flgNextMonth == 0 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$monthNowStr}}</button>
                         <button wire:click="getCalendarMonth(1)" class="btn {{$flgNextMonth == 1 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$nextMontStr}}</button> -->
@@ -61,14 +62,21 @@
 
               <!-- (7 - $lastDayMonth) Se calculan los dias restantes para que termine la semana -->
 
-              @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + (7 - $lastDayMonth)); $i++) @php($countDayWeek++) @if ($countDayWeek==1) <tr id="fila{{rand(0,1000)}}">
+              @for($i=1; $i < ($cantDaysMonth + $firstDayMonth + (7 - $lastDayMonth)); $i++) 
+                @php($countDayWeek++) 
+                   @if ($countDayWeek==1) <tr id="fila{{rand(0,1000)}}">
                 @endif
 
                 @if ($i == $firstDayMonth)
                 @php($flgPrintDay = 1)
                 @endif
 
-                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif>
+                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) 
+                @php($flgCallModal=0) 
+                @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) 
+                   @php($flgCallModal=1) 
+                @endif 
+                <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" data-tippy-content="Click para solicitar reserva el día {{$countDay}} de {{$mesSelStr}}" @endif>
                     <span class="pt-1 d-block">
                       {{$countDay}}
                     </span>

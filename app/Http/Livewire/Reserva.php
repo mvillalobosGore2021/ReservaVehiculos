@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Rules\HoraValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
+use App\Mail\CorreoNotificacion;
+use Illuminate\Support\Facades\Mail;
 
 class Reserva extends Component 
 {
@@ -19,7 +21,7 @@ class Reserva extends Component
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
-        $diasRestantesMesActual, $fechaActual, $diasMesesAnt;
+        $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser;
 
     public $arrMonthDisplay;
 
@@ -33,6 +35,7 @@ class Reserva extends Component
         $user = Auth::user();
         $this->userName = $user->name;
         $this->idUser = $user->id;
+        $this->correoUser = $user->email;
         $this->getCalendarMonth(Carbon::now()->month);
         $this->diasMesesAnt = 0;
     }
@@ -193,6 +196,42 @@ class Reserva extends Component
             ]);
 
             $this->dispatchBrowserEvent('closeModal');
+
+              //Envío de correo: no se hace rollback si se produce un error al realizar el envío
+              $mailData = [
+                'asunto' => ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo" : "Reserva de Vehículo")." - Gobierno Regional del Bio Bio",
+                'titulo' => $this->idReserva > 0 ? "Resumen modificación de Reserva" : "Resumen de su Reserva",
+                'funcionario' => $this->userName,
+                'fechaReserva' => $this->fechaModal,
+                'horaInicio' => $this->horaInicio,
+                'horaFin' => $this->horaFin,
+                'usaVehiculoPersonal' => $this->flgUsoVehiculoPersonal == 0?'No':'Si',
+                'motivo' => $this->motivo,
+            ];
+
+            try {
+              //Mail al postulante 
+                Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
+            } catch (exception $e) {
+             
+                session()->flash('exceptionMessage', $e->getMessage());
+
+                dd($e->getMessage());
+            }
+
+            // $userAdmin = User::where('flgAdmin', '=', 1)->get();  
+
+            // $mailData['titulo'] =  $this->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
+            // $mailData['asunto'] = ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$this->userName;
+
+            // try {
+            //     foreach ($userAdmin as $item) { 
+            //         Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+            //     }
+            // } catch (exception $e) {
+            //     session()->flash('exceptionMessage', $e->getMessage());
+            // }
+
         } catch (exception $e) {
             session()->flash('exceptionMessage', $e->getMessage());
         }

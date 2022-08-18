@@ -146,17 +146,30 @@ return [
             'rule-name' => 'custom-message',
         ],
 
-        'motivo' => [
+        'motivoSel' => [
             'required' => 'Debe ingresar motivo de la reserva.',
             'max' => 'El largo máximo para el motivo es de :max caracteres.',
         ],
-        'horaInicio' => [
+        'horaInicioSel' => [
             'required' => 'Debe ingresar hora inicio.',
             // 'date_format' => 'El formato de hora inicio no es válido.',
         ],
-        'horaFin' => [
+        'horaFinSel' => [
             'required' => 'Debe ingresar hora fin.',
             // 'date_format' => 'El formato de hora fin no es válido.',
+        ],
+        'idUserSel' => [
+            'required' => 'Seleccione un funcionario.',
+        ],        
+        'codEstadoSel' => [
+            'required' => 'Seleccione Estado de Reserva.',
+        ],
+        'fechaSolicitudSel' => [
+            'required' => 'Debe ingresar fecha de reserva.',
+            'after' => 'Fecha de reserva debe ser posterior o igual a la fecha actual.',
+        ],        
+        'codVehiculoSel' => [
+            'required' => 'Seleccione Vehículo.',
         ],
     ],
 
