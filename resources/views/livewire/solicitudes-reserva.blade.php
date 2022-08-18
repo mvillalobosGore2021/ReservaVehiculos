@@ -8,21 +8,22 @@
         <div class="card-header">
           <div class="row py-md-1 justify-content-center">
           <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
-            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center"><button type="button" class="btn btn-primary btn-sm" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
+              <button type="button" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="setFechaHoySearch"><i class="bi bi-calendar-check"></i> </span>
                 <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch" role="status" aria-hidden="true"></span>
                 Solicitudes Hoy
               </button>
             </div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-4 text-center">
-              <button type="button" class="btn btn-primary btn-sm ms-md-2" wire:click="mostrarTodo" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+              <button type="button" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="mostrarTodo" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="mostrarTodo"><i class="bi bi-eye"></i></span>
                 <span wire:loading.class="spinner-border spinner-border-sm" wire:target="mostrarTodo" role="status" aria-hidden="true"></span>
                 Mostrar Todo
               </button>
             </div>
             <div class="col-12 pb-2 col-md-1 pb-md-2 text-nowrap ms-md-5 text-center">
-            <button type="button" class="btn btn-danger btn-sm" wire:click="nuevaReserva" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+            <button type="button" class="btn btn-danger btn-sm ms-md-3" style="width:135px;" wire:click="nuevaReserva" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <i class="bi bi-plus-circle"></i> Nueva Reserva
               </button>
             </div>
