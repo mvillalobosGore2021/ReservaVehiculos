@@ -146,12 +146,21 @@ class SolicitudesReserva extends Component
         if ($field == 'flgUsoVehiculoPersSel') { //Campo opcional no se valida
             return true;
         }
-
         $this->resetPage();
+
+        if ($field == 'horaInicioSel' || $field == 'horaFinSel') {
+           $this->resetValidation(['horaInicioSel', 'horaFinSel']);
+           $this->resetErrorBag(['horaInicioSel', 'horaFinSel']);
+        }
+      
+        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
+         if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
+             
+         }
+        
 
         $this->validateOnly($field, $this->getArrRules());
     }
-
 
     public function cambiarEstado($idEstado)
     {
@@ -176,7 +185,6 @@ class SolicitudesReserva extends Component
     public function guardarReservaSel()
     {
         $this->validate($this->getArrRules());
-
 
         try {
             // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
@@ -213,6 +221,11 @@ class SolicitudesReserva extends Component
         } catch (exception $e) {
             session()->flash('exceptionMessage', $e->getMessage());
         }
+    }
+
+    public function buscarReservaFuncionario() {        
+      return count(Reservavehiculo::where('idUser', '=', $this->idUserSel)
+      ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)->get()) > 0;
     }
 
     public function getArrRules()

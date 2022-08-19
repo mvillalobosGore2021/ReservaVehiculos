@@ -288,7 +288,7 @@
                             <span class="input-group-text">
                               <i class="bi bi-alarm"></i>
                             </span>
-                            <input type="time" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="time-ini form-control" wire:model.debounce.500ms="horaInicioSel" placeholder="Inicio" autocomplete="off">
+                            <input type="time" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="time-ini form-control" wire:model.debounce.250ms="horaInicioSel" placeholder="Inicio" autocomplete="off">
                           </div>
                         </div>
                         @error('horaInicioSel')
@@ -306,7 +306,7 @@
                             <span class="input-group-text">
                               <i class="bi bi-alarm"></i>
                             </span>
-                            <input type="time" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="time-fin form-control" wire:model.debounce.500ms="horaFinSel" placeholder="Termino" autocomplete="off">
+                            <input type="time" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="time-fin form-control" wire:model.debounce.250ms="horaFinSel" placeholder="Termino" autocomplete="off">
                           </div>
                         </div>
                         @error('horaFinSel')

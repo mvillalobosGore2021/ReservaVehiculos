@@ -35,17 +35,17 @@ class HoraValidator implements Rule, DataAwareRule, ValidatorAwareRule
     
     public function passes($attribute, $value)
     {
-        $attributeSwitch = $attribute == 'horaInicio'?'horaFin':'horaInicio';//Se obtienen el nombre del atributo contrario para verificar si tiene errores para no realizar la comparación
-
-        if ($this->validator->errors()->has($attributeSwitch) || empty(data_get($this->data, $attributeSwitch))) { //Si hora inicio o fin tiene errores no se continua con la validación 
+        $attributeSwitch = $attribute == 'horaInicioSel'?'horaFinSel':'horaInicioSel';//Se obtienen el nombre del atributo contrario para verificar si tiene errores para no realizar la comparación
+      
+        if (empty(data_get($this->data, $attributeSwitch)) /*$this->validator->errors()->has($attributeSwitch) || */ ) { //Si hora inicio o fin tiene errores no se continua con la validación 
             return true;
         }
-    
-        $horaInicio = data_get($this->data, 'horaInicio');
-        $horaFin = data_get($this->data, 'horaFin');
-       
+
+        $horaInicio = data_get($this->data, 'horaInicioSel');
+        $horaFin = data_get($this->data, 'horaFinSel');
+        
         if ($horaInicio > $horaFin) {
-            $this->mensaje = $attribute == 'horaInicio'?'Hora inicio es mayor a hora fin.':'Hora fin es menor a hora inicio.';
+            $this->mensaje = $attribute == 'horaInicioSel'?'Hora inicio es mayor a hora fin.':'Hora fin es menor a hora inicio.';
            return false;
         } 
 
