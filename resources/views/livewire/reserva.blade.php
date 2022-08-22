@@ -15,10 +15,10 @@
         <div class="alert alert-info border border-info d-flex justify-content-center mx-4 shadow" role="alert">
                         <span class="fs-4 pe-2 pe-md-3">
                           <i class="bi bi-info-circle-fill"></i></span>
-                        <span class="fs-6 fst-italic pt-1">
+                 <span class="fs-6 fst-italic pt-1">
                             Las solicitudes de reserva de vehiculos se encuentran habilitadas dentro de un rango de 60 días.
-                        </span>
-      </div>
+                </span>
+      </div>      
 
         <div class="table-responsive-sm mx-4 my-4">
           <table class="table table-bordered">
@@ -101,7 +101,6 @@
         @php($countWeek++)
         </tr>
         @endif
-
         @endfor
         </tbody>
         </table>
@@ -115,7 +114,7 @@
     <div class="modal-content">
       <div class="modal-header bg-light">
         <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">Ingrese los Datos de Su Reserva {{$userName}}</h5>
-        <button type="button" class="btn-close" onclick="ocultarModal()"></button>
+        <button type="button" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva"></button>
       </div>
       <div class="modal-body">
         <!-- <input type="text" id="myInput" class="form-control"> -->
@@ -135,7 +134,7 @@
                       <span class="input-group-text">
                         <i class="bi bi-alarm"></i>
                       </span>
-                      <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
+                      <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
                     </div>
                   </div>
                   @error('horaInicio')
@@ -153,7 +152,7 @@
                       <span class="input-group-text">
                         <i class="bi bi-alarm"></i>
                       </span>
-                      <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
+                      <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
                     </div>
                   </div>
                   @error('horaFin')
@@ -166,7 +165,7 @@
             </div>
             <div class="row pt-3 pt-md-0 pb-3">
               <div class="col-12">
-                <textarea wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
+                <textarea wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
               </div>
               @error('motivo')
               <div class="col-12">
@@ -180,7 +179,7 @@
                   <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
                     Usar Vehiculo Personal con Devolución de Combustible y Peajes.
                   </label>
-                  <input id="flgUsoVehiculoPersonal" wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="solicitarReserva" type="checkbox">
+                  <input id="flgUsoVehiculoPersonal" wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" type="checkbox">
                 </div>
               </div>
             </div>
@@ -254,14 +253,22 @@
         </div>
       </div>
       <div class="modal-footer bg-light pe-5">
-        <button type="button" class="btn btn-danger" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva">
-          Cerrar <i class="bi bi-x-circle pt-1"></i>
+        <button type="button" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+          Cerrar <i class="bi bi-x-lg"></i>
         </button>
-        <button type="button" class="btn btn-primary" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva">
-          {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
+        <button type="button" class="btn btn-primary"  style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+        {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
           <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
           <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
         </button>
+      @if($idReserva > 0)
+        <button type="button" class="btn btn-danger"  style="width:175px;" wire:click="anularReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+          Anular Reserva
+          <span wire:loading.remove wire:target="anularReserva"><i class="bi bi-x-circle"></i></i></span>
+          <span wire:loading.class="spinner-border spinner-border-sm" wire:target="anularReserva" role="status" aria-hidden="true"></span>
+        </button>
+       @endif
+
       </div>
     </div>
   </div>
@@ -282,7 +289,7 @@
       toast: true,
       position: 'center',
       showConfirmButton: false,
-      timer: 5500,
+      timer: 6000,
       timerProgressBar: false,
       showCloseButton: true,
       didOpen: (toast) => {
@@ -293,7 +300,7 @@
 
     Toast.fire({
       icon: event.detail.icon,
-      title: '',
+      title: event.detail.title,
       html: event.detail.mensaje,
     })
   });

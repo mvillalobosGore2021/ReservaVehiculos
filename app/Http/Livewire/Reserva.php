@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 use App\Mail\CorreoNotificacion;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class Reserva extends Component 
 {
@@ -169,12 +170,79 @@ class Reserva extends Component
     //         ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'))->get()) > 0;
     // }
 
+    public function anularReserva() {    
+
+        $msjException = "";
+      try {
+
+        DB::beginTransaction();
+
+        Reservavehiculo::where("idReserva",  $this->idReserva)->update(["codEstado" => 3]);//Estado 3 = Anular
+       
+        //Crear un correo de anulación 
+             //Envío de correo
+             $mailData = [
+                'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
+                'titulo' => "Anulación de Reserva",
+                'funcionario' => $this->userName,
+                'fechaReserva' => $this->fechaModal,
+                'horaInicio' => $this->horaInicio,
+                'horaFin' => $this->horaFin,
+                'usaVehiculoPersonal' => $this->flgUsoVehiculoPersonal == 0?'No':'Si',
+                'motivo' => $this->motivo,
+            ];
+
+            try {
+              //Mail al postulante 
+                Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
+            } catch (exception $e) {
+                $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
+                throw $e;
+            }
+
+            $userAdmin = User::where('flgAdmin', '=', 1)->get();  
+
+            $mailData['titulo'] =  $this->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
+            $mailData['asunto'] = ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$this->userName;
+
+            $emailAdmin = "";
+            try {
+                foreach ($userAdmin as $item) { 
+                    $emailAdmin = $item->email;
+                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                }
+            } catch (exception $e) {
+                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
+                 throw $e;
+            }       
+       
+        $this->dispatchBrowserEvent('swal:information', [
+            'icon' => '', //'info',
+            'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">Su reserva ha sido anulada y notificada con exito.</span>',
+        ]);
+
+        $this->dispatchBrowserEvent('closeModal');
+
+        DB::commit();
+
+      } catch(exception $e) {
+        DB::rollBack();
+            $this->dispatchBrowserEvent('swal:information', [
+                'icon' => 'error', //'info',
+                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">No fue posible anular su reserva. ' . $msjException . '</span>',
+            ]);
+
+        session()->flash('exceptionMessage', $e->getMessage());
+      }
+    }
+
     public function solicitarReserva()
     {
         // dd($this->horaInicio, $this->horaFin);
         $this->validate($this->getArrRules());
-
+        $msjException = "";
         try {
+            DB::beginTransaction();
             // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
             $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
 
@@ -193,18 +261,7 @@ class Reserva extends Component
                 ]
             );
 
-            $this->getReservas();
-
-            $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
-
-            $this->dispatchBrowserEvent('swal:information', [
-                'icon' => '', //'info',
-                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</span>',
-            ]);
-
-            $this->dispatchBrowserEvent('closeModal');
-
-              //Envío de correo: no se hace rollback si se produce un error al realizar el envío
+             //Envío de correo
               $mailData = [
                 'asunto' => ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo" : "Reserva de Vehículo")." - Gobierno Regional del Bio Bio",
                 'titulo' => $this->idReserva > 0 ? "Resumen modificación de Reserva" : "Resumen de su Reserva",
@@ -220,24 +277,44 @@ class Reserva extends Component
               //Mail al postulante 
                 Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
             } catch (exception $e) {
-             
-                session()->flash('exceptionMessage', $e->getMessage());
+                $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
+                throw $e;
             }
 
-            // $userAdmin = User::where('flgAdmin', '=', 1)->get();  
+            $userAdmin = User::where('flgAdmin', '=', 1)->get();  
 
-            // $mailData['titulo'] =  $this->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
-            // $mailData['asunto'] = ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$this->userName;
+            $mailData['titulo'] =  $this->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
+            $mailData['asunto'] = ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$this->userName;
 
-            // try {
-            //     foreach ($userAdmin as $item) { 
-            //         Mail::to($item->email)->send(new CorreoNotificacion($mailData));
-            //     }
-            // } catch (exception $e) {
-            //     session()->flash('exceptionMessage', $e->getMessage());
-            // }
+            $emailAdmin = "";
+            try {
+                foreach ($userAdmin as $item) { 
+                    $emailAdmin = $item->email;
+                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                }
+            } catch (exception $e) {
+                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
+                 throw $e;
+            }
 
+            DB::commit();
+
+            $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
+
+            $this->dispatchBrowserEvent('swal:information', [
+                'icon' => '', //'info',
+                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</span>',
+            ]);
+
+            $this->dispatchBrowserEvent('closeModal');
         } catch (exception $e) {
+            DB::rollBack();
+            if (strlen($msjException) > 0) {
+                $this->dispatchBrowserEvent('swal:information', [
+                    'icon' => 'error', //'info',
+                    'title' => '<span class="fs-6 text-primary" style="font-weight:430;">No fue posible procesar su solicitud. ' . $msjException . '</span>',
+                ]);
+            }
             session()->flash('exceptionMessage', $e->getMessage());
         }
     }
