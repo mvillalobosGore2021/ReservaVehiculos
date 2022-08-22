@@ -7,7 +7,7 @@
       <div class="card mx-2 mt-3 mb-3 shadow">
         <div class="card-header">
           <div class="row py-md-1 justify-content-center">
-          <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
+            <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
               <button type="button" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="setFechaHoySearch"><i class="bi bi-calendar-check"></i> </span>
@@ -23,7 +23,7 @@
               </button>
             </div>
             <div class="col-12 pb-2 col-md-1 pb-md-2 text-nowrap ms-md-5 text-center">
-            <button type="button" class="btn btn-danger btn-sm ms-md-3" style="width:135px;" wire:click="nuevaReserva" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+              <button type="button" class="btn btn-danger btn-sm ms-md-3" style="width:135px;" wire:click="nuevaReserva" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <i class="bi bi-plus-circle"></i> Nueva Reserva
               </button>
             </div>
@@ -178,7 +178,7 @@
               <button type="button" class="btn-close" onclick="ocultarModal()"></button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" id="modalBody">
               <!-- <input type="text" id="myInput" class="form-control"> -->
               <div class="row">
                 <div class="col-12 col-md-6 ps-4">
@@ -186,7 +186,7 @@
                     <div class="col-12">
                       @if ($flgNuevaReserva == true)
                       <div class="row">
-                        <div class="col-12">
+                        <div class="col-12" id="inputFunc">
                           <label>Funcionario(a)</label>
                           <div class="input-group">
                             <span class="input-group-text">
@@ -247,12 +247,12 @@
                       @if ($flgNuevaReserva == true)
                       <div class="row">
                         <div class="col-12">
-                          <label>Estado Reserva</label>
+                          <label>Estado Reserva</label> 
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-list-ul"></i>
                             </span>
-                            <select wire:model="codEstadoSel" class="form-select">
+                            <select wire:model="codEstadoNvo" class="form-select">
                               <option value="">Todos</option>
                               @if (!empty( $estadosCmb))
                               @foreach($estadosCmb as $item)
@@ -325,10 +325,10 @@
                           <label>Nuevo Estado</label>
                           <div class="input-group">
                             <span class="input-group-text">
-                              <i class="bi bi-list-ul"></i>
+                              <i class="bi bi-list-ul"></i> 
                             </span>
-                            <select wire:model="codEstadoSel" class="form-select">
-                              <option value="">Todos</option>
+                            <select wire:model="codEstadoNvo" class="form-select" data-tippy-content="El Campo no es obligatorio, sino se cambia la reserva permanece con el estado actual."> 
+                              <option value="">Todos</option> 
                               @if (!empty( $estadosCmb))
                               @foreach($estadosCmb as $itemEstado)
                               <!-- No mostrar el estado actual   -->
@@ -338,6 +338,9 @@
                             </select>
                           </div>
                         </div>
+                        <!-- <div class="col-12 py-1">                                   
+                                    <span style="text-decoration:none;font-size:15px;font-style:italic;" class="text-secondary">Campo no obligatorio, sino se cambia permanece con el estado actual.</span>
+                                 </div> -->
                         @error('codEstadoSel')
                         <div class="col-12 pb-1">
                           <span class="colorerror">{{ $message }}</span>
@@ -352,7 +355,7 @@
                           <label>Asignar Vehículo</label>
                           <div class="input-group">
                             <span class="input-group-text">
-                              <i class="bi bi-list-ul"></i> 
+                              <i class="bi bi-list-ul"></i>
                             </span>
                             <select wire:model="codVehiculoSel" class="form-select">
                               <option value="">Todos</option>
@@ -501,7 +504,7 @@
 
       Toast.fire({
         icon: event.detail.icon,
-        title: '',
+        title: event.detail.title,
         html: event.detail.mensaje,
       })
     });
@@ -527,5 +530,6 @@
       //myModal2.show();
       modal.hide();
     }
+    
   </script>
 </div>

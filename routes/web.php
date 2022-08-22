@@ -18,9 +18,14 @@ use App\Http\Livewire\SolicitudesReserva;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::redirect('/','login');
+
+Route::redirect('/register','login');
+
 
 // Route::get('/reserva', function () {
 //     return view('livewire.reserva');

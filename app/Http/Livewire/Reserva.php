@@ -162,6 +162,13 @@ class Reserva extends Component
         $this->validateOnly($field, $this->getArrRules());
     }
 
+
+    // public function buscarReservaFuncionario()
+    // {
+    //     return count(Reservavehiculo::where('idUser', '=', $this->idUser) 
+    //         ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'))->get()) > 0;
+    // }
+
     public function solicitarReserva()
     {
         // dd($this->horaInicio, $this->horaFin);
@@ -192,7 +199,7 @@ class Reserva extends Component
 
             $this->dispatchBrowserEvent('swal:information', [
                 'icon' => '', //'info',
-                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</div>',
+                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</span>',
             ]);
 
             $this->dispatchBrowserEvent('closeModal');
@@ -215,8 +222,6 @@ class Reserva extends Component
             } catch (exception $e) {
              
                 session()->flash('exceptionMessage', $e->getMessage());
-
-                dd($e->getMessage());
             }
 
             // $userAdmin = User::where('flgAdmin', '=', 1)->get();  

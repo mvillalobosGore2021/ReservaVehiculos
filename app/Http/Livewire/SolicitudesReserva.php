@@ -21,7 +21,7 @@ class SolicitudesReserva extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $fechaSolSearch, $codEstadoSearch, $nameSearch, $fechaHoySearch, $codVehiculoSel, $codEstadoSel;
+    public $fechaSolSearch, $codEstadoSearch, $nameSearch, $fechaHoySearch, $codVehiculoSel, $codEstadoSel, $codEstadoNvo;
 
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $flgNuevaReserva, $userList, $idUserSel;
@@ -32,7 +32,7 @@ class SolicitudesReserva extends Component
 
     public function mount()
     {
-       
+
         $this->userList = User::orderBy('name')->get();
         // $this->estadosCmb = Estado::where('codEstado', '>', 1)->get();
         // Ver por que se pierden los datos del combo estado y el de funcionarios no al crear una nueva reserva
@@ -52,7 +52,7 @@ class SolicitudesReserva extends Component
             ->where('users.name', 'like', '%' . $this->nameSearch . '%')
             ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
             ->orderBy('fechaSolicitud', 'desc')
-            ->paginate(4);
+            ->paginate(5);
 
         // dd($reservasTotales->where('fechaSolicitud', 'like', '%2022-08-09%'));
         $estadosCmb = null;
@@ -62,7 +62,7 @@ class SolicitudesReserva extends Component
         } else {
             //Se obtienen todos los estados distintos a No Confirmado
             $estadosCmb = Estado::where('codEstado', '>', 1)
-                ->where('codestado', '!=', $this->codEstadoSel)->get();
+                ->where('codestado', '!=', $this->codEstadoSel)->get(); 
         }
         //dd($estadosCmb);
 
@@ -114,23 +114,26 @@ class SolicitudesReserva extends Component
         //     ->where('fechaSolicitud', '=', $reservaSel->fechaSolicitud)
         //     ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
 
+        //Para diferenciar cuando se abre desde la <table> del modal o de la <table> principal
         if ($openModal == 1) {
             $this->dispatchBrowserEvent('showModal');
-        }
+        }     
+
     }
 
     public function setFechaHoySearch()
     {
         $this->fechaHoySearch = Carbon::now()->format('Y-m-d');
         $this->dispatchBrowserEvent('iniTooltips');
-        // $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
+        $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
     }
 
     public function mostrarTodo()
     {
         $this->reset(['codEstadoSearch', 'nameSearch', 'fechaHoySearch']);
-        // $this->dispatchBrowserEvent('iniTooltips');
+        //$this->dispatchBrowserEvent('iniTooltips');
+        $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
     }
 
@@ -141,7 +144,7 @@ class SolicitudesReserva extends Component
         $this->resetPage();
     }
 
-    public function updated($field)
+    public function updated($field, $value)
     {
         if ($field == 'flgUsoVehiculoPersSel') { //Campo opcional no se valida
             return true;
@@ -149,17 +152,24 @@ class SolicitudesReserva extends Component
         $this->resetPage();
 
         if ($field == 'horaInicioSel' || $field == 'horaFinSel') {
-           $this->resetValidation(['horaInicioSel', 'horaFinSel']);
-           $this->resetErrorBag(['horaInicioSel', 'horaFinSel']);
+            $this->resetValidation(['horaInicioSel', 'horaFinSel']);
+            $this->resetErrorBag(['horaInicioSel', 'horaFinSel']);
         }
-      
-        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
-         if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
-             
-         }
-        
 
         $this->validateOnly($field, $this->getArrRules());
+
+        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
+        if ($this->flgNuevaReserva == true) {
+            if (($field == 'idUserSel' || $field == 'fechaSolicitudSel')) {
+                if ($this->idUserSel > 0 && !empty($this->fechaSolicitudSel)) {
+                    if ($this->buscarReservaFuncionario() == true) {
+                        $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
+                        $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
+                        $this->addError($field, 'El funcionario ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                    }
+                }
+            }
+        }
     }
 
     public function cambiarEstado($idEstado)
@@ -184,48 +194,89 @@ class SolicitudesReserva extends Component
 
     public function guardarReservaSel()
     {
-        $this->validate($this->getArrRules());
+        $flgError = false;
 
         try {
-            // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
-            $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
+            $this->validate($this->getArrRules());
+        } catch (exception $e) {
+            $flgError = true;
+        } 
 
-            //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva
-
-            $reservaVehiculo =  Reservavehiculo::updateOrCreate(
-                ['idReserva' => $this->idReservaSel],
-                [
-                    'idUser' => $this->idUserSel,
-                    'prioridad' => $prioridad,
-                    'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersSel,
-                    'fechaSolicitud' => $this->fechaSolicitudSel, //Carbon::createFromFormat('d/m/Y', $this->fechaSolicitudSel)->format('Y-m-d'), 
-                    'horaInicio' => $this->horaInicioSel,
-                    'horaFin' => $this->horaFinSel,
-                    'motivo' => $this->motivoSel,
-                    'codEstado' => $this->codEstadoSel,
-                    'codVehiculo' => $this->codVehiculoSel,
-                    //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
-                ]
-            );
-
-            //$this->getReservas();
-
-            $mensaje = $this->idReservaSel > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
-
+        if ($flgError == true) {
             $this->dispatchBrowserEvent('swal:information', [
-                'icon' => '', //'info',
-                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</div>',
+                'icon' => 'error', //'info',
+                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor revíselos y corríjalos.</span>',
+                //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
+                'timer' => '5000',
             ]);
 
-            $this->dispatchBrowserEvent('closeModal');
-        } catch (exception $e) {
-            session()->flash('exceptionMessage', $e->getMessage());
+            $this->validate($this->getArrRules()); //Para que se generen nuevamente los msjs           
+        }
+
+        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
+        if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
+            $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
+            $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
+            $this->addError('idUserSel', 'El funcionario ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+
+            $user = User::where('id', '=', $this->idUserSel)->first();
+
+            $this->dispatchBrowserEvent('swal:information', [
+                'icon' => 'error', //'info',
+                'title' => '<span class="fs-6 text-success" style="font-weight:450;">'.$user->name.' <span class="fs-6 text-primary" style="font-weight:430;">ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.</span>',
+                //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
+                'timer' => '5000',
+            ]);           
+
+            $this->dispatchBrowserEvent('moveScrollModal');
+        } else {
+            try {
+                // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
+                $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
+
+                //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva
+
+                $codEstadoPaso = $this->codEstadoSel;
+                if ($this->codEstadoNvo > 0) {//Si se selecciona un nuevo estado se cambia
+                    $codEstadoPaso = $this->codEstadoNvo;
+                }
+
+                $reservaVehiculo =  Reservavehiculo::updateOrCreate(
+                    ['idReserva' => $this->idReservaSel],
+                    [
+                        'idUser' => $this->idUserSel,
+                        'prioridad' => $prioridad,
+                        'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersSel,
+                        'fechaSolicitud' => $this->fechaSolicitudSel, //Carbon::createFromFormat('d/m/Y', $this->fechaSolicitudSel)->format('Y-m-d'), 
+                        'horaInicio' => $this->horaInicioSel,
+                        'horaFin' => $this->horaFinSel,
+                        'motivo' => $this->motivoSel,
+                        'codEstado' => $codEstadoPaso,
+                        'codVehiculo' => $this->codVehiculoSel,
+                        //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
+                    ]
+                );
+
+                //$this->getReservas();
+
+                $mensaje = $this->idReservaSel > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
+
+                $this->dispatchBrowserEvent('swal:information', [
+                    'icon' => '', //'info',
+                    'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</div>',
+                ]);
+
+                $this->dispatchBrowserEvent('closeModal');
+            } catch (exception $e) {
+                session()->flash('exceptionMessage', $e->getMessage());
+            }
         }
     }
 
-    public function buscarReservaFuncionario() {        
-      return count(Reservavehiculo::where('idUser', '=', $this->idUserSel)
-      ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)->get()) > 0;
+    public function buscarReservaFuncionario()
+    {
+        return count(Reservavehiculo::where('idUser', '=', $this->idUserSel)
+            ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)->get()) > 0;
     }
 
     public function getArrRules()

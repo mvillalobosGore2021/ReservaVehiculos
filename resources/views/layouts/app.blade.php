@@ -68,7 +68,7 @@
             placement: 'bottom',
             duration: 450, //Tiempo que se demora el despliegue
             delay: 500, //Tiempo que se demora en aparecer
-        });
+        });      
     }
 
     window.addEventListener('moveScroll', event => {
@@ -76,14 +76,30 @@
          });
 
          function moveScrollById(id) {
+            const menuReserva = document.getElementById("menureserva");
+                               
             const element = document.querySelector(id);
-            const topPos = element.getBoundingClientRect().top + window.pageYOffset;
+            const topPos = element.getBoundingClientRect().top - menuReserva.offsetTop + window.pageYOffset;
 
             window.scrollTo({
                top: topPos,
                behavior: 'smooth'
             });
          }
+
+    window.addEventListener('moveScrollModal', event => {
+         moveScrollModal();
+    });
+
+    function moveScrollModal() {
+      const modalBody = document.getElementById("modalBody");   
+    //const topPos = modalBody.getBoundingClientRect().top;// - menuReserva.offsetTop + window.pageYOffset;
+
+        modalBody.scrollTo({
+               top: 0,
+               behavior: 'smooth'
+        });     
+    }
 
     // tippy('[data-tippy-content]', {
     //     touch: true, //Habilita Toolstips para moviles
