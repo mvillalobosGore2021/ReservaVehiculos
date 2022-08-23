@@ -263,7 +263,7 @@
                             </select>
                           </div>
                         </div>
-                        @error('codEstadoSel')
+                        @error('codEstadoNvo')
                         <div class="col-12">
                           <span class="colorerror">{{ $message }}</span>
                         </div>
@@ -341,7 +341,7 @@
                         <!-- <div class="col-12 py-1">                                   
                                     <span style="text-decoration:none;font-size:15px;font-style:italic;" class="text-secondary">Campo no obligatorio, sino se cambia permanece con el estado actual.</span>
                                  </div> -->
-                        @error('codEstadoSel')
+                        @error('codEstadoNvo')
                         <div class="col-12 pb-1">
                           <span class="colorerror">{{ $message }}</span>
                         </div>

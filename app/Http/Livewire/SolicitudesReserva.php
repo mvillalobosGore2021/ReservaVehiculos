@@ -48,7 +48,7 @@ class SolicitudesReserva extends Component
         $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
             ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaNextMonth])
-            ->where('fechaSolicitud', 'like', '%' . $this->fechaHoySearch . '%')
+            ->where('reservavehiculos.created_at', 'like', '%' . $this->fechaHoySearch . '%')
             ->where('users.name', 'like', '%' . $this->nameSearch . '%')
             ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
             ->orderBy('fechaSolicitud', 'desc')
@@ -172,9 +172,6 @@ class SolicitudesReserva extends Component
         }
     }
 
-    public function cambiarEstado($idEstado)
-    {
-    }
 
     public function nuevaReserva()
     {
@@ -285,13 +282,13 @@ class SolicitudesReserva extends Component
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'motivoSel' => 'required:max:500',
-            'codEstadoSel' => 'required',
             'codVehiculoSel' => 'required',
         ];
 
         if ($this->flgNuevaReserva == true) {
             $rulesReserva = Arr::add($rulesReserva, 'idUserSel', 'required');
             $rulesReserva = Arr::add($rulesReserva, 'fechaSolicitudSel', 'required|date_format:Y-m-d|after:yesterday');
+            $rulesReserva = Arr::add($rulesReserva, 'codEstadoNvo', 'required');
         }
 
         return $rulesReserva;

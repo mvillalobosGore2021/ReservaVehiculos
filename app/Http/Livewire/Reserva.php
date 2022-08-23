@@ -23,7 +23,7 @@ class Reserva extends Component
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
-        $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser;
+        $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado;
 
     public $arrMonthDisplay;
 
@@ -125,7 +125,7 @@ class Reserva extends Component
     public function setFechaModal($fechaSel)
     {
         $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
-
+        
         $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
             // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
@@ -135,7 +135,7 @@ class Reserva extends Component
         //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
         $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
 
-        $this->reset(['idReserva', 'horaInicio', 'horaFin', 'motivo', 'flgUsoVehiculoPersonal']);
+        $this->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'flgUsoVehiculoPersonal']);
         $this->resetValidation(['horaInicio', 'horaFin', 'motivo']);
         $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo']);
 
@@ -143,6 +143,8 @@ class Reserva extends Component
             $this->idReserva = $reservasFechaUser['idReserva'];
             $this->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $this->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
+            $this->codEstado = $reservasFechaUser['codEstado']; 
+            $this->descripcionEstado = $reservasFechaUser['descripcionEstado']; 
             $this->motivo = $reservasFechaUser['motivo'];
             $this->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
         }

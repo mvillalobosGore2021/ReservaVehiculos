@@ -161,8 +161,8 @@ return [
         'idUserSel' => [
             'required' => 'Seleccione un funcionario.',
         ],        
-        'codEstadoSel' => [
-            'required' => 'Seleccione Estado de Reserva.',
+        'codEstadoNvo' => [
+            'required' => 'Seleccione Estado de la Reserva.',
         ],
         'fechaSolicitudSel' => [
             'required' => 'Debe ingresar fecha de reserva.',
