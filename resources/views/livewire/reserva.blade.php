@@ -114,7 +114,7 @@
     <div class="modal-content">
       <div class="modal-header bg-light">
         <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">Ingrese los Datos de Su Reserva {{$userName}}</h5>
-        <button type="button" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva"></button>
+        <button type="button" id="btnIconClose" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva"></button>
       </div>
       <div class="modal-body">
         <!-- <input type="text" id="myInput" class="form-control"> -->
@@ -134,7 +134,7 @@
                       <span class="input-group-text">
                         <i class="bi bi-alarm"></i>
                       </span>
-                      <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
+                      <input type="time" id="horaInicio" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
                     </div>
                   </div>
                   @error('horaInicio')
@@ -152,7 +152,7 @@
                       <span class="input-group-text">
                         <i class="bi bi-alarm"></i>
                       </span>
-                      <input type="time" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
+                      <input type="time" id="horaFin" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
                     </div>
                   </div>
                   @error('horaFin')
@@ -165,7 +165,7 @@
             </div>
             <div class="row pt-3 pt-md-0 pb-3">
               <div class="col-12">
-                <textarea wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
+                <textarea id="motivo" wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
               </div>
               @error('motivo')
               <div class="col-12">
@@ -253,19 +253,19 @@
         </div>
       </div>
       <div class="modal-footer bg-light pe-5">
-        <button type="button" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+        <button type="button" id="btnCerrar" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
           Cerrar <i class="bi bi-x-lg"></i>
         </button>
-        <button type="button" class="btn btn-primary"  style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+        <button type="button" id="btnSolicitarReserva" class="btn btn-primary"  style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
         {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
           <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
           <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
         </button>
       @if($idReserva > 0)
-        <button type="button" class="btn btn-danger"  style="width:175px;" wire:click="anularReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+        <button type="button" class="btn btn-danger" id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
           Anular Reserva
-          <span wire:loading.remove wire:target="anularReserva"><i class="bi bi-x-circle"></i></i></span>
-          <span wire:loading.class="spinner-border spinner-border-sm" wire:target="anularReserva" role="status" aria-hidden="true"></span>
+          <span id="anularIcon"><i class="bi bi-x-circle"></i></i></span>
+          <span id="spinnerAnularReserva"></span>
         </button>
        @endif
 
@@ -304,6 +304,49 @@
       html: event.detail.mensaje,
     })
   });
+
+  window.addEventListener('swal:confirm', event => {
+            const swalWithBootstrapButtons = Swal.mixin({
+               customClass: {
+                  confirmButton: 'btn btn-primary m-2',
+                  cancelButton: 'btn btn-danger m-2'
+               },
+               buttonsStyling: false
+            })
+
+            swalWithBootstrapButtons.fire({
+               title: event.detail.title,
+               html: event.detail.text,
+               icon: 'warning',
+               showCancelButton: true,
+               showCloseButton: true,
+               confirmButtonText: 'Confirmar',
+               cancelButtonText: 'Cancelar',
+               reverseButtons: false
+            }).then((result) => {
+               if (result.isConfirmed) {
+                  window.livewire.emit('anularReserva'); 
+               }
+            })
+         });
+
+      document.addEventListener('livewire:load', () => {
+        window.livewire.on('anularReserva', () => {
+            var element = document.getElementById("spinnerAnularReserva");
+            var element2 = document.getElementById("anularIcon");  
+            element.classList.add("spinner-border");
+            element.classList.add("spinner-border-sm");
+            element2.classList.add("d-none");
+            document.getElementById("btnCerrar").disabled = true; 
+            document.getElementById("btnIconClose").disabled = true; 
+            document.getElementById("btnSolicitarReserva").disabled = true; 
+            document.getElementById("btnAnularReserva").disabled = true; 
+            document.getElementById("horaInicio").disabled = true; 
+            document.getElementById("horaFin").disabled = true; 
+            document.getElementById("motivo").disabled = true; 
+            document.getElementById("flgUsoVehiculoPersonal").disabled = true; 
+        });
+    });
 
 
   const container = document.getElementById("modalReserva");

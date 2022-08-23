@@ -12,6 +12,7 @@ use App\Rules\HoraValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 use App\Mail\CorreoNotificacion;
+use App\Mail\CorreoAnulacion;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
@@ -27,6 +28,8 @@ class Reserva extends Component
     public $arrMonthDisplay;
 
     protected  $arrMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    protected $listeners = ['anularReserva'];
 
     public function mount()
     {
@@ -170,8 +173,16 @@ class Reserva extends Component
     //         ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'))->get()) > 0;
     // }
 
-    public function anularReserva() {    
 
+    public function confirmAnularReserva() {      
+            $this->dispatchBrowserEvent('swal:confirm', [
+                'type' => 'warning',
+                'title' => 'Anulación de Reserva',
+                'text' => '¿Está seguro(a) que desea Anular su reserva?',                
+            ]);
+    }
+
+    public function anularReserva() {    
         $msjException = "";
       try {
 
@@ -183,18 +194,18 @@ class Reserva extends Component
              //Envío de correo
              $mailData = [
                 'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
-                'titulo' => "Anulación de Reserva",
+                'titulo' => "Su reserva ha sido anulada",
                 'funcionario' => $this->userName,
                 'fechaReserva' => $this->fechaModal,
+                'fechaAnulacion' => Carbon::now()->format('d/m/Y'),
                 'horaInicio' => $this->horaInicio,
                 'horaFin' => $this->horaFin,
                 'usaVehiculoPersonal' => $this->flgUsoVehiculoPersonal == 0?'No':'Si',
-                'motivo' => $this->motivo,
             ];
 
             try {
               //Mail al postulante 
-                Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
+                Mail::to($this->correoUser)->send(new CorreoAnulacion($mailData));
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
                 throw $e;
@@ -202,14 +213,14 @@ class Reserva extends Component
 
             $userAdmin = User::where('flgAdmin', '=', 1)->get();  
 
-            $mailData['titulo'] =  $this->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
-            $mailData['asunto'] = ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$this->userName;
+            $mailData['titulo'] =  "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio";
+            $mailData['asunto'] = $this->userName. " Ha anulado su reserva";
 
             $emailAdmin = "";
             try {
                 foreach ($userAdmin as $item) { 
                     $emailAdmin = $item->email;
-                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                    Mail::to($item->email)->send(new CorreoAnulacion($mailData));
                 }
             } catch (exception $e) {
                  $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
