@@ -2,7 +2,7 @@
   <form>
     <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
-        Reserva de Vehiculos
+        Reserva de Vehiculos       
       </div>
       <div class="card-body" id="card{{$randId}}">
         <input wire:model="mesSelStr" type="hidden">
@@ -16,10 +16,9 @@
           <span class="fs-4 pe-2 pe-md-3">
             <i class="bi bi-info-circle-fill"></i></span>
           <span class="fs-6 fst-italic pt-1">
-            Las solicitudes de reserva de vehiculos se encuentran habilitadas dentro de un rango de 60 días.
+            Haga click sobre el día en el cuál desea realizar su reserva. El calendario se encuentran habilitado dentro de un rango de 60 días. 
           </span>
         </div>
-
         <div class="table-responsive-sm mx-4 my-4">
           <table class="table table-bordered">
             <thead>
@@ -164,7 +163,7 @@
             </div>
             <div class="row pt-3 pt-md-0 pb-3">
               <div class="col-12">
-                <textarea id="motivo" @if($codEstado==3) readonly @endif data-tippy-content="Motivo de su viaje" wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="6"></textarea>
+                <textarea id="motivo" @if($codEstado==3) readonly @endif data-tippy-content="Motivo de su viaje" wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
               </div>
               @error('motivo')
               <div class="col-12">

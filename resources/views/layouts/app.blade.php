@@ -100,6 +100,18 @@
                behavior: 'smooth'
         });     
     }   
+
+    function movScrollModalById(id) {
+        const modalBody = document.getElementById("modalBody"); 
+                               
+        const element = document.querySelector(id);
+        const topPos = element.getBoundingClientRect().top;
+
+        modalBody.scrollTo({
+           top: topPos,
+           behavior: 'smooth'
+        });
+    }
 </script>
 
 </html>

@@ -9,7 +9,7 @@
           <div class="row py-md-1 justify-content-center">
             <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
-              <button type="button" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+              <button type="button" data-tippy-content="Ver solicitudes realizadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="setFechaHoySearch"><i class="bi bi-calendar-check"></i> </span>
                 <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch" role="status" aria-hidden="true"></span>
                 Solicitudes Hoy
@@ -87,8 +87,6 @@
                   </div>
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>
@@ -105,7 +103,7 @@
               </th>
               <th scope="col">Hora Inicio</th>
               <th scope="col">Hora Fin</th>
-              <th scope="col">Fecha Confirmación</th>
+              <th scope="col">Fecha Creación</th>
               <th scope="col">
                 Estado Reserva
               </th>
@@ -121,7 +119,12 @@
               <td class="text-center">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>
-              <td class="text-center">{{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}</td>
+              <!-- <td class="text-center">
+                @if(!empty($item->fechaConfirmacion))
+                   {{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}
+                @endif
+              </td> -->
+              <td class="text-center">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
               <td class="text-center" nowrap>{{$item->descripcionEstado}}</td>
               <td class="glosaTable pe-4">
                 <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
@@ -184,7 +187,6 @@
                 <div class="col-12 col-md-6 ps-4">
                   <div class="row mb-2">
                     <div class="col-12">
-                      @if ($flgNuevaReserva == true)
                       <div class="row">
                         <div class="col-12" id="inputFunc">
                           <label>Funcionario(a)</label>
@@ -192,8 +194,8 @@
                             <span class="input-group-text">
                               <i class="bi bi-person"></i>
                             </span>
-                            <select wire:model="idUserSel" class="form-select">
-                              <option value="">Todos</option>
+                            <select wire:model="idUserSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                              <option value="">Sel.Funcionario</option>
                               @if (!empty( $userList))
                               @foreach($userList as $item)
                               <option value="{{$item->id}}">{{$item->name}}</option>
@@ -203,23 +205,17 @@
                           </div>
                         </div>
                         @error('idUserSel')
-                        <div class="col-12">
+                        <div class="col-12" id="idUserSelError">
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
                       </div>
-                      @else
-                      Funcionario(a):
-                      <span class="text-success" style="font-weight:800;">
-                        {{$nameSel}}
-                      </span>
-                      @endif
+
                     </div>
                   </div>
                   <div class="row mb-2">
                     <div class="col-12 col-md-5">
                       <input type="hidden" wire:model="idReservaSel">
-                      @if ($flgNuevaReserva == true)
                       <div class="row">
                         <div class="col-12">
                           <label>Fecha Reserva</label>
@@ -227,7 +223,7 @@
                             <span class="input-group-text">
                               <i class="bi bi-calendar4"></i>
                             </span>
-                            <input type="date" wire:model.debounce.500ms="fechaSolicitudSel" class="date-ini form-control" autocomplete="off">
+                            <input type="date" wire:model.debounce.500ms="fechaSolicitudSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="date-ini form-control" autocomplete="off">
                           </div>
                         </div>
                         @error('fechaSolicitudSel')
@@ -236,24 +232,17 @@
                         </div>
                         @enderror
                       </div>
-                      @else
-                      Fecha Reserva:
-                      <span class="text-success" style="font-weight:800;">
-                        {{\Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
-                      </span>
-                      @endif
                     </div>
                     <div class="col-12 col-md-6 mt-2 mt-md-0">
-                      @if ($flgNuevaReserva == true)
                       <div class="row">
                         <div class="col-12">
-                          <label>Estado Reserva</label> 
+                          <label>Estado Reserva</label>
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-list-ul"></i>
                             </span>
-                            <select wire:model="codEstadoNvo" class="form-select">
-                              <option value="">Todos</option>
+                            <select wire:model="codEstadoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                              <option value="">Sel.Estado</option>
                               @if (!empty( $estadosCmb))
                               @foreach($estadosCmb as $item)
                               <!-- No mostrar el estado actual   -->
@@ -263,24 +252,16 @@
                             </select>
                           </div>
                         </div>
-                        @error('codEstadoNvo')
+                        @error('codEstadoSel')
                         <div class="col-12">
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
                       </div>
-                      @else
-                      Estado:
-                      <span class="text-success" style="font-weight:800;">
-                        {{$descripEstadoSel}}
-                      </span>
-                      @endif
-
                     </div>
                   </div>
-
                   <div class="row">
-                    <div class="col-12 pb-3 col-md-5 mt-md-0">
+                    <div class="col-12 pb-2 col-md-5 mt-md-0">
                       <div class="row">
                         <div class="col-12">
                           <label>Hora Inicio Reserva</label>
@@ -317,67 +298,32 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    @if ($flgNuevaReserva == false)
-                    <div class="col-12 col-md-5 mb-3">
-                      <div class="row">
-                        <div class="col-12">
-                          <label>Nuevo Estado</label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="bi bi-list-ul"></i> 
-                            </span>
-                            <select wire:model="codEstadoNvo" class="form-select" data-tippy-content="El Campo no es obligatorio, sino se cambia la reserva permanece con el estado actual."> 
-                              <option value="">Todos</option> 
-                              @if (!empty( $estadosCmb))
-                              @foreach($estadosCmb as $itemEstado)
-                              <!-- No mostrar el estado actual   -->
-                              <option value="{{$itemEstado->codEstado}}">{{$itemEstado->descripAccionEstado}}</option>
-                              @endforeach
-                              @endif
-                            </select>
-                          </div>
-                        </div>
-                        <!-- <div class="col-12 py-1">                                   
-                                    <span style="text-decoration:none;font-size:15px;font-style:italic;" class="text-secondary">Campo no obligatorio, sino se cambia permanece con el estado actual.</span>
-                                 </div> -->
-                        @error('codEstadoNvo')
-                        <div class="col-12 pb-1">
-                          <span class="colorerror">{{ $message }}</span>
-                        </div>
-                        @enderror
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <label>Vehículo Asignado</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="bi bi-list-ul"></i>
+                        </span>
+                        <select wire:model="codVehiculoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                          <option value="">Sel.Vehículo</option>
+                          @if (!empty( $cmbVehiculos))
+                          @foreach($cmbVehiculos as $item)
+                          <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
+                          @endforeach
+                          @endif
+                        </select>
                       </div>
                     </div>
-                    @endif
-                    <div class="col-12 {{!$flgNuevaReserva ? 'col-md-7':'col-md-12'}} mb-3">
-                      <div class="row">
-                        <div class="col-12">
-                          <label>Asignar Vehículo</label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="bi bi-list-ul"></i>
-                            </span>
-                            <select wire:model="codVehiculoSel" class="form-select">
-                              <option value="">Todos</option>
-                              @if (!empty( $cmbVehiculos))
-                              @foreach($cmbVehiculos as $item)
-                              <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
-                              @endforeach
-                              @endif
-                            </select>
-                          </div>
-                        </div>
-                        @error('codVehiculoSel')
-                        <div class="col-12 pb-1">
-                          <span class="colorerror">{{ $message }}</span>
-                        </div>
-                        @enderror
-                      </div>
+                    @error('codVehiculoSel')
+                    <div class="col-12 pb-1">
+                      <span class="colorerror">{{ $message }}</span>
                     </div>
+                    @enderror
                   </div>
                   <div class="row pt-3 pt-md-0 pb-3">
                     <div class="col-12">
-                      <textarea wire:model.debounce.250ms="motivoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
+                      <textarea wire:model.debounce.250ms="motivoSel" onclick="movScrollModalById('#usoVehiculoHead')" wire:loading.attr="disabled" wire:target="guardarReservaSel" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
                     </div>
                     @error('motivoSel')
                     <div class="col-12">
@@ -386,7 +332,7 @@
                     @enderror
                   </div>
                   <div class="row">
-                    <div class="col-12">
+                    <div class="col-12" id="usoVehiculoHead">
                       <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gastos de combustible y peajes.">
                         <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
                           Usar Vehiculo Personal con Devolución de Combustible y Peajes.
@@ -530,6 +476,5 @@
       //myModal2.show();
       modal.hide();
     }
-    
   </script>
 </div>

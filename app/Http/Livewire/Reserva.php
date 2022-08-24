@@ -191,9 +191,8 @@ class Reserva extends Component
         DB::beginTransaction();
 
         Reservavehiculo::where("idReserva",  $this->idReserva)->update(["codEstado" => 3]);//Estado 3 = Anular
-       
-        //Crear un correo de anulación 
-             //Envío de correo
+      
+        //Envío de correo
              $mailData = [
                 'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
                 'titulo' => "Su reserva ha sido anulada",
