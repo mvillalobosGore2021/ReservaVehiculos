@@ -15,7 +15,7 @@ class Listarreservas extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $userName, $idUser;//, $reservasUsuario;
+    public $userName, $idUser, $fechaDesde, $fechaHasta;//, $reservasUsuario;
 
     public function mount() {
         $user = Auth::user();
@@ -24,13 +24,17 @@ class Listarreservas extends Component
        // $this->consultarRerservasUser();
     }
     
-    public function render()
+    public function render() 
     {   //Se obtienen las reservas para un rango de tres meses
          $reservasUsuario = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
+          ->select('reservavehiculos.*', 'estados.descripcionEstado')
           ->where('idUser', '=', $this->idUser)
           ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addMonths(2)->format('Y-m-d')])
           ->orderBy('fechaSolicitud', 'desc')
           ->paginate(10);
+
+          $this->fechaDesde = Carbon::now()->format('d/m/Y');
+          $this->fechaHasta = Carbon::now()->addMonths(2)->format('d/m/Y');
 
         return view('livewire.listarreservas', compact('reservasUsuario'));
     }

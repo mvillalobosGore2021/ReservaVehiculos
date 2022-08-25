@@ -18,16 +18,16 @@
       <div class="table-responsive-sm">
         <table class="table m-0">
           <thead class="table-light">
-            <tr class="text-center fs-5" >
-              <th scope="col" colspan="6" class="py-3"><span class="text-primary">Listado de Reservas de</span> <span class="text-success">{{$userName}}</span></th> 
+            <tr class="text-center fs-5 text-primary" >
+              <th scope="col" colspan="6" class="py-3">Listado de Reservas de <span class="text-success">{{$userName}}</span><br>Desde el <span class="text-success">{{$fechaDesde}}</span> Hasta el <span class="text-success">{{$fechaHasta}}</span></th> 
             </tr>
             <tr class="text-center">
-              <th scope="col" class="ps-4">Fecha Solicitud</th>
+              <th scope="col" class="ps-4">Fecha a Reservar</th>
               <th scope="col">Hora Inicio</th>
               <th scope="col">Hora Fin</th>
-              <th scope="col">Fecha Confirmación</th>
+              <th scope="col">Fecha de Creación</th>
               <th scope="col">Estado Reserva</th>    
-              <th scope="col" class="pe-4" style="text-align: left;">Motivo</th>   
+              <th scope="col" class="pe-4" style="text-align: left;">Motivo</th>
             </tr>
           </thead>
           <tbody>
