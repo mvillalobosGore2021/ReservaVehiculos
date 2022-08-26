@@ -29,7 +29,6 @@
             </div>
           </div>
 
-
         </div>
         <div class="card-body">
           <div class="row ms-1">
@@ -94,19 +93,13 @@
       <div class="table-responsive card mx-2 mt-4 shadow" id="listadoSolReservas">
         <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif ">
           <thead class="table-light">
-            <tr class="text-center">
-              <th scope="col">
-                Funcionario
-              </th>
-              <th scope="col">
-                Fecha Solicitud
-              </th>
-              <th scope="col">Hora Inicio</th>
-              <th scope="col">Hora Fin</th>
-              <th scope="col">Fecha Creación</th>
-              <th scope="col">
-                Estado Reserva
-              </th>
+            <tr>
+              <th scope="col" class="ps-4">Funcionario</th>
+              <th scope="col" class="text-center">Día Reserva</th>
+              <th scope="col" class="text-center">Hora Inicio</th>
+              <th scope="col" class="text-center">Hora Fin</th>
+              <th scope="col" class="text-start">Fecha Creación</th>
+              <th scope="col" class="text-center">Estado Reserva</th>
               <th scope="col" class="text-left">Motivo</th>
               <!-- <th scope="col" style="width:170px;">Acción</th> -->
             </tr>
@@ -124,11 +117,11 @@
                    {{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}
                 @endif
               </td> -->
-              <td class="text-center">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
+              <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
               <td class="text-center" nowrap>{{$item->descripcionEstado}}</td>
               <td class="glosaTable pe-4">
                 <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
-                {{$item->motivo}}
+                {{$item->motivo}}                
               </td>
 
             </tr>
@@ -150,7 +143,7 @@
         </table>
       </div>
       <div class="row mt-3 ">
-        <div class="col-7 offset-2 col-md-5 offset-md-5 mb-4 pt-2">
+        <div class="col-7 offset-0 col-md-5 offset-md-4 mb-4 pt-2">
           {{ $reservasTotales->links()}}
         </div>
       </div>
@@ -218,7 +211,7 @@
                       <input type="hidden" wire:model="idReservaSel">
                       <div class="row">
                         <div class="col-12">
-                          <label>Fecha Reserva</label>
+                          <label>Dia a Reservar</label>
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-calendar4"></i>
@@ -476,5 +469,10 @@
       //myModal2.show();
       modal.hide();
     }
+
+
+    let el = document.querySelector('.el');
+    let height = el.scrollHeight;
+    el.style.setProperty('--max-height', height + 'px');
   </script>
 </div>

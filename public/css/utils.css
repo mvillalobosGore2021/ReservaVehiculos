@@ -196,4 +196,16 @@
       }
     /* Fin Efecto rebote Loading */
 
+
+    /*Ver mas columna Motivo*/
+    .el {
+      transition: max-height 1s;
+      overflow: hidden;
+      max-height: 0;
+    }
+    
+    .trigger:hover > .el {
+      max-height: var(--max-height);
+    }
+
     

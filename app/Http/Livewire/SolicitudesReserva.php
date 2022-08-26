@@ -323,8 +323,8 @@ class SolicitudesReserva extends Component
                     try {
                         //Mail al postulante 
                         Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
-                    } catch (exception $e) {
-                        $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->correoUser . '</span>';
+                    } catch (exception $e) { 
+                        $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
                         throw $e;
                     }
 

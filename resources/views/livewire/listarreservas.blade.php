@@ -38,11 +38,7 @@
               <td>{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
               <td>{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>
               <td>
-                @if(!empty($item->fechaConfirmacion))
-                   {{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}
-                @else
-                   &nbsp;
-                @endif                
+                   {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y')}}                              
               </td>
               <td>{{$item->descripcionEstado}}</td>
               <td class="glosaTable pe-4">{{$item->motivo}}</td>
