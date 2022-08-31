@@ -9,13 +9,20 @@
           <div class="row py-md-1 justify-content-center">
             <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
-              <button type="button" data-tippy-content="Ver solicitudes realizadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
-                <span wire:loading.remove wire:target="setFechaHoySearch"><i class="bi bi-calendar-check"></i> </span>
-                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch" role="status" aria-hidden="true"></span>
+              <button type="button" data-tippy-content="Ver solicitudes realizadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch(1)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+                <span wire:loading.remove wire:target="setFechaHoySearch(1)"><i class="bi bi-calendar-check"></i> </span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch(1)" role="status" aria-hidden="true"></span>
                 Solicitudes Hoy
               </button>
             </div>
-            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-4 text-center">
+            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-4 me-md-2 text-center">
+              <button type="button" data-tippy-content="Ver reservas solicitadas para el día de hoy" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="setFechaHoySearch(0)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+                <span wire:loading.remove wire:target="setFechaHoySearch(0)"><i class="bi bi-calendar-check"></i></span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch(0)" role="status" aria-hidden="true"></span>
+                Reservas Hoy
+              </button>
+            </div>
+            <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-5 text-center">
               <button type="button" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="mostrarTodo" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="mostrarTodo"><i class="bi bi-eye"></i></span>
                 <span wire:loading.class="spinner-border spinner-border-sm" wire:target="mostrarTodo" role="status" aria-hidden="true"></span>
@@ -59,15 +66,15 @@
               </div>
             </div>
             <div class="col-12 mt-3">
-              <div class="row">
-                <div class="col-5">
+              <div class="row text-center text-md-start">
+                <div class="col-12 col-md-5" id="resetSearch">
                   @if(!empty($fechaHoySearch))
-                  <button type="button" id="resetSearch" class="btn btn-dark btn-sm rounded-pill p-1" style="cursor:context-menu;">
-                    Solicitudes Hoy <div class="d-inline" wire:click="resetSearch('fechaHoySearch')" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
+                  <button type="button" class="btn btn-dark btn-sm rounded-pill p-1" style="cursor:context-menu;">
+                    {{$flgSolicitudesHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}} <div class="d-inline" wire:click="resetSearch" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
                   </button>
                   @endif
                 </div>
-                <div class="col-3">
+                <div class="col-12 col-md-3 pt-3 pt-md-0">
                   <div style="height:33px;">
                     <div wire:loading wire:target="setFechaHoySearch,mostrarTodo">
                       <div class="spinner-grow text-primary" style="width: 1.2rem; height: 1.2rem;" role="status">
@@ -100,7 +107,7 @@
               <th scope="col" class="text-center">Hora Fin</th>
               <th scope="col" class="text-start">Fecha Creación</th>
               <th scope="col" class="text-center">Estado Reserva</th>
-              <th scope="col" class="text-left">Motivo</th>
+              <th scope="col" class="text-left">Motivo</th>  
               <!-- <th scope="col" style="width:170px;">Acción</th> -->
             </tr>
           </thead>

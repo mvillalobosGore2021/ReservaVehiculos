@@ -51,7 +51,6 @@ class Reserva extends Component
          //dd($this->fechaActual->firstOfMonth()->dayOfWeek);                                          
         
           $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaActual->month, ['mes'=>$this->arrMeses[$this->fechaActual->month-1], 'agno' => $this->fechaActual->year, 'primerDiaSemana' => $this->fechaActual->firstOfMonth()->dayOfWeek == 0?7:$this->fechaActual->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaActual->lastOfMonth()->dayOfWeek == 0?7:$this->fechaActual->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $this->fechaActual->daysInMonth]);  
-          
           $this->mesSel = $this->fechaActual->month;
           $this->mesActual = $this->fechaActual->month;
          
@@ -61,15 +60,14 @@ class Reserva extends Component
           $this->firstDayMonth = $this->fechaActual->firstOfMonth()->dayOfWeek; 
           $this->lastDayMonth = $this->fechaActual->lastOfMonth()->dayOfWeek;
   
-          $fechaSiguiente = Carbon::now()->addMonth();
+          $fechaSiguiente = Carbon::now()->addMonthsNoOverflow(); //addMonthsNoOverflow para que cuando finalice el mes no agregue dos meses 
           $diasSiguienteMes = $fechaSiguiente->daysInMonth;
           $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaSiguiente->month, ['mes'=>$this->arrMeses[$fechaSiguiente->month-1], 'agno' => $fechaSiguiente->year, 'primerDiaSemana' => $fechaSiguiente->firstOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaSiguiente->lastOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->lastOfMonth()->dayOfWeek,'cantDiasMes' => $fechaSiguiente->daysInMonth]);  
-                  
+        
           $this->diasRestantesMesActual = $this->fechaActual->daysInMonth - Carbon::now()->format('d') * 1 + 1;//Calculo de los dias restantes para que termine el mes, se le suma uno para incluir el dia actual
-      
-        //Si los dos meses no suman 60 dias se agrega otro mes
+         //Si los dos meses no suman 60 dias se agrega otro mes
           if (( $this->diasRestantesMesActual+$diasSiguienteMes) < 60) {
-              $fechaUltima = Carbon::now()->addMonths(2); 
+              $fechaUltima = Carbon::now()->addMonthsNoOverflow(2);
               $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaUltima->month, ['mes'=>$this->arrMeses[$fechaUltima->month-1], 'agno' => $fechaUltima->year, 'primerDiaSemana' => $fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaUltima->daysInMonth]);     
           }
         //Fin Calculo Despliege de 60 dias  
@@ -206,7 +204,7 @@ class Reserva extends Component
 
             try {
               //Mail al postulante 
-                Mail::to($this->correoUser)->send(new CorreoAnulacion($mailData));
+                //Mail::to($this->correoUser)->send(new CorreoAnulacion($mailData));
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
                 throw $e;
@@ -221,7 +219,7 @@ class Reserva extends Component
             try {
                 foreach ($userAdmin as $item) { 
                     $emailAdmin = $item->email;
-                    Mail::to($item->email)->send(new CorreoAnulacion($mailData));
+                    //Mail::to($item->email)->send(new CorreoAnulacion($mailData));
                 }
             } catch (exception $e) {
                  $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
@@ -287,7 +285,7 @@ class Reserva extends Component
 
             try {
               //Mail al postulante 
-                Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
+                //Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
                 throw $e;
@@ -302,7 +300,7 @@ class Reserva extends Component
             try {
                 foreach ($userAdmin as $item) { 
                     $emailAdmin = $item->email;
-                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                    //Mail::to($item->email)->send(new CorreoNotificacion($mailData));
                 }
             } catch (exception $e) {
                  $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              

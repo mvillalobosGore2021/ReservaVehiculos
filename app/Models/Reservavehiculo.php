@@ -10,6 +10,8 @@ class Reservavehiculo extends Model
     use HasFactory;
 
     protected $primaryKey = 'idReserva';
-
-    protected $fillable = ['idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'codVehiculo', 'horaInicio', 'horaFin'];
+    
+    protected $fillable = ['idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 
+    'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'codVehiculo', 'horaInicio', 
+    'horaFin', 'idUserCreacion', 'idUserModificacion'];
 }
