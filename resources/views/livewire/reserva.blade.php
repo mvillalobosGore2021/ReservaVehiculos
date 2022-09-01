@@ -2,7 +2,10 @@
   <form>
     <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
-        Reserva de Vehiculos       
+        Reserva de Vehiculos    
+        <span class="d-block fst-italic text-secondary pt-1" style="font-size:15px;">
+               Fecha Actual: <i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse(now())->format('d/m/Y')}}
+        </span>     
       </div>
       <div class="card-body" id="card{{$randId}}">
         <input wire:model="mesSelStr" type="hidden">

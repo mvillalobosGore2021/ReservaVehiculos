@@ -174,7 +174,7 @@ class Reserva extends Component
     // }
 
 
-    public function confirmAnularReserva() {      
+    public function confirmAnularReserva() {
             $this->dispatchBrowserEvent('swal:confirm', [
                 'type' => 'warning',
                 'title' => 'Anulación de Reserva',
@@ -307,7 +307,12 @@ class Reserva extends Component
                  throw $e;
             }
 
+
+
+
             DB::commit();
+            
+            $this->getReservas();
 
             $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
 

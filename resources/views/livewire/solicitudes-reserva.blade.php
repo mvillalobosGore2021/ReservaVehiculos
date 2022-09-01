@@ -16,9 +16,9 @@
               </button>
             </div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-4 me-md-2 text-center">
-              <button type="button" data-tippy-content="Ver reservas solicitadas para el día de hoy" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="setFechaHoySearch(0)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
-                <span wire:loading.remove wire:target="setFechaHoySearch(0)"><i class="bi bi-calendar-check"></i></span>
-                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch(0)" role="status" aria-hidden="true"></span>
+              <button type="button" data-tippy-content="Ver reservas solicitadas para el día de hoy" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="setFechaHoySearch(2)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
+                <span wire:loading.remove wire:target="setFechaHoySearch(2)"><i class="bi bi-calendar-check"></i></span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch(2)" role="status" aria-hidden="true"></span>
                 Reservas Hoy
               </button>
             </div>
@@ -46,6 +46,9 @@
                   <i class="bi bi-person"></i>
                 </span>
                 <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch">
+                <span class="input-group-text bg-white" id="borrarNameSearch" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
+                      <i class="bi bi-x-circle"></i>
+               </span>
               </div>
             </div>
             <div class="col-12 col-md-3">
@@ -65,12 +68,42 @@
                 </select>
               </div>
             </div>
+
+            <div class="col-12 col-md-3 pt-3">
+              <div class="row">
+                <div class="col-12">
+                  <label>{{$flgFechaSearch == 1 ? 'Fecha Solicitud':'Fecha Reserva'}}</label>
+                  <div class="input-group">
+                    <span class="input-group-text"> 
+                      <i class="bi bi-calendar4"></i>
+                    </span>
+                    <input type="date" wire:model.debounce.500ms="fechaSearch" class="form-control" autocomplete="off">
+                    <span class="input-group-text bg-white" id="borrarFechaSearch" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaSearch', '')">
+                      <i class="bi bi-x-circle"></i>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-12  pt-1">
+                  <div class="form-check form-switch" data-tippy-content="Active la casilla si desea buscar por la fecha cuando se realizó la solicitud.">
+                    <input class="form-check-input" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Fecha Solicitud</label> 
+                  </div>
+                </div>
+                @error('fechaSearch')
+                <div class="col-12  pt-1">
+                  <span class="colorerror">{{ $message }}</span>
+                </div>
+                @enderror
+              </div>
+            </div>
+
             <div class="col-12 mt-3">
               <div class="row text-center text-md-start">
                 <div class="col-12 col-md-5" id="resetSearch">
-                  @if(!empty($fechaHoySearch))
+                  @if(!empty($fechaSearch) && ($flgSearchHoy == 1 || $flgSearchHoy == 2))
                   <button type="button" class="btn btn-dark btn-sm rounded-pill p-1" style="cursor:context-menu;">
-                    {{$flgSolicitudesHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}} <div class="d-inline" wire:click="resetSearch" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
+                    {{$flgSearchHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}}
+                    <div class="d-inline" wire:click="resetSearch" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
                   </button>
                   @endif
                 </div>
@@ -107,14 +140,14 @@
               <th scope="col" class="text-center">Hora Fin</th>
               <th scope="col" class="text-start">Fecha Creación</th>
               <th scope="col" class="text-center">Estado Reserva</th>
-              <th scope="col" class="text-left">Motivo</th>  
+              <th scope="col" class="text-left">Motivo</th>
               <!-- <th scope="col" style="width:170px;">Acción</th> -->
             </tr>
           </thead>
           <tbody>
             @if(!empty($reservasTotales) && count($reservasTotales) > 0)
             @foreach($reservasTotales as $item)
-            <tr style="height:55px;cursor:pointer;" wire:click="reservaSel('{{$item->idReserva}}', '1')" data-tippy-content="Click para editar">
+            <tr style="height:55px;cursor:pointer;" id="td{{$loop->index}}" wire:click="reservaSel('{{$item->idReserva}}', '1')" data-tippy-content="Click para editar">
               <td nowrap class="ps-4">{{ $item->name}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
@@ -128,7 +161,7 @@
               <td class="text-center" nowrap>{{$item->descripcionEstado}}</td>
               <td class="glosaTable pe-4">
                 <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
-                {{$item->motivo}}                
+                {{$item->motivo}}
               </td>
 
             </tr>
@@ -344,34 +377,36 @@
                 </div>
 
                 <div class="col-12 col-md-6 pt-3 pt-md-1">
-                  <div class="table-responsive-sm mx-2">
+                  <div class="table-responsive mx-2">
                     <table class="table @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0 && $flgNuevaReserva == false) table-hover @endif ">
                       <!-- table-bordered -->
                       <thead>
                         <tr>
                           <th scope="col" colspan="4" class="text-center text-success pb-3">
-                            Reservas realizadas el día {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
+                            Reservas para el día {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
                           </th>
                         </tr>
                         <tr>
                           <th scope="col">Nombre</th>
-                          <th scope="col">Hora Inicio</th>
-                          <th scope="col">Hora Fin</th>
+                          <th scope="col" nowrap>Hora Inicio</th>
+                          <th scope="col" nowrap>Hora Fin</th>
                           <th scope="col">Estado</th>
+                          <th scope="col" nowrap>Vehículo Asignado</th>
                         </tr>
                       </thead>
                       <tbody>
                         @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                         @foreach($reservasFechaSel as $index => $item)
                         <tr id="fila{{$index}}" @if ($flgNuevaReserva==false) style="cursor:pointer;" wire:click="reservaSel('{{$item->idReserva}}', '0')" @endif>
-                          <td>{{$item['name']}}</td>
-                          <td>
+                          <td nowrap>{{$item['name']}}</td>
+                          <td align="center">
                             {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
                           </td>
-                          <td>
+                          <td align="center">
                             {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
                           </td>
-                          <td>{{$item['descripcionEstado']}}</td>
+                          <td nowrap>{{$item['descripcionEstado']}}</td>
+                          <td nowrap>{{$item['descripcionVehiculo']}}</td>
                         </tr>
                         @endforeach
                         @else
