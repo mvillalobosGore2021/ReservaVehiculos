@@ -29,7 +29,7 @@ class SolicitudesReserva extends Component
 
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
-        $fechaSearch, $flgFechaSearch, $flgValidateConfirmar;
+        $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate;
 
     public Collection $inputsTable;
 
@@ -205,7 +205,9 @@ class SolicitudesReserva extends Component
                 }
             }
         }
-        //dd($this->getErrorBag()->toArray()['codVehiculoSel']);
+
+
+        
         if ($field == 'codEstadoSel' || $field == 'codVehiculoSel' || 'fechaSolicitudSel') {
             // dd($this->flgValidateConfirmar);
             if ($this->flgValidateConfirmar == true) {
@@ -214,9 +216,10 @@ class SolicitudesReserva extends Component
                 $this->resetErrorBag(['codEstadoSel', 'codVehiculoSel', 'fechaSolicitudSel']);
             }
 
-            if ($this->validateEstadoConfirmar() > 0) {
+           //dd(!empty($this->validateEstadoConfirmar()), $this->validateEstadoConfirmar(), $this->funcionarioValidate);
+            if (!empty($this->validateEstadoConfirmar())) { 
                 $this->flgValidateConfirmar = true;
-                $this->addError($field, 'El vehículo ya se encuentra asignado en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $this->addError($field, 'El vehículo ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
             }
         }
     }
@@ -239,21 +242,39 @@ class SolicitudesReserva extends Component
 
     protected function validateEstadoConfirmar()
     {
-
         $countReg = 0;
+        $reservaVehiculo = null;
 
         if (!empty($this->fechaSolicitudSel) && !empty($this->codEstadoSel) && $this->codEstadoSel == 2 && !empty($this->codVehiculoSel)) {
+          
+          if ($this->flgNuevaReserva == true) {
             $reservaVehiculo = Reservavehiculo::where("fechaSolicitud", "=", $this->fechaSolicitudSel)
+                ->join("users", "users.id", "=", "reservavehiculos.idUser") 
                 ->where("codEstado", "=", 2) //Estado 2 = Confirmar 
-                //->whereNotNull("codVehiculo")
-                ->whereRaw("codVehiculo = " . $this->codVehiculoSel . " and codVehiculo IS NOT NULL")->get();
+                ->whereNotNull("codVehiculo")
+                ->whereRaw("codVehiculo = " . $this->codVehiculoSel . " and codVehiculo IS NOT NULL")->first();               
+          } else  {
+              $reservaVehiculo = Reservavehiculo::where("fechaSolicitud", "=", $this->fechaSolicitudSel)
+              ->join("users", 'users.id', "=", "reservavehiculos.idUser") 
+              ->where("codEstado", "=", 2) //Estado 2 = Confirmar 
+              ->where("idUser", "!=", $this->idUserSel)
+              ->whereNotNull("codVehiculo")
+              ->whereRaw("codVehiculo = " . $this->codVehiculoSel . " and codVehiculo IS NOT NULL")->first();
+            }
 
-            $countReg = count($reservaVehiculo);
+            $this->funcionarioValidate = !empty($reservaVehiculo) ? $reservaVehiculo->name:"";
+            // dd($reservaVehiculo, $reservaVehiculo->toSql());
+          
+             // dd($this->idReservaSel > 0 ? "idReserva != ".$this->idReservaSel : $this->idReservaSel." IS NULL"); 
+            //  dd($this->idReservaSel, $this->fechaSolicitudSel, $this->codVehiculoSel, $reservaVehiculo->toSql());
+
+             //$countReg = count($reservaVehiculo);
         }
-        return $countReg;
+        // return $countReg;
+        return $reservaVehiculo;
     }
 
-    public function guardarReservaSel()
+    public function guardarReservaSel() 
     {
         $msjException = "";
 
@@ -337,6 +358,7 @@ class SolicitudesReserva extends Component
 
             //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
             if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
+                $flgError = true;
                 $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
                 $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
                 $this->addError('idUserSel', 'El funcionario ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
@@ -351,8 +373,17 @@ class SolicitudesReserva extends Component
                 ]);
 
                 $this->dispatchBrowserEvent('moveScrollModal');
-            } else {
-
+            }  
+       
+        //Validar que el vehiculo no este asignado en otra reserva confirmada para el dia seleccionado   
+                 
+            if (!empty($this->validateEstadoConfirmar())) {
+                $this->flgError = true;
+                $this->addError('codVehiculoSel', 'El vehículo ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+            }
+          
+ 
+            if ($flgError == false) {
                 try {
                     DB::beginTransaction();
                     // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'

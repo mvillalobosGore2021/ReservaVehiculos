@@ -46,7 +46,7 @@
                   <i class="bi bi-person"></i>
                 </span>
                 <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch">
-                <span class="input-group-text bg-white" id="borrarNameSearch" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
+                <span class="input-group-text bg-white" id="borrarNameSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
                       <i class="bi bi-x-circle"></i>
                </span>
               </div>
@@ -78,15 +78,15 @@
                       <i class="bi bi-calendar4"></i>
                     </span>
                     <input type="date" wire:model.debounce.500ms="fechaSearch" class="form-control" autocomplete="off">
-                    <span class="input-group-text bg-white" id="borrarFechaSearch" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaSearch', '')">
+                    <span class="input-group-text bg-white" id="borrarFechaSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaSearch', '')">
                       <i class="bi bi-x-circle"></i>
                     </span>
                   </div>
                 </div>
                 <div class="col-12  pt-1">
                   <div class="form-check form-switch" data-tippy-content="Active la casilla si desea buscar por la fecha cuando se realizó la solicitud.">
-                    <input class="form-check-input" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Fecha Solicitud</label> 
+                    <input class="form-check-input" id="flgFechaSearch" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
+                    <label class="form-check-label" for="flgFechaSearch">Fecha Solicitud</label> 
                   </div>
                 </div>
                 @error('fechaSearch')
@@ -145,9 +145,9 @@
             </tr>
           </thead>
           <tbody>
-            @if(!empty($reservasTotales) && count($reservasTotales) > 0)
+            @if(!empty($reservasTotales) && count($reservasTotales) > 0) 
             @foreach($reservasTotales as $item)
-            <tr style="height:55px;cursor:pointer;" id="td{{$loop->index}}" wire:click="reservaSel('{{$item->idReserva}}', '1')" data-tippy-content="Click para editar">
+            <tr style="height:55px;cursor:pointer;" id="td{{$loop->index}}{{rand(0, 100)}}" wire:click="reservaSel('{{$item->idReserva}}', '1')" data-tippy-content="Click para editar">
               <td nowrap class="ps-4">{{ $item->name}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
@@ -222,7 +222,8 @@
                     <div class="col-12">
                       <div class="row">
                         <div class="col-12" id="inputFunc">
-                          <label>Funcionario(a)</label>
+                        <label>Funcionario(a)</label>
+                          @if ($flgNuevaReserva == true)                        
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-person"></i>
@@ -234,8 +235,12 @@
                               <option value="{{$item->id}}">{{$item->name}}</option>
                               @endforeach
                               @endif
-                            </select>
+                            </select> 
                           </div>
+                          @else
+                             <input type="hidden" wire:model="idUserSel">
+                             <span class="text-success">{{$nameSel}}</span>
+                          @endif
                         </div>
                         @error('idUserSel')
                         <div class="col-12" id="idUserSelError">
@@ -391,7 +396,7 @@
                           <th scope="col" nowrap>Hora Inicio</th>
                           <th scope="col" nowrap>Hora Fin</th>
                           <th scope="col">Estado</th>
-                          <th scope="col" nowrap>Vehículo Asignado</th>
+                          <th scope="col" nowrap>Vehículo</th>
                         </tr>
                       </thead>
                       <tbody>
