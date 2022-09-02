@@ -29,7 +29,7 @@ class SolicitudesReserva extends Component
 
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
-        $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate;
+        $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate;
 
     public Collection $inputsTable;
 
@@ -217,9 +217,9 @@ class SolicitudesReserva extends Component
             }
 
            //dd(!empty($this->validateEstadoConfirmar()), $this->validateEstadoConfirmar(), $this->funcionarioValidate);
-            if (!empty($this->validateEstadoConfirmar())) { 
+            if (!empty($this->validateEstadoConfirmar())) {
                 $this->flgValidateConfirmar = true;
-                $this->addError($field, 'El vehículo ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $this->addError($field, 'El vehículo '.$this->descripVehiculoValidate.' ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
             }
         }
     }
@@ -256,13 +256,23 @@ class SolicitudesReserva extends Component
           } else  {
               $reservaVehiculo = Reservavehiculo::where("fechaSolicitud", "=", $this->fechaSolicitudSel)
               ->join("users", 'users.id', "=", "reservavehiculos.idUser") 
+              ->join("vehiculos", "vehiculos.codVehiculo", "=", "reservavehiculos.codVehiculo") 
               ->where("codEstado", "=", 2) //Estado 2 = Confirmar 
               ->where("idUser", "!=", $this->idUserSel)
               ->whereNotNull("codVehiculo")
               ->whereRaw("codVehiculo = " . $this->codVehiculoSel . " and codVehiculo IS NOT NULL")->first();
             }
 
-            $this->funcionarioValidate = !empty($reservaVehiculo) ? $reservaVehiculo->name:"";
+            // $this->funcionarioValidate = !empty($reservaVehiculo) ? $reservaVehiculo->name:""; 
+
+              // dd($reservaVehiculo->toSql());
+              $this->funcionarioValidate = ""; 
+              $this->descripVehiculoValidate = "";
+  
+              if (!empty($reservaVehiculo)) {
+                 $this->funcionarioValidate = $reservaVehiculo->name; 
+                 $this->descripVehiculoValidate = Vehiculo::where('codVehiculo', '=', $reservaVehiculo->codVehiculo)->first()->descripcionVehiculo; 
+              }
             // dd($reservaVehiculo, $reservaVehiculo->toSql());
           
              // dd($this->idReservaSel > 0 ? "idReserva != ".$this->idReservaSel : $this->idReservaSel." IS NULL"); 
@@ -280,7 +290,7 @@ class SolicitudesReserva extends Component
 
         if ($this->codEstadoSel == 3 && $this->flgNuevaReserva == false/*Modo modificacion*/) { //Estado 3 = Anular, no se validan los datos
             try {
-                DB::beginTransaction();
+                DB::beginTransaction();                
 
                 Reservavehiculo::where("idReserva",  $this->idReservaSel)->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
 
@@ -416,7 +426,7 @@ class SolicitudesReserva extends Component
                         $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'fechaConfirmacion', now());
                     }
 
-
+                   // dd("Reservavehiculo::updateOrCreate", $this->idReservaSel);
                     $reservaVehiculo = Reservavehiculo::updateOrCreate(
                         ['idReserva' => $this->idReservaSel],
                         $camposReservaVehiculoArr

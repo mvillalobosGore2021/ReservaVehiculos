@@ -45,7 +45,7 @@
                 <span class="input-group-text">
                   <i class="bi bi-person"></i>
                 </span>
-                <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch">
+                <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario que desea buscar" data-tippy-content="Ingrese el nombre del funcionario que desea buscar">
                 <span class="input-group-text bg-white" id="borrarNameSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
                       <i class="bi bi-x-circle"></i>
                </span>
@@ -57,7 +57,7 @@
                 <span class="input-group-text">
                   <i class="bi bi-list-ul"></i>
                 </span>
-                <select wire:model="codEstadoSearch" class="form-select">
+                <select wire:model="codEstadoSearch" class="form-select" data-tippy-content="Seleccione el estado de las reservas que desea buscar">
                   <option value="">Todos</option>
                   @if (!empty( $estadosCmbSearch))
                   @foreach($estadosCmbSearch as $item)
@@ -84,7 +84,7 @@
                   </div>
                 </div>
                 <div class="col-12  pt-1">
-                  <div class="form-check form-switch" data-tippy-content="Active la casilla si desea buscar por la fecha cuando se realizó la solicitud.">
+                  <div class="form-check form-switch" id="idFlgFecSearch{{rand(0, 1000)}}" data-tippy-content="{{$flgFechaSearch == 1 ? 'Desactive la casilla si desea buscar por la fecha de reserva':'Active la casilla si desea buscar por la fecha cuando se realizó la solicitud'}}">
                     <input class="form-check-input" id="flgFechaSearch" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
                     <label class="form-check-label" for="flgFechaSearch">Fecha Solicitud</label> 
                   </div>
