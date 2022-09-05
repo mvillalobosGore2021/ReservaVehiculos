@@ -290,7 +290,7 @@ class SolicitudesReserva extends Component
 
         if ($this->codEstadoSel == 3 && $this->flgNuevaReserva == false/*Modo modificacion*/) { //Estado 3 = Anular, no se validan los datos
             try {
-                DB::beginTransaction();                
+                DB::beginTransaction();
 
                 Reservavehiculo::where("idReserva",  $this->idReservaSel)->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
 
