@@ -101,7 +101,7 @@ class SolicitudesReserva extends Component
     }
 
     public function reservaSel($idReservaSel, $openModal)
-    {
+    {        
         $this->flgNuevaReserva = false;
         // dd($idReservaSel, $openModal);
         $reservaSel = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
@@ -283,7 +283,7 @@ class SolicitudesReserva extends Component
         return $reservaVehiculo;
     }
 
-    public function guardarReservaSel() 
+    public function guardarReservaSel()
     {
         $msjException = "";
 
@@ -375,7 +375,7 @@ class SolicitudesReserva extends Component
                 $user = User::where('id', '=', $this->idUserSel)->first();
 
                 $this->dispatchBrowserEvent('swal:information', [
-                    'icon' => 'error', //'info',
+                    'icon' => 'error', //'info', 
                     'title' => '<span class="fs-6 text-success" style="font-weight:450;">' . $user->name . ' <span class="fs-6 text-primary" style="font-weight:430;">ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.</span>',
                     //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
                     'timer' => '5000',
@@ -383,15 +383,20 @@ class SolicitudesReserva extends Component
 
                 $this->dispatchBrowserEvent('moveScrollModal');
             }  
-       
-        //Validar que el vehiculo no este asignado en otra reserva confirmada para el dia seleccionado   
-                 
+         else
+        //Validar que el vehiculo no este asignado en otra reserva confirmada para el dia seleccionado 
             if (!empty($this->validateEstadoConfirmar())) {
-                $this->flgError = true;
-                $this->addError('codVehiculoSel', 'El vehículo ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $flgError = true; 
+                $this->addError('codVehiculoSel', 'El vehículo '.$this->descripVehiculoValidate.' ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+
+                $this->dispatchBrowserEvent('swal:information', [
+                    'icon' => 'error', //'info',
+                    'title' => '<span class="fs-6 text-primary" style="font-weight:450;">El vehículo <span class="fs-6 text-success" style="font-weight:450;">' .$this->descripVehiculoValidate. '</span> <span class="fs-6 text-primary" style="font-weight:430;">ya se encuentra asignado a </span><span class="fs-6 text-success" style="font-weight:430;">'.$this->funcionarioValidate.'</span><span class="fs-6 text-primary" style="font-weight:430;"> en una reserva confirmada para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '</span>',
+                    //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
+                    'timer' => '5000',
+                ]);
             }
-           
- 
+            
             if ($flgError == false) {
                 try {
                     DB::beginTransaction();

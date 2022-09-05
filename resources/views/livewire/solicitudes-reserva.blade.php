@@ -89,11 +89,11 @@
                     <label class="form-check-label" for="flgFechaSearch">Fecha Solicitud</label> 
                   </div>
                 </div>
-                @error('fechaSearch')
+                <!-- @error('fechaSearch')
                 <div class="col-12  pt-1">
                   <span class="colorerror">{{ $message }}</span>
                 </div>
-                @enderror
+                @enderror -->
               </div>
             </div>
 
@@ -387,7 +387,7 @@
                       <!-- table-bordered -->
                       <thead>
                         <tr>
-                          <th scope="col" colspan="4" class="text-center text-success pb-3">
+                          <th scope="col" colspan="5" class="text-center text-success pb-3">
                             Reservas para el día {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
                           </th>
                         </tr>
@@ -416,7 +416,7 @@
                         @endforeach
                         @else
                         <tr>
-                          <td colspan="4">
+                          <td colspan="5">
                             <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
                               <span class="fs-4 pe-2 pe-md-3">
                                 <i class="bi bi-info-circle-fill"></i></span>
