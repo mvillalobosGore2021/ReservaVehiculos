@@ -256,7 +256,6 @@ class SolicitudesReserva extends Component
           } else  {
               $reservaVehiculo = Reservavehiculo::where("fechaSolicitud", "=", $this->fechaSolicitudSel)
               ->join("users", 'users.id', "=", "reservavehiculos.idUser") 
-              ->join("vehiculos", "vehiculos.codVehiculo", "=", "reservavehiculos.codVehiculo") 
               ->where("codEstado", "=", 2) //Estado 2 = Confirmar 
               ->where("idUser", "!=", $this->idUserSel)
               ->whereNotNull("codVehiculo")
@@ -391,7 +390,7 @@ class SolicitudesReserva extends Component
                 $this->flgError = true;
                 $this->addError('codVehiculoSel', 'El vehículo ya se encuentra asignado a '.$this->funcionarioValidate.' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
             }
-          
+           
  
             if ($flgError == false) {
                 try {
