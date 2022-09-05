@@ -204,7 +204,7 @@ class Reserva extends Component
 
             try {
               //Mail al postulante 
-                //Mail::to($this->correoUser)->send(new CorreoAnulacion($mailData));
+                Mail::to($this->correoUser)->send(new CorreoAnulacion($mailData));
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
                 throw $e;
@@ -219,7 +219,7 @@ class Reserva extends Component
             try {
                 foreach ($userAdmin as $item) { 
                     $emailAdmin = $item->email;
-                    //Mail::to($item->email)->send(new CorreoAnulacion($mailData));
+                    Mail::to($item->email)->send(new CorreoAnulacion($mailData));
                 }
             } catch (exception $e) {
                  $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
@@ -285,7 +285,7 @@ class Reserva extends Component
 
             try {
               //Mail al postulante 
-                //Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
+                Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
                 throw $e;
@@ -300,18 +300,15 @@ class Reserva extends Component
             try {
                 foreach ($userAdmin as $item) { 
                     $emailAdmin = $item->email;
-                    //Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
                 }
             } catch (exception $e) {
                  $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
                  throw $e;
             }
 
-
-
-
             DB::commit();
-            
+
             $this->getReservas();
 
             $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';

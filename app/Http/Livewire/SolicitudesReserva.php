@@ -307,7 +307,7 @@ class SolicitudesReserva extends Component
 
                 try {
                     //Mail al postulante 
-                    //Mail::to($this->emailSel)->send(new CorreoAnulacion($mailData));
+                    Mail::to($this->emailSel)->send(new CorreoAnulacion($mailData));
                 } catch (exception $e) {
                     $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
                     throw $e;
@@ -322,7 +322,7 @@ class SolicitudesReserva extends Component
                 try {
                     foreach ($userAdmin as $item) {
                         $emailAdmin = $item->email;
-                        //Mail::to($item->email)->send(new CorreoAnulacion($mailData));
+                        Mail::to($item->email)->send(new CorreoAnulacion($mailData));
                     }
                 } catch (exception $e) {
                     $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $emailAdmin . '</span>';
@@ -450,7 +450,7 @@ class SolicitudesReserva extends Component
 
                     try {
                         //Mail al postulante 
-                        // Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
+                        Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
                     } catch (exception $e) {
                         $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
                         throw $e;
@@ -465,7 +465,7 @@ class SolicitudesReserva extends Component
                     try {
                         foreach ($userAdmin as $item) {
                             $emailAdmin = $item->email;
-                            //Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                            Mail::to($item->email)->send(new CorreoNotificacion($mailData));
                         }
                     } catch (exception $e) {
                         $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">' . $emailAdmin . '</span>';
