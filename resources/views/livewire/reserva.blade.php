@@ -2,10 +2,10 @@
   <form>
     <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
-        Reserva de Vehiculos    
+        Reserva de Vehiculos
         <span class="d-block fst-italic text-secondary pt-1" style="font-size:15px;">
-               Fecha Actual: <i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse(now())->format('d/m/Y')}}
-        </span>     
+          Fecha Actual: <i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse(now())->format('d/m/Y')}}
+        </span>
       </div>
       <div class="card-body" id="card{{$randId}}">
         <input wire:model="mesSelStr" type="hidden">
@@ -19,7 +19,7 @@
           <span class="fs-4 pe-2 pe-md-3">
             <i class="bi bi-info-circle-fill"></i></span>
           <span class="fs-6 fst-italic pt-1">
-            Haga click sobre el día en el cuál desea realizar su reserva. El calendario se encuentran habilitado dentro de un rango de 60 días. 
+            Haga click sobre el día en el cuál desea realizar su reserva. El calendario se encuentran habilitado dentro de un rango de 60 días.
           </span>
         </div>
         <div class="table-responsive-sm mx-4 my-4">
@@ -115,7 +115,7 @@
         <!-- <input type="text" id="myInput" class="form-control"> -->
         <div class="row">
           <div class="col-12 col-md-6 ps-4">
-            <div class="row pb-md-1 text-success">             
+            <div class="row pb-md-1 text-success">
               <div class="col-12 pb-md-1">
                 <span class="text-primary">Funcionario:</span> {{$userName}}
               </div>
@@ -130,7 +130,7 @@
               <div class="col-12 pb-3 col-md-6 mt-md-0">
                 <div class="row">
                   <div class="col-12">
-                    <label>Hora Inicio Reserva</label>
+                    <label data-tippy-content="Hora estimada de inicio.">Hora Inicio Reserva</label>
                     <div class="input-group">
                       <span class="input-group-text">
                         <i class="bi bi-alarm"></i>
@@ -148,7 +148,7 @@
               <div class="col-12 col-md-6">
                 <div class="row">
                   <div class="col-12">
-                    <label data-tippy-content="Hora de regreso">Hora Fin Reserva</label>
+                    <label data-tippy-content="Hora estimada de regreso.">Hora Fin Reserva</label>
                     <div class="input-group">
                       <span class="input-group-text">
                         <i class="bi bi-alarm"></i>
@@ -164,6 +164,74 @@
                 </div>
               </div>
             </div>
+
+
+
+            <div class="row">
+              <div class="col-12 pb-3 col-md-6 mt-md-0">
+                <div class="row">
+                  <div class="col-12">
+                    <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
+                    <div class="input-group">
+                      <span class="input-group-text" id="cantPasajeros">
+                        <i class="bi bi-people"></i>
+                      </span>
+                      <input type="text" id="cantPasajeros" onkeydown="return onlyNumberKey(event, this);" maxlength="7" wire:model.debounce.500ms="cantPasajeros" wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                    </div>
+                  </div>
+                  @error('cantPasajeros')
+                  <div class="col-12 pb-1">
+                    <span class="colorerror">{{ $message }}</span>
+                  </div>
+                  @enderror
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="row">
+                  <div class="col-12">
+                    <label data-tippy-content="comuna destino.">Comuna destino</label>
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="bi bi-signpost-2"></i>
+                      </span>
+                      <select id="codComuna" wire:model="codComuna" wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-select">
+                        <option value="0">Sel. Destino</option>
+                        @foreach($comunasCmb as $itemComuna)
+                        <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  @error('codComuna')
+                  <div class="col-12 pb-1">
+                    <span class="colorerror">{{ $message }}</span>
+                  </div>
+                  @enderror
+                </div>
+              </div>
+            </div> 
+            <div class="row pt-3 pt-md-0 pb-3">
+              <div class="col-12">
+                <label>División</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-signpost-2"></i>
+                  </span>
+                  <select id="codDivision" wire:model="codDivision" wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-select">
+                    <option value="0">Sel.División</option>
+                    @foreach($divisionesCmb as $itemDivision)
+                    <option value="{{$itemDivision->codDivision}}">{{$itemComuna->nombreDivison}}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              @error('codDivision')
+              <div class="col-12">
+                <span class="colorerror">{{$message}}</span>
+              </div>
+              @enderror
+            </div>
+
             <div class="row pt-3 pt-md-0 pb-3">
               <div class="col-12">
                 <textarea id="motivo" @if($codEstado==3) readonly @endif data-tippy-content="Motivo de su viaje" wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
@@ -284,6 +352,25 @@
   // myModal.addEventListener('shown.bs.modal', () => {
   //   // myInput.focus() 
   // })
+
+  function onlyNumberKey(evt, obj) {
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
+    var flgAsciiNumberOK = false;
+
+    if (ASCIICode == 8 /*Borrar <-*/ || ASCIICode == 46 /*Supr*/ || ASCIICode == 37 /*Atras*/ || ASCIICode == 39 /*Adelante*/ || ASCIICode == 9 /*Tab*/ ) {
+      return true;
+    }
+
+    if (obj.value.length >= obj.maxLength) {
+      return false;
+    }
+
+    if ((ASCIICode > 47 && ASCIICode < 58) || (ASCIICode > 95 && ASCIICode < 106)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   window.addEventListener('swal:information', event => {
     const Toast = Swal.mixin({

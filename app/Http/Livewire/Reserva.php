@@ -8,6 +8,8 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Reservavehiculo;
 use App\Models\User;
+use App\Models\Comuna;
+use App\Models\Division;
 use App\Rules\HoraValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
@@ -23,9 +25,10 @@ class Reserva extends Component
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
-        $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado;
+        $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado, 
+        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb;
 
-    public $arrMonthDisplay;
+    public $arrMonthDisplay; 
 
     protected  $arrMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -42,6 +45,9 @@ class Reserva extends Component
         $this->correoUser = $user->email;
         $this->getCalendarMonth(Carbon::now()->month);
         $this->diasMesesAnt = 0;
+        $this->comunasCmb = Comuna::all();
+        $this->divisionesCmb = Division::all();
+        // dd($this->comunasCmb, $this->divisionesCmb);
     }
 
     public function calculoDespliegue60Dias() {
@@ -265,6 +271,9 @@ class Reserva extends Component
                     'fechaSolicitud' => Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'), // Carbon::parse($this->fechaModal)->format('Y/m/d'),
                     'horaInicio' => $this->horaInicio,
                     'horaFin' => $this->horaFin,
+                    'codComuna' => $this->codComuna,
+                    'codDivision' => $this->codDivision, 
+                    'cantPasajeros' => $this->cantPasajeros,
                     'motivo' => $this->motivo,
                     'codEstado' => 1, //Crear tabla con los estados: Pendiente, Confirmada
                     //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
