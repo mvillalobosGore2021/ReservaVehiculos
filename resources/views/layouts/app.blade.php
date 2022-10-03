@@ -104,11 +104,11 @@
     function movScrollModalById(id) {
         const modalBody = document.getElementById("modalBody"); 
                                
-        const element = document.querySelector(id);
+        const element = document.querySelector(id);  
         const topPos = element.getBoundingClientRect().top;
 
         modalBody.scrollTo({
-           top: topPos,
+           top: topPos-109,
            behavior: 'smooth'
         });
     }

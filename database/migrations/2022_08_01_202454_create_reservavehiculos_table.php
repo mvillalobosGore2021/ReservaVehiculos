@@ -20,7 +20,9 @@ class CreateReservavehiculosTable extends Migration
             $table->integer('idUserModificacion')->nullable();
             $table->integer('codVehiculo')->nullable();
             $table->integer('codComuna')->nullable();
-            $table->string('motivo', 500);
+            $table->integer('codDivision')->nullable();
+            $table->integer('cantPasajeros')->nullable();            
+            $table->string('motivo', 500); 
             $table->boolean('flgUsoVehiculoPersonal')->nullable();
             $table->date('fechaSolicitud');
             $table->time('horaInicio');

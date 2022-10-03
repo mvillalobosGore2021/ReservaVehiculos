@@ -46,8 +46,13 @@ class Reserva extends Component
         $this->getCalendarMonth(Carbon::now()->month);
         $this->diasMesesAnt = 0;
         $this->comunasCmb = Comuna::all();
-        $this->divisionesCmb = Division::all();
+        $this->divisionesCmb = Division::all(); 
         // dd($this->comunasCmb, $this->divisionesCmb);
+    }
+
+    public function render()
+    {
+        return view('livewire.reserva', compact(['reservasFechaColl' => $this->reservasFechaSel]));
     }
 
     public function calculoDespliegue60Dias() {
@@ -82,7 +87,7 @@ class Reserva extends Component
     public function getCalendarMonth($mesSel)
     {
         $this->calculoDespliegue60Dias();
-        $this->getReservas();
+        $this->getReservas();  
 
           $this->diasMesesAnt = 0;
         if ($this->arrMonthDisplay[$mesSel]['mes'] == last($this->arrMonthDisplay)['mes']) {
@@ -114,17 +119,22 @@ class Reserva extends Component
           ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addDays(60)->format('Y-m-d')])
           ->get();
 
-      //Tabla Hash con las reservas realizadas
+      //Tabla Hash (key=fechaSolicitud) con las reservas realizadas
         foreach ($reservas as $item) {
            $this->arrCantReservasCount = Arr::add($this->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
         }
     }
 
-    public function render()
-    {
-        return view('livewire.reserva', compact(['reservasFechaColl' => $this->reservasFechaSel]));
-    }
-   
+    
+    
+    // public function getReservasFechaSel($fechaSel) {
+    //     //Despliegue de reservas Tooltip onmouseover dia 
+    //     $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
+    //         ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
+    //         // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
+    //         ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
+    //         ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));        
+    // }
 
     public function setFechaModal($fechaSel)
     {
@@ -139,15 +149,15 @@ class Reserva extends Component
         //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
         $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
 
-        $this->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'flgUsoVehiculoPersonal']);
-        $this->resetValidation(['horaInicio', 'horaFin', 'motivo']);
-        $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo']);
+        $this->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
+        $this->resetValidation(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
 
         if (!empty($reservasFechaUser)) {
             $this->idReserva = $reservasFechaUser['idReserva'];
             $this->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $this->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
-            $this->codEstado = $reservasFechaUser['codEstado']; 
+            $this->codEstado = $reservasFechaUser['codEstado'];  
             $this->descripcionEstado = $reservasFechaUser['descripcionEstado']; 
             $this->motivo = $reservasFechaUser['motivo'];
             $this->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
@@ -230,7 +240,7 @@ class Reserva extends Component
             } catch (exception $e) {
                  $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
                  throw $e;
-            }       
+            }
        
         $this->dispatchBrowserEvent('swal:information', [
             'icon' => '', //'info',
@@ -272,7 +282,7 @@ class Reserva extends Component
                     'horaInicio' => $this->horaInicio,
                     'horaFin' => $this->horaFin,
                     'codComuna' => $this->codComuna,
-                    'codDivision' => $this->codDivision, 
+                    'codDivision' => $this->codDivision,
                     'cantPasajeros' => $this->cantPasajeros,
                     'motivo' => $this->motivo,
                     'codEstado' => 1, //Crear tabla con los estados: Pendiente, Confirmada
@@ -345,6 +355,9 @@ class Reserva extends Component
         return [
             'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],
+            'codDivision' => 'required',
+            'codComuna' => 'required',
+            'cantPasajeros' => 'required:gt:0',
             'motivo' => 'required:max:500',
         ];
     }

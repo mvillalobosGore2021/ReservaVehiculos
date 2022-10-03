@@ -6,6 +6,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+
 
 class CorreoAnulacion extends Mailable
 {
@@ -30,7 +32,13 @@ class CorreoAnulacion extends Mailable
      */
     public function build()
     {
+        Log::info("Enviando correo de anulacion");
         return $this->subject($this->mailData['asunto'])
         ->view('correoanulacion');
+
+        
+        
+
     }
+     
 }

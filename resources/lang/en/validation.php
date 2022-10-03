@@ -146,15 +146,15 @@ return [
             'rule-name' => 'custom-message',
         ],
 
-        'motivoSel' => [
+        'motivo*' => [
             'required' => 'Debe ingresar motivo de la reserva.',
             'max' => 'El largo máximo para el motivo es de :max caracteres.',
         ],
-        'horaInicioSel' => [
+        'horaInicio*' => [
             'required' => 'Debe ingresar hora inicio.',
             // 'date_format' => 'El formato de hora inicio no es válido.',
         ],
-        'horaFinSel' => [
+        'horaFin*' => [
             'required' => 'Debe ingresar hora fin.',
             // 'date_format' => 'El formato de hora fin no es válido.',
         ],
@@ -170,6 +170,16 @@ return [
         ],        
         'codVehiculoSel' => [
             'required' => 'Seleccione Vehículo.',
+        ],        
+        'cantPasajeros*' => [
+            'required' => 'Ingrese la cantidad de pasajeros.',
+            'gt' => 'Ingrese la cantidad de pasajeros.',
+        ],
+        'codDivision*' => [
+            'required' => 'Seleccione la división.',
+        ],
+        'codComuna*' => [
+            'required' => 'Seleccione comuna de destino.',
         ],
     ],
 

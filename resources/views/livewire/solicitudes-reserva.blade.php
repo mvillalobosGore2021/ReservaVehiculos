@@ -46,8 +46,8 @@
                 </span>
                 <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario que desea buscar" data-tippy-content="Ingrese el nombre del funcionario que desea buscar">
                 <span class="input-group-text bg-white" id="borrarNameSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
-                      <i class="bi bi-x-circle"></i>
-               </span>
+                  <i class="bi bi-x-circle"></i>
+                </span>
               </div>
             </div>
             <div class="col-12 col-md-3">
@@ -73,7 +73,7 @@
                 <div class="col-12">
                   <label>{{$flgFechaSearch == 1 ? 'Fecha Solicitud':'Fecha Reserva'}}</label>
                   <div class="input-group">
-                    <span class="input-group-text"> 
+                    <span class="input-group-text">
                       <i class="bi bi-calendar4"></i>
                     </span>
                     <input type="date" wire:model.debounce.500ms="fechaSearch" class="form-control" autocomplete="off">
@@ -85,7 +85,7 @@
                 <div class="col-12  pt-1">
                   <div class="form-check form-switch" id="idFlgFecSearch{{rand(0, 1000)}}" data-tippy-content="{{$flgFechaSearch == 1 ? 'Desactive la casilla si desea buscar por la fecha de reserva':'Active la casilla si desea buscar por la fecha cuando se realizó la solicitud'}}">
                     <input class="form-check-input" id="flgFechaSearch" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
-                    <label class="form-check-label" for="flgFechaSearch">Fecha Solicitud</label> 
+                    <label class="form-check-label" for="flgFechaSearch">Fecha Solicitud</label>
                   </div>
                 </div>
                 <!-- @error('fechaSearch')
@@ -144,7 +144,7 @@
             </tr>
           </thead>
           <tbody>
-            @if(!empty($reservasTotales) && count($reservasTotales) > 0) 
+            @if(!empty($reservasTotales) && count($reservasTotales) > 0)
             @foreach($reservasTotales as $item)
             <tr style="height:55px;cursor:pointer;" id="td{{$loop->index}}{{rand(0, 100)}}" wire:click="reservaSel('{{$item->idReserva}}', '1')" data-tippy-content="Click para editar">
               <td nowrap class="ps-4">{{ $item->name}}</td>
@@ -215,14 +215,15 @@
 
             <div class="modal-body" id="modalBody">
               <!-- <input type="text" id="myInput" class="form-control"> -->
+              @php($flgError = false)
               <div class="row">
                 <div class="col-12 col-md-6 ps-4">
                   <div class="row mb-2">
                     <div class="col-12">
                       <div class="row">
                         <div class="col-12" id="inputFunc">
-                        <label>Funcionario(a)</label>
-                          @if ($flgNuevaReserva == true)                        
+                          <label>Funcionario(a)</label>
+                          @if ($flgNuevaReserva == true)
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-person"></i>
@@ -234,15 +235,21 @@
                               <option value="{{$item->id}}">{{$item->name}}</option>
                               @endforeach
                               @endif
-                            </select> 
+                            </select>
                           </div>
                           @else
-                             <input type="hidden" wire:model="idUserSel">
-                             <span class="text-success">{{$nameSel}}</span>
+                          <input type="hidden" wire:model="idUserSel">
+                          <span class="text-success">{{$nameSel}}</span>
                           @endif
                         </div>
                         @error('idUserSel')
                         <div class="col-12" id="idUserSelError">
+                        @if($flgError == false)
+                          <script>
+                            movScrollModalById('#inputFunc');
+                          </script>
+                          @php($flgError = true)
+                          @endif
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
@@ -251,7 +258,7 @@
                     </div>
                   </div>
                   <div class="row mb-2">
-                    <div class="col-12 col-md-5">
+                    <div class="col-12 col-md-5" id="fechaSolicitudId">
                       <input type="hidden" wire:model="idReservaSel">
                       <div class="row">
                         <div class="col-12">
@@ -265,6 +272,12 @@
                         </div>
                         @error('fechaSolicitudSel')
                         <div class="col-12">
+                        @if($flgError == false)
+                          <script>
+                            movScrollModalById('#fechaSolicitudId');
+                          </script>
+                          @php($flgError = true)
+                          @endif
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
@@ -272,7 +285,7 @@
                     </div>
                     <div class="col-12 col-md-6 mt-2 mt-md-0">
                       <div class="row">
-                        <div class="col-12">
+                        <div class="col-12" id="codEstadoId">
                           <label>Estado Reserva</label>
                           <div class="input-group">
                             <span class="input-group-text">
@@ -291,6 +304,12 @@
                         </div>
                         @error('codEstadoSel')
                         <div class="col-12">
+                        @if($flgError == false)
+                          <script>
+                            movScrollModalById('#codEstadoId');
+                          </script>
+                          @php($flgError = true)
+                          @endif
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
@@ -300,7 +319,7 @@
                   <div class="row">
                     <div class="col-12 pb-2 col-md-5 mt-md-0">
                       <div class="row">
-                        <div class="col-12">
+                        <div class="col-12" id="horaInicioId">
                           <label>Hora Inicio Reserva</label>
                           <div class="input-group">
                             <span class="input-group-text">
@@ -311,6 +330,12 @@
                         </div>
                         @error('horaInicioSel')
                         <div class="col-12 pb-1">
+                          @if($flgError == false)
+                          <script>
+                            movScrollModalById('#horaInicioId');
+                          </script>
+                          @php($flgError = true)
+                          @endif
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
@@ -318,7 +343,7 @@
                     </div>
                     <div class="col-12 col-md-6">
                       <div class="row">
-                        <div class="col-12">
+                        <div class="col-12" id="horaFinId">
                           <label data-tippy-content="Hora estimada de regreso">Hora Fin Reserva</label>
                           <div class="input-group">
                             <span class="input-group-text">
@@ -329,14 +354,20 @@
                         </div>
                         @error('horaFinSel')
                         <div class="col-12 pb-1">
+                          @if($flgError == false)
+                          <script>
+                            movScrollModalById('#horaFinId');
+                          </script>
+                          @php($flgError = true)
+                          @endif
                           <span class="colorerror">{{ $message }}</span>
                         </div>
                         @enderror
                       </div>
                     </div>
                   </div>
-                  <div class="row mb-3">
-                    <div class="col-12">
+                  <div class="row pb-2">
+                    <div class="col-12" id="codVehiculoId">
                       <label>Vehículo Asignado</label>
                       <div class="input-group">
                         <span class="input-group-text">
@@ -354,21 +385,119 @@
                     </div>
                     @error('codVehiculoSel')
                     <div class="col-12 pb-1">
+                      @if($flgError == false)
+                          <script>
+                            movScrollModalById('#codVehiculoId');
+                          </script>
+                        @php($flgError = true)
+                      @endif
                       <span class="colorerror">{{ $message }}</span>
                     </div>
                     @enderror
                   </div>
-                  <div class="row pt-3 pt-md-0 pb-3">
-                    <div class="col-12">
-                      <textarea wire:model.debounce.250ms="motivoSel" onclick="movScrollModalById('#usoVehiculoHead')" wire:loading.attr="disabled" wire:target="guardarReservaSel" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
+
+                  <div class="row">
+                    <div class="col-12 pb-2 col-md-6 mt-md-0">
+                      <div class="row">
+                        <div class="col-12" id="cantPasajerosId">
+                          <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
+                          <div class="input-group">
+                            <span class="input-group-text" id="cantPasajeros">
+                              <i class="bi bi-people"></i>
+                            </span>
+                            <input type="text" id="cantPasajeros" @if($codEstadoSel==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajerosSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                          </div>
+                        </div>
+                        @error('cantPasajerosSel')
+                        <div class="col-12 pb-1">
+                          @if($flgError == false)
+                          <script>
+                            movScrollModalById('#cantPasajerosId');
+                          </script>
+                          @php($flgError = true)
+                          @endif
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
                     </div>
-                    @error('motivoSel')
+                    <div class="col-12 col-md-6">
+                      <div class="row">
+                        <div class="col-12" id="codComunaId">
+                          <label>Comuna destino</label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="bi bi-signpost-2"></i>
+                            </span>
+                            <select id="codComuna" wire:model="codComunaSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                              <option value="">Sel. Comuna destino</option>
+                              @foreach($comunasCmb as $itemComuna)
+                              <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        @error('codComunaSel')
+                        <div class="col-12 pb-1">
+                          @if($flgError == false)
+                          <script>
+                            movScrollModalById('#codComunaId');
+                          </script>
+                          @php($flgError = true)
+                          @endif
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row pt-2 pt-md-0 pb-2" id="divisionId">
                     <div class="col-12">
+                      <label>División</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="bi bi-signpost-2"></i>
+                        </span>
+                        <select id="codDivision" wire:model="codDivisionSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                          <option value="">Sel.División</option>
+                          @foreach($divisionesCmb as $itemDivision)
+                          <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                    </div>
+                    @error('codDivisionSel')
+                    <div class="col-12">
+                      @if($flgError == false)
+                      <script>
+                        movScrollModalById('#divisionId');
+                      </script>
+                      @php($flgError = true)
+                      @endif
                       <span class="colorerror">{{$message}}</span>
                     </div>
                     @enderror
                   </div>
-                  <div class="row">
+
+                  <div class="row pt-3 pt-md-0 pb-3">
+                    <div class="col-12" id="motivoId">
+                      <label>Motivo del viaje</label>
+                      <textarea wire:model.debounce.250ms="motivoSel" onclick="movScrollModalById('#usoVehiculoHead')" wire:loading.attr="disabled" wire:target="guardarReservaSel" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
+                    </div>
+                    @error('motivoSel')
+                    <div class="col-12">
+                    @if($flgError == false)
+                      <script>
+                        movScrollModalById('#motivoId');
+                      </script>
+                      @php($flgError = true)
+                      @endif
+                      <span class="colorerror">{{$message}}</span>
+                    </div>
+                    @enderror
+                  </div>
+                  <!-- <div class="row">
                     <div class="col-12" id="usoVehiculoHead">
                       <div class="form-check form-switch" data-tippy-content="Proponer uso de vehiculo personal con devolución del costo por gastos de combustible y peajes.">
                         <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
@@ -377,7 +506,7 @@
                         <input wire:model.debounce.500ms="flgUsoVehiculoPersSel" class="form-check-input" wire:loading.attr="disabled" wire:target="guardarReservaSel" type="checkbox" id="flgUsoVehiculoPersonal">
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
 
                 <div class="col-12 col-md-6 pt-3 pt-md-1">

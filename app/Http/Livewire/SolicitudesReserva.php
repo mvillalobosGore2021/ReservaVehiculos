@@ -7,6 +7,8 @@ use App\Models\Reservavehiculo;
 use App\Models\Estado;
 use App\Models\Vehiculo;
 use App\Models\User;
+use App\Models\Comuna;
+use App\Models\Division;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +31,8 @@ class SolicitudesReserva extends Component
 
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
-        $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate;
+        $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate,
+        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb;
 
     public Collection $inputsTable;
 
@@ -37,7 +40,6 @@ class SolicitudesReserva extends Component
 
     public function mount()
     {
-
         $this->userList = User::orderBy('name')->get();
         // $this->estadosCmb = Estado::where('codEstado', '>', 1)->get();
         // Ver por que se pierden los datos del combo estado y el de funcionarios no al crear una nueva reserva
@@ -46,6 +48,8 @@ class SolicitudesReserva extends Component
         $this->usernameLog = $user->name;
         $this->fechaSearch = "";
         $this->flgValidateConfirmar = false;
+        $this->comunasCmb = Comuna::all();
+        $this->divisionesCmb = Division::all();
     }
 
     public function render()
@@ -101,7 +105,7 @@ class SolicitudesReserva extends Component
     }
 
     public function reservaSel($idReservaSel, $openModal)
-    {        
+    {
         $this->flgNuevaReserva = false;
         // dd($idReservaSel, $openModal);
         $reservaSel = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
@@ -205,8 +209,6 @@ class SolicitudesReserva extends Component
                 }
             }
         }
-
-
         
         if ($field == 'codEstadoSel' || $field == 'codVehiculoSel' || 'fechaSolicitudSel') {
             // dd($this->flgValidateConfirmar);
@@ -235,9 +237,9 @@ class SolicitudesReserva extends Component
 
     public function resetCamposModal()
     {
-        $this->reset(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel']);
-        $this->resetValidation(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel']);
-        $this->resetErrorBag(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel']);
+        $this->reset(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
+        $this->resetValidation(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
+        $this->resetErrorBag(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
     }
 
     protected function validateEstadoConfirmar()
@@ -245,7 +247,7 @@ class SolicitudesReserva extends Component
         $countReg = 0;
         $reservaVehiculo = null;
 
-        if (!empty($this->fechaSolicitudSel) && !empty($this->codEstadoSel) && $this->codEstadoSel == 2 && !empty($this->codVehiculoSel)) {
+        if (!empty($this->fechaSolicitudSel) && !empty($this->codEstadoSel) && $this->codEstadoSel == 2 /*Confirmada*/&& !empty($this->codVehiculoSel)) {
           
           if ($this->flgNuevaReserva == true) {
             $reservaVehiculo = Reservavehiculo::where("fechaSolicitud", "=", $this->fechaSolicitudSel)
@@ -265,7 +267,7 @@ class SolicitudesReserva extends Component
             // $this->funcionarioValidate = !empty($reservaVehiculo) ? $reservaVehiculo->name:""; 
 
               // dd($reservaVehiculo->toSql());
-              $this->funcionarioValidate = ""; 
+              $this->funcionarioValidate = "";
               $this->descripVehiculoValidate = "";
   
               if (!empty($reservaVehiculo)) {
@@ -291,7 +293,8 @@ class SolicitudesReserva extends Component
             try {
                 DB::beginTransaction();
 
-                Reservavehiculo::where("idReserva",  $this->idReservaSel)->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
+                Reservavehiculo::where("idReserva",  $this->idReservaSel)
+                ->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
 
                 //Envío de correo 
                 $mailData = [
@@ -415,6 +418,9 @@ class SolicitudesReserva extends Component
                         'motivo' => $this->motivoSel,
                         'codEstado' => $this->codEstadoSel,
                         'codVehiculo' => $this->codVehiculoSel,
+                        'codDivisionSel' => $this->codDivisionSel,
+                        'codComunaSel' => $this->codComunaSel,
+                        'cantPasajerosSel' => $this->cantPasajerosSel,
                         //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
                     ];
 
@@ -429,12 +435,11 @@ class SolicitudesReserva extends Component
                     if ($this->codEstadoSel == 2) { //Si el estado es Confirmar se agrega la fecha de confirmacion 
                         $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'fechaConfirmacion', now());
                     }
-
-                   // dd("Reservavehiculo::updateOrCreate", $this->idReservaSel);
+                  
                     $reservaVehiculo = Reservavehiculo::updateOrCreate(
                         ['idReserva' => $this->idReservaSel],
                         $camposReservaVehiculoArr
-                    );
+                    );       
 
                     //Envío de correo
                     $mailData = [
@@ -510,9 +515,13 @@ class SolicitudesReserva extends Component
             'codEstadoSel' => 'required',
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
+            'codDivisionSel' => 'required',
+            'codComunaSel' => 'required',
+            'cantPasajerosSel' => 'required:gt:0',
             'motivoSel' => 'required:max:500',
             'codVehiculoSel' => 'required',
         ];
+
 
         // if ($this->flgNuevaReserva == true) {
         //     $rulesReserva = Arr::add($rulesReserva, 'idUserSel', 'required');
