@@ -48,12 +48,19 @@ class NotificacionReservaCron extends Command
         try {
             Log::info("Enviando correo Try ". Carbon::now()->format('d/m/Y H:i'));
            
-            $data = array('name'=>"Virat Gandhi");
+            // $data = array('name'=>"Virat Gandhi");
    
-            Mail::send(['text'=>'mail'], $data, function($message) {
-               $message->to('villalobosmario@gmail.com', 'Tutorials Point')->subject
-                  ('Laravel Basic Testing Mail');
-               $message->from('villalobosmario@gmail.com','Virat Gandhi');
+            // Mail::send(['text'=>'mail'], $data, function($message) {
+            //    $message->to('villalobosmario@gmail.com', 'Tutorials Point')->subject
+            //       ('Laravel Basic Testing Mail');
+            //    $message->from('villalobosmario@gmail.com','Virat Gandhi');
+            // });
+
+
+            Mail::send("correonotifreserva", ['funcionario'=>'Oscar Cruces', 'fecha' => Carbon::now()->format('d/m/Y H:i')], function ($message) {
+                $message->to('villalobosmario@gmail.com', 'Notificación Reserva')->subject
+                  ('Probando Cron Job Notificación Reserva');
+               $message->from('villalobosmario@gmail.com','Notificación Reserva');
             });
         } catch (exception $e) {
             Log::info("Enviando correo Catch ". Carbon::now()->format('d/m/Y H:i'));

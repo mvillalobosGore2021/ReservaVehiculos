@@ -209,7 +209,6 @@
                   Cargando...
                 </div>
               </div>
-
               <button type="button" class="btn-close" onclick="ocultarModal()"></button>
             </div>
 
@@ -376,9 +375,9 @@
                         <select wire:model="codVehiculoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
                           <option value="">Sel.Vehículo</option>
                           @if (!empty( $cmbVehiculos))
-                          @foreach($cmbVehiculos as $item)
-                          <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
-                          @endforeach
+                            @foreach($cmbVehiculos as $item)
+                              <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
+                            @endforeach
                           @endif
                         </select>
                       </div>

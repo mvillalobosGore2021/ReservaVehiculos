@@ -1,15 +1,17 @@
 <?php
 
 namespace App\Http\Livewire;
-
+use App\Classes\PruebaServices;
 use Livewire\Component;
 use Illuminate\Support\Carbon;
+use App\Classes\ReservaServices;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Reservavehiculo;
 use App\Models\User;
 use App\Models\Comuna;
 use App\Models\Division;
+use App\Tools\SomeExampleClass;
 use App\Rules\HoraValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
@@ -26,9 +28,9 @@ class Reserva extends Component
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
         $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado, 
-        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb;
+        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay; 
 
-    public $arrMonthDisplay; 
+    protected $reservaService;
 
     protected  $arrMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -46,8 +48,12 @@ class Reserva extends Component
         $this->getCalendarMonth(Carbon::now()->month);
         $this->diasMesesAnt = 0;
         $this->comunasCmb = Comuna::all();
-        $this->divisionesCmb = Division::all(); 
-        // dd($this->comunasCmb, $this->divisionesCmb);
+        $this->divisionesCmb = Division::all();
+        $this->reservaService = new ReservaServices();
+        // dd($this->comunasCmb, $this->divisionesCmb);        
+        // dd(SomeExampleClass::someFunction());
+        //$pruebaService = new PruebaServices();
+        //dd($pruebaService->saludo());
     }
 
     public function render()
@@ -136,35 +142,10 @@ class Reserva extends Component
     //         ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));        
     // }
 
-    public function setFechaModal($fechaSel)
-    {
-        $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
-        
-        $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
-            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-            // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
-            ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
-            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
-
-        //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
-        $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
-
-        $this->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
-        $this->resetValidation(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-        $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-
-        if (!empty($reservasFechaUser)) {
-            $this->idReserva = $reservasFechaUser['idReserva'];
-            $this->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
-            $this->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
-            $this->codEstado = $reservasFechaUser['codEstado'];  
-            $this->descripcionEstado = $reservasFechaUser['descripcionEstado']; 
-            $this->motivo = $reservasFechaUser['motivo'];
-            $this->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
-        }
-
-        $this->dispatchBrowserEvent('showModal');
-    }
+    public function setFechaModal($fechaSel) {
+       $reservaService = new ReservaServices();
+       $reservaService->setFechaModal($fechaSel, $this);
+   }
 
     public function updated($field)
     {
@@ -190,164 +171,19 @@ class Reserva extends Component
     // }
 
 
-    public function confirmAnularReserva() {
-            $this->dispatchBrowserEvent('swal:confirm', [
-                'type' => 'warning',
-                'title' => 'Anulación de Reserva',
-                'text' => '¿Está seguro(a) que desea Anular su reserva?',                
-            ]);
+    public function confirmAnularReserva() { 
+        $reservaService = new ReservaServices();
+        $reservaService->confirmAnularReserva($this);
     }
 
-    public function anularReserva() {    
-        $msjException = "";
-      try {
-
-        DB::beginTransaction();
-
-        Reservavehiculo::where("idReserva",  $this->idReserva)->update(["codEstado" => 3]);//Estado 3 = Anular
-      
-        //Envío de correo
-             $mailData = [
-                'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
-                'titulo' => "Su reserva ha sido anulada",
-                'funcionario' => $this->userName,
-                'fechaReserva' => $this->fechaModal,
-                'fechaAnulacion' => Carbon::now()->format('d/m/Y'),
-                'horaInicio' => $this->horaInicio,
-                'horaFin' => $this->horaFin,
-                'usaVehiculoPersonal' => $this->flgUsoVehiculoPersonal == 0?'No':'Si',
-            ];
-
-            try {
-              //Mail al postulante 
-                Mail::to($this->correoUser)->send(new CorreoAnulacion($mailData));
-            } catch (exception $e) {
-                $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
-                throw $e;
-            }
-
-            $userAdmin = User::where('flgAdmin', '=', 1)->get();  
-
-            $mailData['titulo'] =  "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio";
-            $mailData['asunto'] = $this->userName. " Ha anulado su reserva";
-
-            $emailAdmin = "";
-            try {
-                foreach ($userAdmin as $item) { 
-                    $emailAdmin = $item->email;
-                    Mail::to($item->email)->send(new CorreoAnulacion($mailData));
-                }
-            } catch (exception $e) {
-                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
-                 throw $e;
-            }
-       
-        $this->dispatchBrowserEvent('swal:information', [
-            'icon' => '', //'info',
-            'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">Su reserva ha sido anulada y notificada con exito.</span>',
-        ]);
-
-        $this->dispatchBrowserEvent('closeModal');
-
-        DB::commit();
-
-      } catch(exception $e) {
-        DB::rollBack();
-            $this->dispatchBrowserEvent('swal:information', [
-                'icon' => 'error', //'info',
-                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">No fue posible anular su reserva. ' . $msjException . '</span>',
-            ]);
-
-        session()->flash('exceptionMessage', $e->getMessage());
-      }
+    public function anularReserva() {
+        $reservaService = new ReservaServices();
+        $reservaService->anularReserva($this);
     }
 
-    public function solicitarReserva()
-    {
-        // dd($this->horaInicio, $this->horaFin);
-        $this->validate($this->getArrRules());
-        $msjException = "";
-        try {
-            DB::beginTransaction();
-            // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
-            $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
-
-            $reservaVehiculo =  Reservavehiculo::updateOrCreate(
-                ['idReserva' => $this->idReserva],
-                [
-                    'idUser' => $this->idUser,
-                    'prioridad' => $prioridad,
-                    'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersonal,
-                    'fechaSolicitud' => Carbon::createFromFormat('d/m/Y', $this->fechaModal)->format('Y-m-d'), // Carbon::parse($this->fechaModal)->format('Y/m/d'),
-                    'horaInicio' => $this->horaInicio,
-                    'horaFin' => $this->horaFin,
-                    'codComuna' => $this->codComuna,
-                    'codDivision' => $this->codDivision,
-                    'cantPasajeros' => $this->cantPasajeros,
-                    'motivo' => $this->motivo,
-                    'codEstado' => 1, //Crear tabla con los estados: Pendiente, Confirmada
-                    //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
-                ]
-            );
-
-             //Envío de correo
-              $mailData = [
-                'asunto' => ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo" : "Reserva de Vehículo")." - Gobierno Regional del Bio Bio",
-                'titulo' => $this->idReserva > 0 ? "Resumen modificación de Reserva" : "Resumen de su Reserva",
-                'funcionario' => $this->userName,
-                'fechaReserva' => $this->fechaModal,
-                'horaInicio' => $this->horaInicio,
-                'horaFin' => $this->horaFin,
-                'usaVehiculoPersonal' => $this->flgUsoVehiculoPersonal == 0?'No':'Si',
-                'motivo' => $this->motivo,
-            ];
-
-            try {
-              //Mail al postulante 
-                Mail::to($this->correoUser)->send(new CorreoNotificacion($mailData));
-            } catch (exception $e) {
-                $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$this->correoUser.'</span>';
-                throw $e;
-            }
-
-            $userAdmin = User::where('flgAdmin', '=', 1)->get();  
-
-            $mailData['titulo'] =  $this->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
-            $mailData['asunto'] = ($this->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$this->userName;
-
-            $emailAdmin = "";
-            try {
-                foreach ($userAdmin as $item) { 
-                    $emailAdmin = $item->email;
-                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
-                }
-            } catch (exception $e) {
-                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
-                 throw $e;
-            }
-
-            DB::commit();
-
-            $this->getReservas();
-
-            $mensaje = $this->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
-
-            $this->dispatchBrowserEvent('swal:information', [
-                'icon' => '', //'info',
-                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">' . $mensaje . '</span>',
-            ]);
-
-            $this->dispatchBrowserEvent('closeModal');
-        } catch (exception $e) {
-            DB::rollBack();
-            if (strlen($msjException) > 0) {
-                $this->dispatchBrowserEvent('swal:information', [
-                    'icon' => 'error', //'info',
-                    'title' => '<span class="fs-6 text-primary" style="font-weight:430;">No fue posible procesar su solicitud. ' . $msjException . '</span>',
-                ]);
-            }
-            session()->flash('exceptionMessage', $e->getMessage());
-        }
+    public function solicitarReserva()  {
+        $reservaService = new ReservaServices();
+        $reservaService->solicitarReserva($this);
     }
 
     public function getArrRules()

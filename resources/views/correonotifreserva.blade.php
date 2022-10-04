@@ -1,0 +1,1 @@
+<h1>Notificación Reserva de Vehiculo</h1> Funcionario: {{$funcionario}}  Fecha: {{$fecha}}
