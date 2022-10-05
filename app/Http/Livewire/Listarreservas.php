@@ -18,14 +18,18 @@ class Listarreservas extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $userName, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, $descripcionEstado,
-    $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb;
+    $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
+    $correoUser, $arrCantReservasCount;
+
+    protected $listeners = ['anularReserva'];
 
     public function mount() {
         $user = Auth::user();
         $this->userName = $user->name;
         $this->idUser = $user->id;
-        $this->comunasCmb = Comuna::all();
-        $this->divisionesCmb = Division::all();
+        $this->correoUser = $user->email;
+        $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();
+        $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
        // $this->consultarRerservasUser();
     }
     
@@ -44,39 +48,24 @@ class Listarreservas extends Component
         return view('livewire.listarreservas', compact('reservasUsuario'));
     }
 
-    public function callSetFechaModal($fechaSel) {
-         $reservaService = new ReservaServices();
-        //dd($pruebaService->saludo());
+    public function setFechaModal($fechaSel)  {
+        $reservaService = new ReservaServices();
         $reservaService->setFechaModal($fechaSel, $this);
     }
 
-    public function setFechaModal($fechaSel)  {
-        $this->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
-        
-        $this->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
-            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-            // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $this->fechaModal)
-            ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
-            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
+    public function confirmAnularReserva() {
+        $reservaService = new ReservaServices();
+        $reservaService->confirmAnularReserva($this);
+    }
 
-        //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
-        $reservasFechaUser = $this->reservasFechaSel->where('idUser', '=', $this->idUser)->first();
+    public function anularReserva() {
+        $reservaService = new ReservaServices(); 
+        $reservaService->anularReserva($this);
+    }
 
-        $this->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
-        $this->resetValidation(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-        $this->resetErrorBag(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-
-        if (!empty($reservasFechaUser)) {
-            $this->idReserva = $reservasFechaUser['idReserva'];
-            $this->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
-            $this->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
-            $this->codEstado = $reservasFechaUser['codEstado'];  
-            $this->descripcionEstado = $reservasFechaUser['descripcionEstado']; 
-            $this->motivo = $reservasFechaUser['motivo'];
-            $this->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
-        }       
-
-        $this->dispatchBrowserEvent('showModal');
+    public function solicitarReserva()  {
+        $reservaService = new ReservaServices();
+        $reservaService->solicitarReserva($this);
     }
 
     // public function consultarRerservasUser() {

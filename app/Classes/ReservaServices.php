@@ -55,11 +55,17 @@ class ReservaServices {
             $objInput->idReserva = $reservasFechaUser['idReserva'];
             $objInput->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $objInput->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
-            $objInput->codEstado = $reservasFechaUser['codEstado'];  
-            $objInput->descripcionEstado = $reservasFechaUser['descripcionEstado']; 
+            $objInput->codEstado = $reservasFechaUser['codEstado'];
+            $objInput->descripcionEstado = $reservasFechaUser['descripcionEstado'];
+            $objInput->codComuna = $reservasFechaUser['codComuna'];
+            $objInput->codDivision = $reservasFechaUser['codDivision'];
+            $objInput->cantPasajeros = $reservasFechaUser['cantPasajeros'];
             $objInput->motivo = $reservasFechaUser['motivo'];
             $objInput->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
         }       
+
+      //Listado de reservas realizadas por otros funcionarios para el el dia seleccionado
+        $objInput->reservasFechaSel = $objInput->reservasFechaSel->where('idUser', '!=', $objInput->idUser);
 
         $objInput->dispatchBrowserEvent('showModal');
     }
@@ -73,7 +79,7 @@ public function confirmAnularReserva($objInput) {
         ]);
 }
 
-public function anularReserva($objInput) {    
+public function anularReserva($objInput) {
     $msjException = "";
   try {
     DB::beginTransaction();
@@ -138,7 +144,7 @@ public function anularReserva($objInput) {
 
 public function solicitarReserva($objInput) {
         // dd($objInput->horaInicio, $objInput->horaFin);
-        $objInput->validate($objInput->getArrRules());
+        $objInput->validate($this->getArrRules());
         $msjException = "";
         try {
             DB::beginTransaction();
@@ -201,7 +207,7 @@ public function solicitarReserva($objInput) {
 
             DB::commit();
 
-            $objInput->getReservas();
+            $this->getReservas($objInput);  
 
             $mensaje = $objInput->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
 
@@ -221,8 +227,19 @@ public function solicitarReserva($objInput) {
             }
             session()->flash('exceptionMessage', $e->getMessage());
         }
+        
+    }  
+
+    public function getArrRules()
+    {
+        return [
+            'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],
+            'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],
+            'codDivision' => 'required',
+            'codComuna' => 'required',
+            'cantPasajeros' => 'required:gt:0',
+            'motivo' => 'required:max:500',
+        ];
     }
-
-
 
 }

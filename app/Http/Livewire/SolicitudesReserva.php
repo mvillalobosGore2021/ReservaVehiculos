@@ -48,8 +48,8 @@ class SolicitudesReserva extends Component
         $this->usernameLog = $user->name;
         $this->fechaSearch = "";
         $this->flgValidateConfirmar = false;
-        $this->comunasCmb = Comuna::all();
-        $this->divisionesCmb = Division::all();
+        $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();
+        $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
     }
 
     public function render()
@@ -126,6 +126,9 @@ class SolicitudesReserva extends Component
         $this->descripEstadoSel = $reservaSel->descripcionEstado;
         $this->codEstadoSel = $reservaSel->codEstado;
         $this->codVehiculoSel = $reservaSel->codVehiculo;
+        $this->codComunaSel = $reservaSel->codComuna;
+        $this->codDivisionSel = $reservaSel->codDivision;
+        $this->cantPasajerosSel = $reservaSel->cantPasajeros;
 
         // //Lista de reservas realizadas el mismo dia de la reserva seleccionada
         // $this->reservasFechaSelPaso = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
@@ -137,9 +140,9 @@ class SolicitudesReserva extends Component
         if ($openModal == 1) {
             $this->dispatchBrowserEvent('showModal');
         }
-
-        $this->resetValidation(['fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel']);
-        $this->resetErrorBag(['fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel']);
+                                                                                         
+        $this->resetValidation(['fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
+        $this->resetErrorBag(['fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
     }
 
     public function setFechaHoySearch($flgSearchHoy)

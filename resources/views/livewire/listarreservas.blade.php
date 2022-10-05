@@ -32,7 +32,7 @@
               <tbody>
                 @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
                 @foreach($reservasUsuario as $item)
-                <tr class="text-center" style="cursor:pointer;" wire:click="callSetFechaModal('{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d-m-Y')}}')">
+                <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d-m-Y')}}')">
                   <td class="ps-4">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
                   <td>{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
                   <td>{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>
@@ -75,7 +75,7 @@
         <div class="modal-content">
           <div class="modal-header bg-light">
             <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">@if ($idReserva < 1) Ingrese los @endif Datos de Su Reserva</h5>
-                <button type="button" id="btnIconClose" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva"></button>
+                <button type="button" id="btnIconClose" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva"></button>
           </div>
           <div class="modal-body" id="modalBody">
             <!-- <input type="text" id="myInput" class="form-control"> -->
@@ -102,7 +102,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" id="horaInicio" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
+                          <input type="time" id="horaInicio" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
                         </div>
                       </div>
                       @error('horaInicio')
@@ -126,7 +126,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" id="horaFin" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
+                          <input type="time" id="horaFin" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
                         </div>
                       </div>
                       @error('horaFin')
@@ -150,10 +150,10 @@
                       <div class="col-12" id="cantPasajerosId">
                         <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
                         <div class="input-group">
-                          <span class="input-group-text" id="cantPasajeros">
+                          <span class="input-group-text">
                             <i class="bi bi-people"></i>
                           </span>
-                          <input type="text" id="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajeros" wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                          <input type="text" id="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajeros" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
                         </div>
                       </div>
                       @error('cantPasajeros')
@@ -177,7 +177,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-signpost-2"></i>
                           </span>
-                          <select id="codComuna" wire:model="codComuna" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-select">
+                          <select id="codComuna" wire:model="codComuna" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
                             <option value="">Sel. Comuna destino</option>
                             @foreach($comunasCmb as $itemComuna)
                             <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
@@ -204,15 +204,16 @@
                     <label>División</label>
                     <div class="input-group">
                       <span class="input-group-text">
-                        <i class="bi bi-signpost-2"></i>
+                      <i class="bi bi-list-ul"></i>
                       </span>
-                      <select id="codDivision" wire:model="codDivision" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-select">
+                                                                                                          
+                      <select id="codDivision" wire:model="codDivision" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
                         <option value="">Sel.División</option>
                         @foreach($divisionesCmb as $itemDivision)
                         <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
                         @endforeach
                       </select>
-                    </div>
+                    </div> 
                   </div>
                   @error('codDivision')
                   <div class="col-12">
@@ -229,7 +230,7 @@
                 <div class="row pt-md-0 pb-3">
                   <div class="col-12" id="motivoId">
                     <label>Motivo del viaje</label>
-                    <textarea id="motivo" @if($codEstado==3) readonly @endif wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" onclick="movScrollModalById('#motivoId')" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
+                    <textarea id="motivo" @if($codEstado==3) readonly @endif wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" onclick="movScrollModalById('#motivoId')" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
                   </div>
                   @error('motivo')
                   <div class="col-12">
@@ -249,7 +250,7 @@
                   <label class="form-check-label text-secondary" style="font-style:italic;" for="flgUsoVehiculoPersonal">
                     Usar Vehiculo Personal con Devolución de Combustible y Peajes.
                   </label>
-                  <input id="flgUsoVehiculoPersonal" @if($codEstado==3) disabled @endif wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" type="checkbox">
+                  <input id="flgUsoVehiculoPersonal" @if($codEstado==3) disabled @endif wire:model.debounce.500ms="flgUsoVehiculoPersonal" class="form-check-input" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" type="checkbox">
                 </div>
               </div>
             </div> -->
@@ -262,7 +263,7 @@
                     <thead>
                       <tr>
                         <th scope="col" colspan="4" class="text-center text-success pb-3">
-                          Reservas realizadas para el día {{$fechaModal}}
+                          <span class="text-primary">Reservas realizadas por otros funcionarios para el día seleccionado:</span> {{$fechaModal}}
                           <input type="hidden" wire:model="fechaModal">
                         </th>
                       </tr>
@@ -292,9 +293,10 @@
                         <td colspan="4">
                           <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
                             <span class="fs-4 pe-2 pe-md-3">
-                              <i class="bi bi-info-circle-fill"></i></span>
+                              <i class="bi bi-info-circle-fill"></i>
+                            </span>
                             <span class="fs-6 fst-italic pt-1">
-                              No existen reservas para el día seleccionado
+                               No existen reservas realizadas por otros funcionarios para el día seleccionado.
                             </span>
                           </div>
                         </td>
@@ -323,13 +325,13 @@
             </div>
           </div>
           <div class="modal-footer bg-light pe-5">
-            <button type="button" id="btnCerrar" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+            <button type="button" id="btnCerrar" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva">
               Cerrar <i class="bi bi-x-lg"></i>
             </button>
-            <button type="button" id="btnSolicitarReserva" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+            <button type="button" id="btnSolicitarReserva" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva">
               {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
-              <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
-              <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
+              <span wire:loading.remove wire:target="solicitarReserva,anularReserva"><i class="bi bi-send pt-1"></i></span>
+              <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva,anularReserva" role="status" aria-hidden="true"></span>
             </button>
             @if($idReserva > 0)
             <button type="button" class="btn btn-danger" @if($codEstado==3) disabled @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
@@ -347,20 +349,113 @@
 
   </form>
   <script>
-    const container = document.getElementById("modalReserva");
-    const modal = new bootstrap.Modal(container);
+  // const myModal = document.getElementById('modalReserva')
+  // // const myInput = document.getElementById('myInput')
+  // myModal.addEventListener('shown.bs.modal', () => {
+  //   // myInput.focus() 
+  // })
 
-    window.addEventListener('showModal', event => {
-      modal.show();
-    });
+  function onlyNumberKey(evt, obj) {
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
+    var flgAsciiNumberOK = false;
 
-    window.addEventListener('closeModal', event => {
-      modal.hide();
-    });
-
-    function ocultarModal() {
-      //myModal2.show();
-      modal.hide();
+    if (ASCIICode == 8 /*Borrar <-*/ || ASCIICode == 46 /*Supr*/ || ASCIICode == 37 /*Atras*/ || ASCIICode == 39 /*Adelante*/ || ASCIICode == 9 /*Tab*/ ) {
+      return true;
     }
-  </script>
+
+    if (obj.value.length >= obj.maxLength) {
+      return false;
+    }
+
+    if ((ASCIICode > 47 && ASCIICode < 58) || (ASCIICode > 95 && ASCIICode < 106)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  window.addEventListener('swal:information', event => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 6000,
+      timerProgressBar: false,
+      showCloseButton: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+
+    Toast.fire({
+      icon: event.detail.icon,
+      title: event.detail.title,
+      html: event.detail.mensaje,
+    })
+  });
+
+  window.addEventListener('swal:confirm', event => {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-primary m-2',
+        cancelButton: 'btn btn-danger m-2'
+      },
+      buttonsStyling: false
+    })
+
+    swalWithBootstrapButtons.fire({
+      title: event.detail.title,
+      html: event.detail.text,
+      icon: 'warning',
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.livewire.emit('anularReserva');
+      }
+    })
+  });
+
+  document.addEventListener('livewire:load', () => {
+    window.livewire.on('anularReserva', () => {
+      var element = document.getElementById("spinnerAnularReserva");
+      var element2 = document.getElementById("anularIcon");
+      element.classList.add("spinner-border");
+      element.classList.add("spinner-border-sm"); 
+      element2.classList.add("d-none");
+      document.getElementById("btnCerrar").disabled = true;
+      document.getElementById("btnIconClose").disabled = true;
+      document.getElementById("btnSolicitarReserva").disabled = true;
+      document.getElementById("btnAnularReserva").disabled = true;
+      document.getElementById("horaInicio").disabled = true;
+      document.getElementById("horaFin").disabled = true;
+      document.getElementById("motivo").disabled = true;
+      document.getElementById("codComuna").disabled = true;
+      document.getElementById("codDivision").disabled = true;
+      document.getElementById("cantPasajeros").disabled = true; 
+      // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
+    });
+  });
+
+
+  const container = document.getElementById("modalReserva");
+  const modal = new bootstrap.Modal(container);
+
+  window.addEventListener('showModal', event => {
+    modal.show();
+  });
+
+  window.addEventListener('closeModal', event => {
+    modal.hide();
+  });
+
+  function ocultarModal() {
+    //myModal2.show();
+    modal.hide();
+  }
+</script>
 </div>

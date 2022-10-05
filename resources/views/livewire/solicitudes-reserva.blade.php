@@ -401,7 +401,7 @@
                         <div class="col-12" id="cantPasajerosId">
                           <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
                           <div class="input-group">
-                            <span class="input-group-text" id="cantPasajeros">
+                            <span class="input-group-text">
                               <i class="bi bi-people"></i>
                             </span>
                             <input type="text" id="cantPasajeros" @if($codEstadoSel==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajerosSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
@@ -456,7 +456,7 @@
                       <label>División</label>
                       <div class="input-group">
                         <span class="input-group-text">
-                          <i class="bi bi-signpost-2"></i>
+                          <i class="bi bi-list-ul"></i>
                         </span>
                         <select id="codDivision" wire:model="codDivisionSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
                           <option value="">Sel.División</option>
@@ -515,7 +515,7 @@
                       <thead>
                         <tr>
                           <th scope="col" colspan="5" class="text-center text-success pb-3">
-                            Reservas para el día {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
+                            Reservas realizadas para el día {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}
                           </th>
                         </tr>
                         <tr>

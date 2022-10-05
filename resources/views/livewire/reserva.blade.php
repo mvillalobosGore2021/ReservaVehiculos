@@ -180,10 +180,10 @@
                   <div class="col-12" id="cantPasajerosId">
                     <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
                     <div class="input-group">
-                      <span class="input-group-text" id="cantPasajeros">
+                      <span class="input-group-text">
                         <i class="bi bi-people"></i>
                       </span>
-                      <input type="text" id="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajeros" wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                      <input type="text" id="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajeros" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
                     </div>
                   </div>
                   @error('cantPasajeros')
@@ -205,7 +205,7 @@
                       <span class="input-group-text">
                         <i class="bi bi-signpost-2"></i>
                       </span>
-                      <select id="codComuna" wire:model="codComuna" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-select">
+                      <select id="codComuna" wire:model="codComuna" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
                         <option value="">Sel. Comuna destino</option>
                         @foreach($comunasCmb as $itemComuna)
                           <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
@@ -230,9 +230,9 @@
                 <label>División</label>
                 <div class="input-group">
                   <span class="input-group-text">
-                    <i class="bi bi-signpost-2"></i>
+                    <i class="bi bi-list-ul"></i>
                   </span>
-                  <select id="codDivision" wire:model="codDivision" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva" class="form-select">
+                  <select id="codDivision" wire:model="codDivision" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
                     <option value="">Sel.División</option>
                     @foreach($divisionesCmb as $itemDivision)
                       <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
@@ -242,7 +242,7 @@
               </div>
               @error('codDivision')
               <div class="col-12">
-                @if($flgError == false)
+                @if($flgError == false) 
                   <script>movScrollModalById('#divisionId');</script>
                   @php($flgError = true)
                 @endif                
@@ -284,7 +284,7 @@
                 <thead>
                   <tr>
                     <th scope="col" colspan="4" class="text-center text-success pb-3">
-                      Reservas realizadas para el día {{$fechaModal}}
+                      <span class="text-primary">Reservas realizadas por otros funcionarios para el día seleccionado:</span> {{$fechaModal}}
                       <input type="hidden" wire:model="fechaModal">
                     </th>
                   </tr>
@@ -316,7 +316,7 @@
                         <span class="fs-4 pe-2 pe-md-3">
                           <i class="bi bi-info-circle-fill"></i></span>
                         <span class="fs-6 fst-italic pt-1">
-                          No existen reservas para el día seleccionado
+                          No existen reservas realizadas por otros funcionarios para el día seleccionado.
                         </span>
                       </div>
                     </td>
@@ -350,8 +350,8 @@
         </button>
         <button type="button" id="btnSolicitarReserva" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
           {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
-          <span wire:loading.remove wire:target="solicitarReserva"><i class="bi bi-send pt-1"></i></span>
-          <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva" role="status" aria-hidden="true"></span>
+          <span wire:loading.remove wire:target="solicitarReserva, anularReserva"><i class="bi bi-send pt-1"></i></span>
+          <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva, anularReserva" role="status" aria-hidden="true"></span>
         </button>
         @if($idReserva > 0)
         <button type="button" class="btn btn-danger" @if($codEstado==3) disabled @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
@@ -446,7 +446,7 @@
       var element = document.getElementById("spinnerAnularReserva");
       var element2 = document.getElementById("anularIcon");
       element.classList.add("spinner-border");
-      element.classList.add("spinner-border-sm");
+      element.classList.add("spinner-border-sm"); 
       element2.classList.add("d-none");
       document.getElementById("btnCerrar").disabled = true;
       document.getElementById("btnIconClose").disabled = true;
@@ -454,8 +454,11 @@
       document.getElementById("btnAnularReserva").disabled = true;
       document.getElementById("horaInicio").disabled = true;
       document.getElementById("horaFin").disabled = true;
-      document.getElementById("motivo").disabled = true;
-      document.getElementById("flgUsoVehiculoPersonal").disabled = true;
+      document.getElementById("motivo").disabled = true;      
+      document.getElementById("codComuna").disabled = true;
+      document.getElementById("codDivision").disabled = true;
+      document.getElementById("cantPasajeros").disabled = true;
+      // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
     });
   });
 

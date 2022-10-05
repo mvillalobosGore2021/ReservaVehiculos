@@ -25,7 +25,7 @@ class Reserva extends Component
     public $horaInicio, $horaFin, $firstDayMonth, $lastDayMonth, $cantDaysMonth,
         $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto,
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
-        $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel1, $reservasFechaSel,
+        $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
         $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado, 
         $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay; 
@@ -47,8 +47,8 @@ class Reserva extends Component
         $this->correoUser = $user->email;
         $this->getCalendarMonth(Carbon::now()->month);
         $this->diasMesesAnt = 0;
-        $this->comunasCmb = Comuna::all();
-        $this->divisionesCmb = Division::all();
+        $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();
+        $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
         $this->reservaService = new ReservaServices();
         // dd($this->comunasCmb, $this->divisionesCmb);        
         // dd(SomeExampleClass::someFunction());
@@ -118,20 +118,9 @@ class Reserva extends Component
 
     public function getReservas()
     {
-    //Se obtienen las reservas para un rango de 60 dias a contar de la fecha actual 
-      $this->dayNow = Carbon::now()->format('d')*1;
-      $reservas = Reservavehiculo::groupBy('fechaSolicitud')
-          ->selectRaw('count(*) as cantReservas, fechaSolicitud')
-          ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addDays(60)->format('Y-m-d')])
-          ->get();
-
-      //Tabla Hash (key=fechaSolicitud) con las reservas realizadas
-        foreach ($reservas as $item) {
-           $this->arrCantReservasCount = Arr::add($this->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
-        }
-    }
-
-    
+        $reservaService = new ReservaServices();
+        $reservaService->getReservas($this);
+    }     
     
     // public function getReservasFechaSel($fechaSel) {
     //     //Despliegue de reservas Tooltip onmouseover dia 
@@ -160,7 +149,9 @@ class Reserva extends Component
         //    $this->resetErrorBag($field);
         //}
 
-        $this->validateOnly($field, $this->getArrRules());
+        $reservaService = new ReservaServices();
+
+        $this->validateOnly($field, $reservaService->getArrRules());
     }
 
 
@@ -171,30 +162,18 @@ class Reserva extends Component
     // }
 
 
-    public function confirmAnularReserva() { 
+    public function confirmAnularReserva() {
         $reservaService = new ReservaServices();
         $reservaService->confirmAnularReserva($this);
     }
 
     public function anularReserva() {
-        $reservaService = new ReservaServices();
+        $reservaService = new ReservaServices(); 
         $reservaService->anularReserva($this);
     }
 
     public function solicitarReserva()  {
         $reservaService = new ReservaServices();
         $reservaService->solicitarReserva($this);
-    }
-
-    public function getArrRules()
-    {
-        return [
-            'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],
-            'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],
-            'codDivision' => 'required',
-            'codComuna' => 'required',
-            'cantPasajeros' => 'required:gt:0',
-            'motivo' => 'required:max:500',
-        ];
     }
 }
