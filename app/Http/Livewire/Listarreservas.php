@@ -33,7 +33,7 @@ class Listarreservas extends Component
        // $this->consultarRerservasUser();
     }
     
-    public function render() 
+    public function render()
     {   //Se obtienen las reservas para un rango de tres meses
          $reservasUsuario = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
           ->select('reservavehiculos.*', 'estados.descripcionEstado')

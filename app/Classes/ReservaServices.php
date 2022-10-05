@@ -7,13 +7,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\Comuna;
-use App\Models\Division;
-use App\Tools\SomeExampleClass;
 use App\Rules\HoraValidator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 use App\Mail\CorreoNotificacion;
 use App\Mail\CorreoAnulacion;
@@ -207,7 +202,7 @@ public function solicitarReserva($objInput) {
 
             DB::commit();
 
-            $this->getReservas($objInput);  
+            $this->getReservas($objInput);
 
             $mensaje = $objInput->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
 
@@ -228,7 +223,7 @@ public function solicitarReserva($objInput) {
             session()->flash('exceptionMessage', $e->getMessage());
         }
         
-    }  
+    }
 
     public function getArrRules()
     {

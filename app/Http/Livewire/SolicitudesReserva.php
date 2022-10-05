@@ -65,7 +65,6 @@ class SolicitudesReserva extends Component
             $sqlFechaSearch = "reservavehiculos.fechaSolicitud like '%" . $this->fechaSearch . "%'";
         }
 
-
         //Se obtienen las reservas para un rango de dos meses
         $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
             ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
