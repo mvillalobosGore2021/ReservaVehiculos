@@ -12,6 +12,7 @@ use App\Rules\HoraValidator;
 use Illuminate\Support\Arr;
 use App\Mail\CorreoNotificacion;
 use App\Mail\CorreoAnulacion;
+use Illuminate\Support\Collection;
 
 class ReservaServices {
 
@@ -25,19 +26,31 @@ class ReservaServices {
           ->get();
 
       //Tabla Hash (key=fechaSolicitud) con las reservas realizadas
+      $objInput->arrCantReservasCount = new Collection();  
         foreach ($reservas as $item) {
-           $objInput->arrCantReservasCount = Arr::add($objInput->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
+            $reservasFechaItem = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
+            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
+            ->join('comunas', 'reservavehiculos.codComuna', '=', 'comunas.codComuna', 'left outer')
+            ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($item['fechaSolicitud'])->format('d/m/Y'))->format('Y-m-d'))
+            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'comunas.nombreComuna'])); 
+
+            // $objInput->arrCantReservasCount =  Arr::add($objInput->arrCantReservasCount, $item['fechaSolicitud'], $item['cantReservas']);
+                   
+            $objInput->arrCantReservasCount->add(['fechaSolicitud' =>  $item['fechaSolicitud'], 'cantReservas' => $item['cantReservas'], 'reservasFechaItem' => $reservasFechaItem]);
         }
+
+        $objInput->arrCantReservasCount = $objInput->arrCantReservasCount->keyBy('fechaSolicitud');
     }
  
     public function setFechaModal($fechaSel, $objInput)  {
-        $objInput->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
-        
+        $objInput->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');            
+
         $objInput->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-            // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $objInput->fechaModal)
+            ->join('comunas', 'reservavehiculos.codComuna', '=', 'comunas.codComuna', 'left outer') 
+            // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $objInput->fechaModal) 
             ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
-            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado']));
+            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'comunas.nombreComuna']));
 
         //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
         $reservasFechaUser = $objInput->reservasFechaSel->where('idUser', '=', $objInput->idUser)->first();
@@ -236,5 +249,4 @@ public function solicitarReserva($objInput) {
             'motivo' => 'required:max:500',
         ];
     }
-
 }

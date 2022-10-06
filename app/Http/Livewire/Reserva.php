@@ -93,7 +93,8 @@ class Reserva extends Component
     public function getCalendarMonth($mesSel)
     {
         $this->calculoDespliegue60Dias();
-        $this->getReservas();  
+        $reservaService = new ReservaServices();
+        $reservaService->getReservas($this);
 
           $this->diasMesesAnt = 0;
         if ($this->arrMonthDisplay[$mesSel]['mes'] == last($this->arrMonthDisplay)['mes']) {
@@ -114,13 +115,7 @@ class Reserva extends Component
         $this->cantDaysMonth = $itemMesSel['cantDiasMes'];
         $this->firstDayMonth = $itemMesSel['primerDiaSemana']; 
         $this->lastDayMonth = $itemMesSel['ultimoDiaSemana'];
-    }
-
-    public function getReservas()
-    {
-        $reservaService = new ReservaServices();
-        $reservaService->getReservas($this);
-    }     
+    } 
     
     // public function getReservasFechaSel($fechaSel) {
     //     //Despliegue de reservas Tooltip onmouseover dia 

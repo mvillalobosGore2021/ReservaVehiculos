@@ -177,7 +177,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-signpost-2"></i>
                           </span>
-                          <select id="codComuna" wire:model="codComuna" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
+                          <select id="codComuna" wire:model="codComuna" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
                             <option value="">Sel. Comuna destino</option>
                             @foreach($comunasCmb as $itemComuna)
                             <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
@@ -207,7 +207,7 @@
                       <i class="bi bi-list-ul"></i>
                       </span>
                                                                                                           
-                      <select id="codDivision" wire:model="codDivision" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
+                      <select id="codDivision" wire:model="codDivision" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
                         <option value="">Sel.División</option>
                         @foreach($divisionesCmb as $itemDivision)
                         <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
@@ -262,7 +262,7 @@
                     <!-- table-bordered -->
                     <thead>
                       <tr>
-                        <th scope="col" colspan="4" class="text-center text-success pb-3">
+                        <th scope="col" colspan="5" class="text-center text-success pb-3">
                           <span class="text-primary">Reservas realizadas por otros funcionarios para el día seleccionado:</span> {{$fechaModal}}
                           <input type="hidden" wire:model="fechaModal">
                         </th>
@@ -271,6 +271,7 @@
                         <th scope="col">Nombre</th>
                         <th scope="col">Hora Inicio</th>
                         <th scope="col">Hora Fin</th>
+                        <th scope="col">Destino</th>
                         <th scope="col">Estado</th>
                       </tr>
                     </thead>
@@ -278,19 +279,20 @@
                       @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                       @foreach($reservasFechaSel as $index => $item)
                       <tr>
-                        <td>{{$item['name']}}</td>
-                        <td>
+                        <td nowrap>{{$item['name']}}</td>
+                        <td nowrap>
                           {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
                         </td>
-                        <td>
+                        <td nowrap>
                           {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
                         </td>
-                        <td>{{$item['descripcionEstado']}}</td>
+                        <td nowrap>{{$item['nombreComuna']}}</td>
+                        <td nowrap>{{$item['descripcionEstado']}}</td>
                       </tr>
                       @endforeach
                       @else
                       <tr>
-                        <td colspan="4">
+                        <td colspan="5">
                           <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
                             <span class="fs-4 pe-2 pe-md-3">
                               <i class="bi bi-info-circle-fill"></i>

@@ -210,4 +210,16 @@
       max-height: var(--max-height);
     }
 
+    .classTippy {
+      color:#0B5ED7;
+    }
+
+    .classTippy2 {
+      color:white;
+    }
+    
+    .tippy-box[data-theme~='tablereservas'] {
+      background-color: #EBF7FE; 
+      /* color: #21293C; */
+    }
     

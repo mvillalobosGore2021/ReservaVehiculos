@@ -71,18 +71,20 @@
                 @php($flgPrintDay = 1)
                 @endif
 
-                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" data-tippy-content="Click para solicitar reserva el día {{$countDay}} de {{$mesSelStr}}" @endif>
-                    <span class="pt-1 d-block">
-                      {{$countDay}}
-                    </span>
-                    <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
-                      @php($fechaKeyArr = \Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
-                      @if (!empty($arrCantReservasCount[$fechaKeyArr]))
-                      {{$arrCantReservasCount[$fechaKeyArr]}} {{$arrCantReservasCount[$fechaKeyArr] > 1 ? 'Reservas':'Reserva'}}
-                      @else
-                      &nbsp;&nbsp;&nbsp;
-                      @endif
-                    </span>
+
+                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
+                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar su solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif>
+                      <span class="pt-1 d-block">
+                        {{$countDay}}
+                      </span>
+                      <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
+
+                        @if (!empty($arrCantReservasCount[$fechaKeyArr]))
+                        {{$arrCantReservasCount[$fechaKeyArr]['cantReservas']}} {{$arrCantReservasCount[$fechaKeyArr]['cantReservas'] > 1 ? 'Reservas':'Reserva'}}                       
+                        @else
+                        &nbsp;&nbsp;&nbsp;
+                        @endif
+                      </span>
         </div>
         </td>
 
@@ -109,7 +111,7 @@
     <div class="modal-content">
       <div class="modal-header bg-light">
         <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">@if ($idReserva < 1) Ingrese los @endif Datos de Su Reserva</h5>
-            <button type="button" id="btnIconClose" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva"></button>
+            <button type="button" id="btnIconClose" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva"></button>
       </div>
       <div class="modal-body" id="modalBody">
         <!-- <input type="text" id="myInput" class="form-control"> -->
@@ -139,11 +141,13 @@
                       <input type="time" id="horaInicio" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
                     </div>
                   </div>
-                  @error('horaInicio') 
-                  <div class="col-12 pb-1">                 
+                  @error('horaInicio')
+                  <div class="col-12 pb-1">
                     @if($flgError == false)
-                      <script>movScrollModalById('#horaInicioId');</script>
-                      @php($flgError = true)
+                    <script>
+                      movScrollModalById('#horaInicioId');
+                    </script>
+                    @php($flgError = true)
                     @endif
                     <span class="colorerror">{{ $message }}</span>
                   </div>
@@ -161,11 +165,13 @@
                       <input type="time" id="horaFin" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
                     </div>
                   </div>
-                  @error('horaFin') 
+                  @error('horaFin')
                   <div class="col-12 pb-1">
                     @if($flgError == false)
-                      <script>movScrollModalById('#horaFinId');</script>
-                      @php($flgError = true)
+                    <script>
+                      movScrollModalById('#horaFinId');
+                    </script>
+                    @php($flgError = true)
                     @endif
                     <span class="colorerror">{{ $message }}</span>
                   </div>
@@ -188,9 +194,11 @@
                   </div>
                   @error('cantPasajeros')
                   <div class="col-12 pb-1">
-                    @if($flgError == false)                  
-                      <script>movScrollModalById('#cantPasajerosId');</script>
-                      @php($flgError = true)
+                    @if($flgError == false)
+                    <script>
+                      movScrollModalById('#cantPasajerosId');
+                    </script>
+                    @php($flgError = true)
                     @endif
                     <span class="colorerror">{{ $message }}</span>
                   </div>
@@ -205,10 +213,10 @@
                       <span class="input-group-text">
                         <i class="bi bi-signpost-2"></i>
                       </span>
-                      <select id="codComuna" wire:model="codComuna" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
+                      <select id="codComuna" wire:model="codComuna" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
                         <option value="">Sel. Comuna destino</option>
                         @foreach($comunasCmb as $itemComuna)
-                          <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
+                        <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
                         @endforeach
                       </select>
                     </div>
@@ -216,52 +224,58 @@
                   @error('codComuna')
                   <div class="col-12 pb-1">
                     @if($flgError == false)
-                      <script>movScrollModalById('#codComunaId');</script>
-                      @php($flgError = true)
+                    <script>
+                      movScrollModalById('#codComunaId');
+                    </script>
+                    @php($flgError = true)
                     @endif
                     <span class="colorerror">{{ $message }}</span>
                   </div>
                   @enderror
                 </div>
               </div>
-            </div> 
+            </div>
             <div class="row pt-2 pt-md-0 pb-2" id="divisionId">
-              <div class="col-12"> 
+              <div class="col-12">
                 <label>División</label>
                 <div class="input-group">
                   <span class="input-group-text">
                     <i class="bi bi-list-ul"></i>
                   </span>
-                  <select id="codDivision" wire:model="codDivision" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
+                  <select id="codDivision" wire:model="codDivision" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
                     <option value="">Sel.División</option>
                     @foreach($divisionesCmb as $itemDivision)
-                      <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
+                    <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
               @error('codDivision')
               <div class="col-12">
-                @if($flgError == false) 
-                  <script>movScrollModalById('#divisionId');</script>
-                  @php($flgError = true)
-                @endif                
+                @if($flgError == false)
+                <script>
+                  movScrollModalById('#divisionId');
+                </script>
+                @php($flgError = true)
+                @endif
                 <span class="colorerror">{{$message}}</span>
               </div>
               @enderror
             </div>
-            <div class="row pt-md-0 pb-3"> 
+            <div class="row pt-md-0 pb-3">
               <div class="col-12" id="motivoId">
-              <label>Motivo del viaje</label>
+                <label>Motivo del viaje</label>
                 <textarea id="motivo" @if($codEstado==3) readonly @endif wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" onclick="movScrollModalById('#motivoId')" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
-              </div> 
+              </div>
               @error('motivo')
               <div class="col-12">
-              @if($flgError == false)
-                  <script>movScrollModalById('#motivoId');</script>
-                  @php($flgError = true)
-                @endif  
-                <span class="colorerror">{{$message}}</span> 
+                @if($flgError == false)
+                <script>
+                  movScrollModalById('#motivoId');
+                </script>
+                @php($flgError = true)
+                @endif
+                <span class="colorerror">{{$message}}</span>
               </div>
               @enderror
             </div>
@@ -292,6 +306,7 @@
                     <th scope="col">Nombre</th>
                     <th scope="col">Hora Inicio</th>
                     <th scope="col">Hora Fin</th>
+                    <th scope="col">Destino</th>
                     <th scope="col">Estado</th>
                   </tr>
                 </thead>
@@ -299,14 +314,15 @@
                   @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                   @foreach($reservasFechaSel as $index => $item)
                   <tr>
-                    <td>{{$item['name']}}</td>
-                    <td>
+                    <td nowrap>{{$item['name']}}</td>
+                    <td nowrap>
                       {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
                     </td>
-                    <td>
+                    <td nowrap>
                       {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
                     </td>
-                    <td>{{$item['descripcionEstado']}}</td>
+                    <td nowrap>{{$item['nombreComuna']}}</td>
+                    <td nowrap>{{$item['descripcionEstado']}}</td>
                   </tr>
                   @endforeach
                   @else
@@ -366,6 +382,38 @@
   </div>
 </div>
 <!-- Fin Modal -->
+
+<!-- Inicio Tooltip Reservas realizadas para el día seleccionado  -->
+@if (!empty($arrCantReservasCount))
+<div style="display:none">
+  @foreach($arrCantReservasCount as $index => $itemReserva)
+  <div id="td{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('Ymd')}}">
+    <table class="table">
+      <tr> 
+        <td colspan="3" class="fst-italic"> 
+         <span class="text-primary">Haga Click sobre el recuadro para ingresar su solicitud de reserva el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
+         <span style="display:block;padding-top: 10px;">Solicitudes realizadas para el día: <span class="fw-bolder">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
+        </td>
+      </tr>
+      <tr>
+        <th nowrap>Funcionario</th>
+        <th nowrap>Destino</th>
+        <th nowrap>Estado</th>
+      </tr>
+
+      @foreach($itemReserva['reservasFechaItem'] as $itemReservasFecha)
+      <tr>
+        <td nowrap>{{$itemReservasFecha['name']}}</td>
+        <td nowrap>{{$itemReservasFecha['nombreComuna']}}</td>
+        <td nowrap>{{$itemReservasFecha['descripcionEstado']}}</td>
+      </tr>
+      @endforeach
+    </table>
+  </div>
+  @endforeach
+</div>
+@endif
+<!-- Fin Tooltip Reservas realizadas para el día seleccionado -->
 </form>
 
 
@@ -446,7 +494,7 @@
       var element = document.getElementById("spinnerAnularReserva");
       var element2 = document.getElementById("anularIcon");
       element.classList.add("spinner-border");
-      element.classList.add("spinner-border-sm"); 
+      element.classList.add("spinner-border-sm");
       element2.classList.add("d-none");
       document.getElementById("btnCerrar").disabled = true;
       document.getElementById("btnIconClose").disabled = true;
@@ -454,7 +502,7 @@
       document.getElementById("btnAnularReserva").disabled = true;
       document.getElementById("horaInicio").disabled = true;
       document.getElementById("horaFin").disabled = true;
-      document.getElementById("motivo").disabled = true;      
+      document.getElementById("motivo").disabled = true;
       document.getElementById("codComuna").disabled = true;
       document.getElementById("codDivision").disabled = true;
       document.getElementById("cantPasajeros").disabled = true;
@@ -478,6 +526,35 @@
     //myModal2.show();
     modal.hide();
   }
+
+  tippy('.btnClass', {
+    content(reference) {
+      const id = reference.getAttribute('data-template');
+      const template = document.getElementById(id);
+      return template.innerHTML;
+    },
+    allowHTML: true,
+    touch: true, //Toolstips para moviles
+    animation: 'scale-extreme',
+    placement: 'bottom',
+    duration: 450, //Tiempo que se demora el despliegue
+    delay: 500, //Tiempo que se demora en aparecer
+  });
+  
+  tippy('.classTippy', {
+    content(reference) {
+      const id = reference.getAttribute('data-template');
+      const template = document.getElementById(id);
+      return template.innerHTML;
+    },
+    theme: 'tablereservas',
+    allowHTML: true,
+    touch: true, //Toolstips para moviles
+    animation: 'scale-extreme',
+    placement: 'bottom',
+    duration: 450, //Tiempo que se demora el despliegue
+    delay: 500, //Tiempo que se demora en aparecer
+  });
 </script>
 
 </div>
