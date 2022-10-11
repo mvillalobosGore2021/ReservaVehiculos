@@ -209,9 +209,8 @@
                   Cargando...
                 </div>
               </div>
-              <button type="button" class="btn-close" onclick="ocultarModal()"></button>
+              <button type="button" id="btnIconClose" class="btn-close" onclick="ocultarModal()" wire:loading.attr="disabled" wire:target="guardarReservaSel"></button>
             </div>
-
             <div class="modal-body" id="modalBody">
               <!-- <input type="text" id="myInput" class="form-control"> -->
               @php($flgError = false)

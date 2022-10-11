@@ -28,7 +28,7 @@ class CreateReservavehiculosTable extends Migration
             $table->time('horaInicio');
             $table->time('horaFin');
             $table->dateTime('fechaConfirmacion')->nullable();
-            $table->integer('codEstado');          
+            $table->integer('codEstado')->default(1);/*No Confirmada*/          
             $table->integer('prioridad');   
             $table->timestamps();
         });

@@ -220,6 +220,14 @@
     
     .tippy-box[data-theme~='tablereservas'] {
       background-color: #EBF7FE; 
-      /* color: #21293C; */
+      color: #21293C;
     }
     
+    .tippy-box[data-animation='rotate'][data-state='hidden'] {
+      opacity: 0;
+      transform: rotate(90deg);
+    }
+
+    .tippy-box[data-inertia][data-state='visible'] {
+      transition-timing-function: cubic-bezier(0.1, 0.7, 1.0, 0.1);
+    }

@@ -1,5 +1,78 @@
 <div>
   <form>
+
+  <center>
+  <table width="640">
+    <tr>      
+      <td colspan="2" style="margin:0px;padding:0px;">
+        <x-encabezadocorreo/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <hr>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding-top:10px;padding-bottom:10px;color:#3980BB" align="center">
+        <h3>Ingreso de Reserva</h3>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" height="15">
+        <hr>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-left:25px;width:165px;color:#282D33;" colspan="2"><b>Funcionario:</b> <span style="color:#746873">Mario Villalobos Pedrero</span></td>
+    
+    </tr>
+    <tr>
+      <td style="padding-left:25px;"><b>Fecha Creación:</b></td>
+      <td>11-10-2022</td>
+    </tr>
+    <tr>
+      <td style="padding-left:25px;"><b>Fecha Reserva:</b></td>
+      <td>11-10-2022</td>
+    </tr>
+    <tr>
+      <td style="padding-left:25px;"><b>Hora Inicio:</b></td>
+      <td>12:00</td>
+    </tr>
+    <tr>
+      <td style="padding-left:25px;"><b>Hora Fin:</b></td>
+      <td>12:00</td>
+    </tr>   
+    <tr>
+      <td style="padding-left:25px;"><b>Estado:</b></td>
+      <td>JJJJJJJJ</td>
+    </tr> 
+    <tr>
+      <td style="padding-left:25px;"><b>Motivo:</b></td>
+      <td>Motivo del viaje</td>
+    </tr>
+    <tr>     
+
+    <td colspan="2" style="padding-top:50px;">
+        <x-piedepaginacorreo/>
+    </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <hr>
+        <br>
+        <center style="padding-top: 35px;padding-bottom: 10px;">
+           © {{ \Carbon\Carbon::parse(Carbon\Carbon::now())->format('Y')}} Reserva de Vehículos - Desarrollo Interno Unidad de Informática.
+        </center>
+        <center style="padding-bottom: 35px;">Gobierno Regional del Biobío - Avenida Prat 525 - Mesa Central 56-41-2405700</center>
+        <center>Concepción, Región del Biobío, Chile.</center>
+        <br>
+        <hr>
+      </td>
+    </tr>
+  </table>
+</center>
+
     <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
         Reserva de Vehiculos
@@ -73,7 +146,7 @@
 
 
                 @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
-                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar su solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif>
+                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif>
                       <span class="pt-1 d-block">
                         {{$countDay}}
                       </span>
@@ -292,12 +365,12 @@
           </div>
 
           <div class="col-12 col-md-6 px-3 pt-3 pt-md-1">
-            <div class="table-responsive-sm mx-4">
+            <div class="table-responsive mx-4">
               <table class="table">
                 <!-- table-bordered -->
                 <thead>
                   <tr>
-                    <th scope="col" colspan="4" class="text-center text-success pb-3">
+                    <th scope="col" colspan="5" class="text-center text-success pb-3">
                       <span class="text-primary">Reservas realizadas por otros funcionarios para el día seleccionado:</span> {{$fechaModal}}
                       <input type="hidden" wire:model="fechaModal">
                     </th>
@@ -327,7 +400,7 @@
                   @endforeach
                   @else
                   <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                       <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
                         <span class="fs-4 pe-2 pe-md-3">
                           <i class="bi bi-info-circle-fill"></i></span>
@@ -390,8 +463,8 @@
   <div id="td{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('Ymd')}}">
     <table class="table">
       <tr> 
-        <td colspan="3" class="fst-italic"> 
-         <span class="text-primary">Haga Click sobre el recuadro para ingresar su solicitud de reserva el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
+        <td colspan="3" class="fst-italic">
+         <span class="text-primary">Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
          <span style="display:block;padding-top: 10px;">Solicitudes realizadas para el día: <span class="fw-bolder">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
         </td>
       </tr>
@@ -527,35 +600,7 @@
     modal.hide();
   }
 
-  tippy('.btnClass', {
-    content(reference) {
-      const id = reference.getAttribute('data-template');
-      const template = document.getElementById(id);
-      return template.innerHTML;
-    },
-    allowHTML: true,
-    touch: true, //Toolstips para moviles
-    animation: 'scale-extreme',
-    placement: 'bottom',
-    duration: 450, //Tiempo que se demora el despliegue
-    delay: 500, //Tiempo que se demora en aparecer
-  });
-
-   
-  tippy('.classTippy', {
-    content(reference) {
-      const id = reference.getAttribute('data-template');
-      const template = document.getElementById(id);
-      return template.innerHTML;
-    },
-    theme: 'tablereservas',
-    allowHTML: true,
-    touch: true, //Toolstips para moviles
-    animation: 'scale-extreme',
-    placement: 'bottom',
-    duration: 450, //Tiempo que se demora el despliegue
-    delay: 500, //Tiempo que se demora en aparecer
-  });
+ 
 </script>
 
 </div>

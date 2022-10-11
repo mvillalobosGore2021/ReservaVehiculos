@@ -39,9 +39,9 @@
       <td>{{ $mailData['fechaAnulacion'] }}</td>
     </tr>
     <tr>
-      <td><b>Uso de Vehiculo Personal:</b></td>
-      <td>{{ $mailData['usaVehiculoPersonal'] }}</td>
-    </tr>
+      <td><b>Estado:</b></td>
+      <td>{{ $mailData['descripcionEstado'] }}</td>
+    </tr> 
     <tr>
       <td colspan="2">
         <hr>

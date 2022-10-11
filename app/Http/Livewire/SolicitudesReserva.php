@@ -295,7 +295,7 @@ class SolicitudesReserva extends Component
             try {
                 DB::beginTransaction();
 
-                Reservavehiculo::where("idReserva",  $this->idReservaSel)
+                $reservaVehiculo = Reservavehiculo::where("idReserva",  $this->idReservaSel)
                 ->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
 
                 //Envío de correo 
@@ -303,11 +303,12 @@ class SolicitudesReserva extends Component
                     'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
                     'titulo' => "Su reserva ha sido anulada por " . $this->usernameLog,
                     'funcionario' => $this->nameSel,
+                    'fechaCreacion' =>  $reservaVehiculo->created_at,
                     'fechaReserva' => Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d/m/Y'),
                     'fechaAnulacion' => Carbon::now()->format('d/m/Y'),
                     'horaInicio' => $this->horaInicioSel,
                     'horaFin' => $this->horaFinSel,
-                    'usaVehiculoPersonal' => $this->flgUsoVehiculoPersSel == 0 ? 'No' : 'Si',
+                    // 'usaVehiculoPersonal' => $this->flgUsoVehiculoPersSel == 0 ? 'No' : 'Si',
                 ];
 
                 try {
@@ -443,15 +444,17 @@ class SolicitudesReserva extends Component
                         $camposReservaVehiculoArr
                     );       
 
-                    //Envío de correo
+                    //Envío de correo 
                     $mailData = [
                         'asunto' => ($this->idReservaSel > 0 ? "Modificación de Reserva de Vehículo" : "Ingreso de Reserva de Vehículo") . " - Gobierno Regional del Bio Bio",
                         'titulo' => $this->idReservaSel > 0 ? "Su reserva ha sido modificada por : " . $this->usernameLog : $this->usernameLog . " ha ingresado una reserva a su nombre",
                         'funcionario' => $this->nameSel,
+                        'fechaCreacion' =>  $reservaVehiculo->created_at,
                         'fechaReserva' => $this->fechaSolicitudSel,
                         'horaInicio' => $this->horaInicioSel,
                         'horaFin' => $this->horaFinSel,
-                        'usaVehiculoPersonal' => $this->flgUsoVehiculoPersSel == 0 ? 'No' : 'Si',
+                        'descripcionEstado' => 'ksjkksj', 
+                        // 'usaVehiculoPersonal' => $this->flgUsoVehiculoPersSel == 0 ? 'No' : 'Si',
                         'motivo' => $this->motivoSel,
                     ];
 

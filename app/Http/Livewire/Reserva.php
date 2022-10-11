@@ -1,24 +1,13 @@
 <?php
 
 namespace App\Http\Livewire;
-use App\Classes\PruebaServices;
 use Livewire\Component;
 use Illuminate\Support\Carbon;
 use App\Classes\ReservaServices;
-use Exception;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Reservavehiculo;
-use App\Models\User;
 use App\Models\Comuna;
 use App\Models\Division;
-use App\Tools\SomeExampleClass;
-use App\Rules\HoraValidator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
-use App\Mail\CorreoNotificacion;
-use App\Mail\CorreoAnulacion;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
 
 class Reserva extends Component 
 {
@@ -115,6 +104,8 @@ class Reserva extends Component
         $this->cantDaysMonth = $itemMesSel['cantDiasMes'];
         $this->firstDayMonth = $itemMesSel['primerDiaSemana']; 
         $this->lastDayMonth = $itemMesSel['ultimoDiaSemana'];
+        
+        $this->dispatchBrowserEvent('iniTooltips');
     } 
     
     // public function getReservasFechaSel($fechaSel) {
@@ -128,7 +119,7 @@ class Reserva extends Component
 
     public function setFechaModal($fechaSel) {
        $reservaService = new ReservaServices();
-       $reservaService->setFechaModal($fechaSel, $this);
+       $reservaService->setFechaModal($fechaSel, $this); 
    }
 
     public function updated($field)

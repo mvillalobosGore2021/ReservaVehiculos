@@ -69,7 +69,25 @@
             placement: 'bottom',
             duration: 450, //Tiempo que se demora el despliegue
             delay: 500, //Tiempo que se demora en aparecer
-        });      
+            theme: 'tablereservas',
+            // animation: 'rotate',
+            // inertia: true,
+        });     
+        
+        tippy('.classTippy', {
+            content(reference) {
+            const id = reference.getAttribute('data-template');
+            const template = document.getElementById(id);
+            return template.innerHTML;
+            },
+            theme: 'tablereservas',
+            allowHTML: true,
+            touch: true, //Toolstips para moviles
+            animation: 'scale-extreme',
+            placement: 'bottom',
+            duration: 450, //Tiempo que se demora el despliegue
+            delay: 500, //Tiempo que se demora en aparecer
+        });
     }
 
     window.addEventListener('moveScroll', event => {
