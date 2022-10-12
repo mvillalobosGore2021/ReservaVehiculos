@@ -37,7 +37,6 @@
         <!-- Page Content -->
         <main>
             <livewire:menureserva />
- 
             {{$slot}}
         </main>
 

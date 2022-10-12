@@ -94,44 +94,79 @@ public function confirmAnularReserva($objInput) {
 public function anularReserva($objInput) {
     $msjException = "";
   try {
-    DB::beginTransaction();
+       DB::beginTransaction()   ;
 
-    $reservaVehiculo = Reservavehiculo::where("idReserva",  $objInput->idReserva)->update(["codEstado" => 3]);//Estado 3 = Anular
-  
+       Reservavehiculo::where("idReserva",  $objInput->idReserva)->update(["codEstado" => 3]);//Estado 3 = Anular
+      
+      $reservaVehiculo = Reservavehiculo::where("idReserva",  $objInput->idReserva)->first();
     //Envío de correo
-         $mailData = [
-            'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
-            'titulo' => "Su reserva ha sido anulada",
+        //  $mailData = [
+        //     'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
+        //     'titulo' => "Su reserva ha sido anulada",
+        //     'funcionario' => $objInput->userName,
+        //     'fechaReserva' => $objInput->fechaModal, 
+        //     'fechaAnulacion' => Carbon::now()->format('d/m/Y'), 
+        //     'horaInicio' => $objInput->horaInicio,           
+        //     'horaFin' => $objInput->horaFin,
+        //     'descripcionEstado' => Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first(),
+        //     // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
+        // ];
+
+         //Envío de correo
+          $mailData = [
+            'asunto' => "Notificación: Anulación de Reserva de Vehículo",                
+            'resumen' => "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día",
             'funcionario' => $objInput->userName,
-            'fechaReserva' => $objInput->fechaModal, 
-            'fechaAnulacion' => Carbon::now()->format('d/m/Y'),
-            'horaInicio' => $objInput->horaInicio,           
-            'horaFin' => $objInput->horaFin,
-            'descripcionEstado' => Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first(),
+            'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
+            'fechaReserva' => Carbon::parse($reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
+            'horaInicio' => $reservaVehiculo->horaInicio,
+            'horaFin' => $reservaVehiculo->horaFin,
+            'descripcionEstado' => "Anulada",
+            'codEstado' => $reservaVehiculo->codEstado,
             // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
+            'motivo' => $reservaVehiculo->motivo,
         ];
 
         try {
           //Mail al postulante 
-            Mail::to($objInput->correoUser)->send(new CorreoAnulacion($mailData));
+            Mail::to($objInput->correoUser)->send(new CorreoNotificacion($mailData)); 
         } catch (exception $e) {
             $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$objInput->correoUser.'</span>';
             throw $e;
         }
 
-        $userAdmin = User::where('flgAdmin', '=', 1)->get();  
+        // $userAdmin = User::where('flgAdmin', '=', 1)->get();  
 
-        $mailData['titulo'] =  "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio";
-        $mailData['asunto'] = $objInput->userName. " Ha anulado su reserva";
+        // $mailData['titulo'] =  "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio";
+        // $mailData['asunto'] = $objInput->userName. " Ha anulado su reserva";  
 
+        // $emailAdmin = "";
+        // try {
+        //     foreach ($userAdmin as $item) { 
+        //         $emailAdmin = $item->email;
+        //         Mail::to($item->email)->send(new CorreoNotificacion($mailData)); 
+        //     }
+        // } catch (exception $e) {
+        //      $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
+        //      throw $e;
+        // }
+
+        $userAdmin = User::where('flgAdmin', '=', 1)->get();
+
+        // $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
+        // $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
+        $mailData['resumen'] = "el funcionario <b>".$mailData['funcionario']."</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día";
+        
         $emailAdmin = "";
         try {
-            foreach ($userAdmin as $item) { 
+            foreach ($userAdmin as $item) {
                 $emailAdmin = $item->email;
-                Mail::to($item->email)->send(new CorreoAnulacion($mailData));
+                $mailData['nomAdmin'] = $item->name;
+           
+                Mail::to($item->email)->send(new CorreoNotificacion($mailData));
             }
         } catch (exception $e) {
-             $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
+             $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">'.$emailAdmin.'</span>';              
              throw $e;
         }
    
@@ -156,11 +191,11 @@ public function anularReserva($objInput) {
   $objInput->dispatchBrowserEvent('iniTooltips');
 }
 
-public function solicitarReserva($objInput) {
+public function solicitarReserva($objInput) { 
         // dd($objInput->horaInicio, $objInput->horaFin); 
         $objInput->validate($this->getArrRules());
         $msjException = "";
-        try {
+        try { 
             DB::beginTransaction();
             // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
             $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
@@ -178,23 +213,24 @@ public function solicitarReserva($objInput) {
                     'codDivision' => $objInput->codDivision,
                     'cantPasajeros' => $objInput->cantPasajeros,
                     'motivo' => $objInput->motivo, 
-                    // 'codEstado' => 1, //Crear tabla con los estados: Pendiente, Confirmada  
+                    // 'codEstado' => 1, //El valor por defecto es 1=No Confirmada cuando se graba por primera vez (ver migration)  
                     //'fechaConfirmacion' => $objInput->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
                 ]
             );
 
-            $estado = Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first();
+            $descripcionEstado = $reservaVehiculo->codEstado > 0 ? (Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first())->descripcionEstado:"No Confirmada";
 
-             //Envío de correo
+           //Envío de correo
               $mailData = [
-                'asunto' => ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" : "Reserva de Vehículo")." - Gobierno Regional del Bio Bio",
-                'titulo' => $objInput->idReserva > 0 ? "Resumen modificación de Reserva" : "Resumen de su Reserva",
+                'asunto' => $objInput->idReserva > 0 ? "Notificación: Modificación de Reserva de Vehículo" : "Notificación: Solicitud de Reserva de Vehículo",                
+                'resumen' => $objInput->idReserva > 0 ? "se ha modificado su reserva solicitada para el día" : "se ha ingresado una nueva solicitud de reserva a su nombre para el día",
                 'funcionario' => $objInput->userName,
-                'fechaCreacion' =>  $reservaVehiculo->created_at,
+                'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                 'fechaReserva' => $objInput->fechaModal,
                 'horaInicio' => $objInput->horaInicio,
                 'horaFin' => $objInput->horaFin,
-                'descripcionEstado' => $estado->descripcionEstado,
+                'descripcionEstado' => $descripcionEstado,
+                'codEstado' => $reservaVehiculo->codEstado > 0 ? $reservaVehiculo->codEstado: 1/*No Confirmada*/,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
                 'motivo' => $objInput->motivo,
             ];
@@ -205,17 +241,20 @@ public function solicitarReserva($objInput) {
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">'.$objInput->correoUser.'</span>';
                 throw $e;
-            }
+            } 
 
-            $userAdmin = User::where('flgAdmin', '=', 1)->get();
+            $userAdmin = User::where('flgAdmin', '=', 1)->get(); 
 
-            $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
-            $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
-
+            // $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
+            // $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
+            $mailData['resumen'] = "el funcionario <b>".$mailData['funcionario']."</b>".($objInput->idReserva > 0 ? " ha modificado su reserva solicitada para el día" : " ha ingresado una nueva solicitud de reserva para el día");
+            
             $emailAdmin = "";
             try {
-                foreach ($userAdmin as $item) { 
+                foreach ($userAdmin as $item) {
                     $emailAdmin = $item->email;
+                    $mailData['nomAdmin'] = $item->name;               
+               
                     Mail::to($item->email)->send(new CorreoNotificacion($mailData));
                 }
             } catch (exception $e) {
