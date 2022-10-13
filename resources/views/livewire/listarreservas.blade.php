@@ -15,7 +15,7 @@
         </div>
         <div class="card p-0 mx-3 mt-4 mb-5 mx-md-4 shadow">
           <div class="table-responsive-sm">
-            <table class="table m-0">
+            <table class="table m-0 table-hover">
               <thead class="table-light">
                 <tr class="text-center fs-5 text-primary">
                   <th scope="col" colspan="6" class="py-3">Listado de Reservas de <span class="text-success">{{$userName}}</span><br>Desde el <span class="text-success">{{$fechaDesde}}</span> Hasta el <span class="text-success">{{$fechaHasta}}</span></th>
@@ -32,7 +32,7 @@
               <tbody>
                 @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
                 @foreach($reservasUsuario as $item)
-                <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d-m-Y')}}')">
+                <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
                   <td class="ps-4">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
                   <td>{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
                   <td>{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>

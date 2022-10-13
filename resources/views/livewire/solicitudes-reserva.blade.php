@@ -457,7 +457,7 @@
                         <span class="input-group-text">
                           <i class="bi bi-list-ul"></i>
                         </span>
-                        <select id="codDivision" wire:model="codDivisionSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                        <select id="codDivision" wire:model="codDivisionSel" @if($codEstadoSel == 3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
                           <option value="">Sel.División</option>
                           @foreach($divisionesCmb as $itemDivision)
                           <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>

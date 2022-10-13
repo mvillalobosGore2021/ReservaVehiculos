@@ -32,9 +32,9 @@ hr {
   <table width="640">
     <tr>      
       <td colspan="2" style="margin:0px;padding:0px;">
-        <!-- x-encabezadocorreo -->
+        <x-encabezadocorreo/>
 
-        <img alt="" height="160" width="650" src="{{ asset('images/encabezadocorreo.png') }}">
+        <!-- <img alt="" height="160" width="650" src="{{ asset('images/encabezadocorreo.png') }}"> -->
       </td>
     </tr>
     <tr>
@@ -49,7 +49,7 @@ hr {
     </tr>
     <tr>
       <td colspan="2" style="padding-bottom:10px;padding-left:15px;padding-right:15px;text-align:justify;font-size:15px;">
-       Estimado <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
+       Estimado(a) <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
        @if ($mailData['codEstado'] == 1 && empty($mailData['nomAdmin'])) 
@@ -76,7 +76,7 @@ hr {
       </td>
     </tr>
     <tr> 
-      <td style="color:#282D33;width:185px;"><b>Funcionario:</b></td>
+      <td style="color:#282D33;width:185px;"><b>Funcionario(a):</b></td>
       <td style="color:#746873">Mario Villalobos Pedrero</td>
     </tr>
     <tr>
@@ -109,8 +109,8 @@ hr {
   <table width="640">
     <tr>
     <td colspan="2" style="padding-top:50px;">
-        <!-- x-piedepaginacorreo  -->
-        <img alt="" height="160" width="650" src="{{ asset('images/footer_gore.jpg') }}">
+        <x-piedepaginacorreo/>
+        <!-- <img alt="" height="160" width="650" src="{{ asset('images/footer_gore.jpg') }}"> -->
     </td>
     </tr>
     <tr>
