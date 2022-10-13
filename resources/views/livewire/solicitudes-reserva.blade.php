@@ -39,12 +39,12 @@
         <div class="card-body">
           <div class="row ms-1">
             <div class="col-12 col-md-7">
-              <label>Nombre Funcionario</label>
+              <label>Nombre Funcionario(a)</label>
               <div class="input-group">
                 <span class="input-group-text">
                   <i class="bi bi-person"></i>
                 </span>
-                <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario que desea buscar" data-tippy-content="Ingrese el nombre del funcionario que desea buscar">
+                <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario(a) que desea buscar" data-tippy-content="Ingrese el nombre del funcionario(a) que desea buscar">
                 <span class="input-group-text bg-white" id="borrarNameSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
                   <i class="bi bi-x-circle"></i>
                 </span>
@@ -133,7 +133,7 @@
         <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif ">
           <thead class="table-light">
             <tr>
-              <th scope="col" class="ps-4">Funcionario</th>
+              <th scope="col" class="ps-4">Funcionario(a)</th>
               <th scope="col" class="text-center">Día Reserva</th>
               <th scope="col" class="text-center">Hora Inicio</th>
               <th scope="col" class="text-center">Hora Fin</th>
@@ -227,7 +227,7 @@
                               <i class="bi bi-person"></i>
                             </span>
                             <select wire:model="idUserSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
-                              <option value="">Sel.Funcionario</option>
+                              <option value="">Sel.Funcionario(a)</option>
                               @if (!empty( $userList))
                               @foreach($userList as $item)
                               <option value="{{$item->id}}">{{$item->name}}</option>

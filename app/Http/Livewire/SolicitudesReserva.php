@@ -121,7 +121,7 @@ class SolicitudesReserva extends Component
         $this->motivoSel = $reservaSel->motivo;
         $this->nameSel = $reservaSel->name;
         $this->emailSel = $reservaSel->email;
-        $this->idUserSel = $reservaSel->idUser;
+        $this->idUserSel = $reservaSel->idUser; 
         $this->descripEstadoSel = $reservaSel->descripcionEstado;
         $this->codEstadoSel = $reservaSel->codEstado;
         $this->codVehiculoSel = $reservaSel->codVehiculo;
@@ -299,13 +299,15 @@ class SolicitudesReserva extends Component
                 Reservavehiculo::where("idReserva",  $this->idReservaSel)
                     ->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
 
-                $reservaVehiculo = Reservavehiculo::where("idReserva",  $this->idReservaSel)->first();
+                $reservaVehiculo = Reservavehiculo::where("idReserva",  $this->idReservaSel)->first();      
+                
+                $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;
 
                 //Envío de correo  
                 $mailData = [
                     'asunto' => "Notificación: Anulación de Reserva de Vehículo",
                     'resumen' => "<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día",
-                    'funcionario' => $this->nameSel,
+                    'funcionario' => $this->nameSel, 
                     'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                     'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
                     'horaInicio' => $reservaVehiculo->horaInicio,
@@ -334,7 +336,7 @@ class SolicitudesReserva extends Component
                     foreach ($userAdmin as $item) {
                         $emailAdmin = $item->email;
                         $mailData['nomAdmin'] = $item->name;
-                        $mailData['resumen'] = "el funcionario <b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
+                        $mailData['resumen'] = "el funcionario <b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $this->nameSel . "</b> solicitada para el día";
 
                         if ($item->id == $this->idUserAdmin) {
                             $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
@@ -422,6 +424,8 @@ class SolicitudesReserva extends Component
 
                     //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva   
 
+                    $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;
+
                     $camposReservaVehiculoArr =  [
                         'idUser' => $this->idUserSel,
                         'prioridad' => $prioridad,
@@ -489,12 +493,12 @@ class SolicitudesReserva extends Component
                     try {
                         foreach ($userAdmin as $item) {
                             $emailAdmin = $item->email;
-                            $mailData['nomAdmin'] = $item->name;
+                            $mailData['nomAdmin'] = $item->name; 
 
-                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $mailData['funcionario'] . "</b> para el día");
+                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $this->nameSel. "</b> para el día");
     
                             if ($item->id == $this->idUserAdmin) { 
-                                $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $mailData['funcionario'] . "</b> para el día");
+                                $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") .$this->nameSel. "</b> para el día");
                             }
     
                             Mail::to($item->email)->send(new CorreoNotificacion($mailData));
@@ -514,7 +518,7 @@ class SolicitudesReserva extends Component
                     ]);
 
                     $this->dispatchBrowserEvent('closeModal');
-                } catch (exception $e) {
+                } catch (exception $e) { 
                     DB::rollBack();
                     if (strlen($msjException) > 0) {
                         $this->dispatchBrowserEvent('swal:information', [
