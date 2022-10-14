@@ -11,5 +11,5 @@ class Estado extends Model
 
     protected $primaryKey = 'idestado';
 
-    protected $fillable = ['codEstado', 'descripcionEstado', 'descripAccionEstado'];
+    protected $fillable = ['codEstado', 'codColor', 'descripcionEstado', 'descripAccionEstado'];
 }

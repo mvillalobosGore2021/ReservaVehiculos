@@ -36,7 +36,9 @@ class Listarreservas extends Component
     public function render()
     {   //Se obtienen las reservas para un rango de tres meses
          $reservasUsuario = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
-          ->select('reservavehiculos.*', 'estados.descripcionEstado')
+          ->leftJoin('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
+          ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')
+          ->select('reservavehiculos.*', 'estados.descripcionEstado', 'estados.codColor', 'comunas.nombreComuna', 'vehiculos.descripcionVehiculo')
           ->where('idUser', '=', $this->idUser)
           ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addMonths(2)->format('Y-m-d')])
           ->orderBy('fechaSolicitud', 'desc')

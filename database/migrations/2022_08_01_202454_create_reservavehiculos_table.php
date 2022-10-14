@@ -18,7 +18,7 @@ class CreateReservavehiculosTable extends Migration
             $table->integer('idUser');
             $table->integer('idUserCreacion')->nullable();
             $table->integer('idUserModificacion')->nullable();
-            $table->integer('codVehiculo')->nullable();
+            $table->integer('codVehiculo')->nullable()->default(0);
             $table->integer('codComuna')->nullable();
             $table->integer('codDivision')->nullable();
             $table->integer('cantPasajeros')->nullable();            

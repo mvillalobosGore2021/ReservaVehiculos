@@ -45,10 +45,10 @@ class SolicitudesReserva extends Component
         // Ver por que se pierden los datos del combo estado y el de funcionarios no al crear una nueva reserva
         $user = Auth::user();
         $this->idUserAdmin = $user->id;
-        $this->usernameLog = $user->name;
+        $this->usernameLog = $user->name; 
         $this->fechaSearch = "";
         $this->flgValidateConfirmar = false;
-        $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();
+        $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get(); 
         $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
     }
 
@@ -67,18 +67,20 @@ class SolicitudesReserva extends Component
 
         //Se obtienen las reservas para un rango de dos meses
         $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-            ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
-            ->select('reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado')
+            ->join('users', 'users.id', '=', 'reservavehiculos.idUser') 
+            ->leftJoin('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna') 
+            ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo') 
+            ->select('reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'estados.codColor', 'comunas.nombreComuna', 'vehiculos.descripcionVehiculo') 
             ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaFin])
-            // ->where('reservavehiculos.created_at', 'like', '%' . $this->fechaHoySearch . '%')
+            // ->where('reservavehiculos.created_at', 'like', '%' . $this->fechaHoySearch . '%') 
             ->whereRaw($sqlFechaSearch)
             ->where('users.name', 'like', '%' . $this->nameSearch . '%')
             ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
-            ->orderBy('fechaSolicitud', 'desc')
+            ->orderBy('fechaSolicitud', 'desc') 
             ->paginate(5);
 
         // dd($reservasTotales->where('fechaSolicitud', 'like', '%2022-08-09%'));
-        $estadosCmb = Estado::orderBy('codEstado')->get();
+        $estadosCmb = Estado::where('codEstado', '!=', 1/*No Confirmado*/)->orderBy('codEstado')->get();//El administrador no ingresa solicitudes No Confirmadas
 
         $cmbVehiculos = Vehiculo::all();
 
@@ -92,13 +94,18 @@ class SolicitudesReserva extends Component
         }
 
         $this->dispatchBrowserEvent('iniTooltips');
+        
+
+     
 
         //Lista de reservas realizadas el mismo dia de la reserva seleccionada
-        $reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
-            ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
-            ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo',)
-            ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)
-            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'vehiculos.descripcionVehiculo']));
+        $reservasFechaSel = collect(Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
+            ->join('comunas', 'reservavehiculos.codComuna', '=', 'comunas.codComuna', 'left outer') 
+            ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
+            ->join('vehiculos', 'reservavehiculos.codVehiculo', '=', 'vehiculos.codVehiculo', 'left outer')
+            ->where('fechaSolicitud', '=', $this->fechaSolicitudSel) 
+            ->where('idUser', '!=', $this->idUserSel)
+            ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'estados.codColor', 'reservavehiculos.codVehiculo', 'vehiculos.descripcionVehiculo', 'comunas.nombreComuna']));
 
         return view('livewire.solicitudes-reserva', compact(['reservasTotales', 'reservasFechaSel', 'estadosCmbSearch', 'estadosCmb', 'cmbVehiculos']));
     }
@@ -290,7 +297,7 @@ class SolicitudesReserva extends Component
 
     public function guardarReservaSel()
     {
-        $msjException = "";
+        $msjException = ""; 
 
         if ($this->codEstadoSel == 3 && $this->flgNuevaReserva == false/*Modo modificacion*/) { //Estado 3 = Anular, no se validan los datos
             try {
@@ -467,7 +474,7 @@ class SolicitudesReserva extends Component
                     //Envío de correo  
                     $mailData = [
                         'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo":"Notificación: Ingreso de Reserva de Vehículo",
-                        'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> su reserva solicitada para el día"):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a su nombre para el día"),
+                        'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->color.";color:white;'>".$estado->descripAccionEstado."</span> su reserva solicitada para el día"):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->color.";color:white;'>".$estado->descripcionEstado."</span> a su nombre para el día"),
                         'funcionario' => $this->nameSel,
                         'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                         'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
@@ -495,10 +502,10 @@ class SolicitudesReserva extends Component
                             $emailAdmin = $item->email;
                             $mailData['nomAdmin'] = $item->name; 
 
-                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $this->nameSel. "</b> para el día");
+                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->color.";color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->color.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $this->nameSel. "</b> para el día");
     
                             if ($item->id == $this->idUserAdmin) { 
-                                $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:#EF3B2D;color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:#EF3B2D;color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") .$this->nameSel. "</b> para el día");
+                                $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:".$estado->color.";color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->color.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") .$this->nameSel. "</b> para el día");
                             }
     
                             Mail::to($item->email)->send(new CorreoNotificacion($mailData));

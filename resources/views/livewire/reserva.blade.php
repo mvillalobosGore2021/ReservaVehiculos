@@ -74,14 +74,14 @@
 
 
                 @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
-                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif>
+                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif>
                       <span class="pt-1 d-block">
                         {{$countDay}}
                       </span>
                       <span class="d-block pt-3 fst-italic text-secondary text-center" style="font-size:14px;">
 
                         @if (!empty($arrCantReservasCount[$fechaKeyArr]))
-                        {{$arrCantReservasCount[$fechaKeyArr]['cantReservas']}} {{$arrCantReservasCount[$fechaKeyArr]['cantReservas'] > 1 ? 'Reservas':'Reserva'}}                       
+                        {{$arrCantReservasCount[$fechaKeyArr]['cantReservas']}} {{$arrCantReservasCount[$fechaKeyArr]['cantReservas'] > 1 ? 'Reservas':'Reserva'}}
                         @else
                         &nbsp;&nbsp;&nbsp;
                         @endif
@@ -298,48 +298,52 @@
                 <!-- table-bordered -->
                 <thead>
                   <tr>
-                    <th scope="col" colspan="5" class="text-center text-success pb-3">
-                      <span class="text-primary">Reservas realizadas por otros funcionarios para el día seleccionado:</span> {{$fechaModal}}
+                    <th scope="col" colspan="8" class="text-start text-success pb-3">
+                      <span data-tippy-content="Reservas realizadas por otros funcionarios para el día: {{$fechaModal}}">
+                      <span class="text-success">Reservas realizadas para el día:</span>
+                      <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{$fechaModal}}</span>
+                      </span>
                       <input type="hidden" wire:model="fechaModal">
                     </th>
                   </tr>
                   <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Hora Inicio</th>
-                    <th scope="col">Hora Fin</th>
-                    <th scope="col">Destino</th>
-                    <th scope="col">Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
-                  @foreach($reservasFechaSel as $index => $item)
-                  <tr>
-                    <td nowrap>{{$item['name']}}</td>
-                    <td nowrap>
-                      {{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}
-                    </td>
-                    <td nowrap>
-                      {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}
-                    </td>
-                    <td nowrap>{{$item['nombreComuna']}}</td>
-                    <td nowrap>{{$item['descripcionEstado']}}</td>
-                  </tr>
-                  @endforeach
-                  @else
-                  <tr>
-                    <td colspan="5">
-                      <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
-                        <span class="fs-4 pe-2 pe-md-3">
-                          <i class="bi bi-info-circle-fill"></i></span>
-                        <span class="fs-6 fst-italic pt-1">
-                          No existen reservas realizadas por otros funcionarios para el día seleccionado.
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                  @endif
-                </tbody>
+                        <th scope="col" class="text-start" nowrap>Fecha Creación</th>
+                        <th scope="col" class="text-start">Nombre</th>
+                        <th scope="col" class="text-start" nowrap>Fecha Reserva</th>
+                        <th scope="col" class="text-start">Estado</th>
+                        <th scope="col" class="text-start">Vehículo</th>
+                        <th scope="col" class="text-start">Destino</th>                            
+                        <th scope="col" class="text-start" nowrap>Hora Inicio-Fin</th>            
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
+                      @foreach($reservasFechaSel as $index => $item)
+                      <tr>
+                        <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
+                        <td class="text-start" nowrap>{{$item['name']}}</td>
+                        <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</span></td>                       
+                        <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};color:white;padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
+                        <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
+                        <td class="text-start" nowrap>{{$item['nombreComuna']}}</td>
+                        <td class="text-center" nowrap>{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}} - {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
+                      </tr>
+                      @endforeach
+                      @else
+                      <tr>
+                        <td colspan="8">
+                          <div class="alert alert-info border border-info d-flex justify-content-center my-3 mx-2 my-md-4" role="alert">
+                            <span class="fs-4 pe-2 pe-md-3">
+                              <i class="bi bi-info-circle-fill"></i>
+                            </span>
+                            <span class="fs-6 fst-italic pt-1">
+                               No existen reservas realizadas por otros funcionarios para el día seleccionado.
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                      @endif
+                    </tbody>
               </table>
             </div>
 
@@ -390,10 +394,10 @@
   @foreach($arrCantReservasCount as $index => $itemReserva)
   <div id="td{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('Ymd')}}">
     <table class="table">
-      <tr> 
+      <tr>
         <td colspan="3" class="fst-italic">
-         <span class="text-primary">Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
-         <span style="display:block;padding-top: 10px;">Solicitudes realizadas para el día: <span class="fw-bolder">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
+          <span class="text-primary">Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
+          <span style="display:block;padding-top: 10px;">Solicitudes realizadas para el día: <span class="fw-bolder">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
         </td>
       </tr>
       <tr>
@@ -527,8 +531,6 @@
     //myModal2.show();
     modal.hide();
   }
-
- 
 </script>
 
 </div>

@@ -18,6 +18,7 @@ class CreateEstadosTable extends Migration
             $table->integer('codEstado');
             $table->string('descripcionEstado', 30);
             $table->string('descripAccionEstado', 30);
+            $table->string('codColor', 10);
             $table->timestamps();
         });
     }
