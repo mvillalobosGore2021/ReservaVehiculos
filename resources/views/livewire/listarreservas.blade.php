@@ -18,14 +18,15 @@
             <table class="table m-0 table-hover">
               <thead class="table-light">
                 <tr class="text-center fs-5 text-primary">
-                  <th scope="col" colspan="7" class="py-3">Listado de Reservas de <span class="text-success">{{$userName}}</span><br>Desde el <span class="text-success">{{$fechaDesde}}</span> Hasta el <span class="text-success">{{$fechaHasta}}</span></th>
+                  <th scope="col" colspan="8" class="py-3">Listado de Reservas de <span class="text-success">{{$userName}}</span><br>Desde el <span class="text-success">{{$fechaDesde}}</span> Hasta el <span class="text-success">{{$fechaHasta}}</span></th>
                 </tr>
                 <tr class="text-center">
-                  <th scope="col" class="ps-4">Fecha Creación</th>
+                  <th scope="col" class="text-start ps-3">Fecha Creación</th>
                   <th scope="col" class="text-start">Fecha Reserva</th>
                   <th scope="col" class="text-start">Hora Inicio</th>
                   <th scope="col" class="text-start">Hora Fin</th>              
                   <th scope="col" class="text-start">Estado</th>
+                  <th scope="col" class="text-start">Destino</th>
                   <th scope="col" class="text-start">Vehículo</th>                 
                   <th scope="col" class="text-start" class="pe-4" style="text-align: left;">Motivo</th>
                 </tr>
@@ -33,19 +34,20 @@
               <tbody>
                 @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
                 @foreach($reservasUsuario as $item)
-                <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
-                  <td class="ps-4">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>  
-                  <td class="text-start">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
-                  <td class="text-start">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
-                  <td class="text-start">{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td>                 
-                  <td class="text-start"><span style="background-color:{{$item->codColor}};color:white;padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
-                  <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td>
-                  <td class="text-start glosaTable pe-4">{{$item->motivo}}</td>
+                <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
+                  <td class="text-start ps-3" nowrap>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y H:i')}}</td>  
+                  <td class="text-start">{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d/m/Y')}}</td>
+                  <td class="text-start">{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}</td>
+                  <td class="text-start">{{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>           
+                  <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};color:white;padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
+                  <td class="text-start glosaTable pe-4">{{$item['nombreComuna']}}</td> 
+                  <td class="text-start" nowrap>{{$item['codVehiculo'] > 0 ? $item['descripcionVehiculo']: 'No Asignado'}}</td>
+                  <td class="text-start glosaTable pe-4">{{$item['motivo']}}</td>
                 </tr>
                 @endforeach
                 @else
                 <tr>
-                  <td colspan="6">
+                  <td colspan="8">
                     <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
                       <span class="fs-4 pe-2 pe-md-3">
                         <i class="bi bi-info-circle-fill"></i></span>
@@ -90,7 +92,7 @@
                     <span class="text-primary">Dia Reserva:</span> {{$fechaModal}}
                   </div>
                   <div class="col-12 col-md-6 pb-2 pb-md-0" id="estadoId">
-                    <span class="text-primary">Estado:</span> {{$descripcionEstado}}
+                    <span class="text-primary">Estado:</span><span style="background-color:{{$codColor}};color:white;padding-left:4px;padding-right:4px;">{{$descripcionEstado}}</span>
                   </div>
                 </div>
                 <div class="row">
@@ -284,11 +286,11 @@
                       @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                       @foreach($reservasFechaSel as $index => $item)
                       <tr>
-                        <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
+                        <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y H:i')}}</td>
                         <td class="text-start" nowrap>{{$item['name']}}</td>
-                        <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</span></td>                       
-                        <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
-                        <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
+                        <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d/m/Y')}}</span></td>                       
+                        <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
+                        <td class="text-start" nowrap>{{$item['codVehiculo'] > 0 ? $item['descripcionVehiculo']: 'No Asignado'}}</td> 
                         <td class="text-start" nowrap>{{$item['nombreComuna']}}</td>
                         <td class="text-center" nowrap>{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}} - {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
                       </tr>

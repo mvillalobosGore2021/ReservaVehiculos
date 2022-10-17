@@ -71,7 +71,7 @@
             <div class="col-12 col-md-3 pt-3">
               <div class="row">
                 <div class="col-12">
-                  <label>{{$flgFechaSearch == 1 ? 'Fecha Solicitud':'Fecha Reserva'}}</label>
+                  <label>{{$flgFechaSearch == 1 ? 'Fecha Creación':'Fecha Reserva'}}</label> 
                   <div class="input-group">
                     <span class="input-group-text">
                       <i class="bi bi-calendar4"></i>
@@ -85,7 +85,7 @@
                 <div class="col-12  pt-1">
                   <div class="form-check form-switch" id="idFlgFecSearch{{rand(0, 1000)}}" data-tippy-content="{{$flgFechaSearch == 1 ? 'Desactive la casilla si desea buscar por la fecha de reserva':'Active la casilla si desea buscar por la fecha cuando se realizó la solicitud'}}">
                     <input class="form-check-input" id="flgFechaSearch" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
-                    <label class="form-check-label" for="flgFechaSearch">Fecha Solicitud</label>
+                    <label class="form-check-label" for="flgFechaSearch">Fecha Creación</label>
                   </div>
                 </div>
                 <!-- @error('fechaSearch')
@@ -376,7 +376,7 @@
                           <i class="bi bi-list-ul"></i>
                         </span>
                         <select wire:model="codVehiculoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
-                          <option value="">Sel.Vehículo</option>
+                          <option value="">Sel.Vehículo</option> 
                           @if (!empty( $cmbVehiculos))
                             @foreach($cmbVehiculos as $item)
                               <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>

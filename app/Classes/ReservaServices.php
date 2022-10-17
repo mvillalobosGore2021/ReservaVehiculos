@@ -49,11 +49,11 @@ class ReservaServices {
         $objInput->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
             ->join('comunas', 'reservavehiculos.codComuna', '=', 'comunas.codComuna', 'left outer') 
-            ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')  
+            ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')   
             // ->whereRaw("DATE_FORMAT(fechaSolicitud, '%d/%m/%Y') = " . $objInput->fechaModal) 
             ->where('fechaSolicitud', '=', Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'))
             ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'comunas.nombreComuna', 'estados.codColor', 'vehiculos.descripcionVehiculo']));
-
+ 
         //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
         $reservasFechaUser = $objInput->reservasFechaSel->where('idUser', '=', $objInput->idUser)->first();
 
@@ -66,10 +66,11 @@ class ReservaServices {
             $objInput->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $objInput->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
             $objInput->codEstado = $reservasFechaUser['codEstado'];
+            $objInput->codColor = $reservasFechaUser['codColor']; 
             $objInput->descripcionEstado = $reservasFechaUser['descripcionEstado'];
             $objInput->codComuna = $reservasFechaUser['codComuna'];
             $objInput->codDivision = $reservasFechaUser['codDivision'];
-            $objInput->cantPasajeros = $reservasFechaUser['cantPasajeros'];
+            $objInput->cantPasajeros = $reservasFechaUser['cantPasajeros']; 
             $objInput->motivo = $reservasFechaUser['motivo'];
             $objInput->flgUsoVehiculoPersonal = $reservasFechaUser['flgUsoVehiculoPersonal'];
         }       

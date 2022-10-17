@@ -76,7 +76,7 @@ class SolicitudesReserva extends Component
             ->whereRaw($sqlFechaSearch)
             ->where('users.name', 'like', '%' . $this->nameSearch . '%')
             ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
-            ->orderBy('fechaSolicitud', 'desc') 
+            ->orderBy('fechaSolicitud', 'asc') 
             ->paginate(5);
 
 
@@ -141,7 +141,7 @@ class SolicitudesReserva extends Component
         $this->codVehiculoSel = $reservaSel->codVehiculo;
         $this->codComunaSel = $reservaSel->codComuna;
         $this->codDivisionSel = $reservaSel->codDivision;
-        $this->cantPasajerosSel = $reservaSel->cantPasajeros;
+        $this->cantPasajerosSel = $reservaSel->cantPasajeros;        
 
         // //Lista de reservas realizadas el mismo dia de la reserva seleccionada
         // $this->reservasFechaSelPaso = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
@@ -160,11 +160,12 @@ class SolicitudesReserva extends Component
 
     public function setFechaHoySearch($flgSearchHoy)
     {
-        $this->flgSearchHoy = $flgSearchHoy;
+        $this->flgSearchHoy = $flgSearchHoy; 
         $this->flgFechaSearch = $flgSearchHoy == 1; //Si es true se activa el Switch de busqueda por fecha de solicitud
         $this->fechaSearch = Carbon::now()->format('Y-m-d');
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-        $this->resetPage();
+        $this->reset(['codEstadoSearch', 'nameSearch']);//Se limpian los demas filtros 
+        $this->resetPage(); 
     }
 
     public function mostrarTodo()
@@ -382,13 +383,16 @@ class SolicitudesReserva extends Component
             }
         } else {
             $flgError = false;
-            try {
-                $this->validate($this->getArrRules());
+            try { 
+                $this->validate($this->getArrRules());                 
             } catch (exception $e) {
                 $flgError = true;
-            }
+            } 
+
+            // dd($flgError, $this->getArrRules());
 
             if ($flgError == true) {
+                // dd("Entre aca");
                 $this->dispatchBrowserEvent('swal:information', [
                     'icon' => 'error', //'info',
                     'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor revíselos y corríjalos.</span>',
@@ -399,9 +403,9 @@ class SolicitudesReserva extends Component
                 $this->validate($this->getArrRules()); //Para que se generen nuevamente los msjs           
             }
 
-            //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
+            //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
             if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
-                $flgError = true;
+                $flgError = true; 
                 $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
                 $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
                 $this->addError('idUserSel', 'El funcionario ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
@@ -550,23 +554,23 @@ class SolicitudesReserva extends Component
     {
         return count(Reservavehiculo::where('idUser', '=', $this->idUserSel)
             ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)->get()) > 0;
-    }
+    }  
 
-    public function getArrRules()
+    public function getArrRules() 
     {
         $rulesReserva = [
-            'idUserSel' => 'required',
+            'idUserSel' => 'required|gt:0',
             'fechaSolicitudSel' => 'required|date_format:Y-m-d|after:yesterday',
-            'codEstadoSel' => 'required',
+            'codEstadoSel' => 'required|gt:1',/*Mayor a 1 para omitir el estado No Confirmado*/
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
-            'codDivisionSel' => 'required',
-            'codComunaSel' => 'required',
-            'cantPasajerosSel' => 'required:gt:0',
-            'motivoSel' => 'required:max:500',
-            'codVehiculoSel' => 'required',
-        ];
-
+            'codDivisionSel' => 'required|gt:0',
+            'codComunaSel' => 'required|gt:0',
+            'cantPasajerosSel' => 'required|gt:0',
+            'motivoSel' => 'required|max:500', 
+            'codVehiculoSel' => 'required|gt:0',
+        ]; 
+     
 
         // if ($this->flgNuevaReserva == true) {
         //     $rulesReserva = Arr::add($rulesReserva, 'idUserSel', 'required');

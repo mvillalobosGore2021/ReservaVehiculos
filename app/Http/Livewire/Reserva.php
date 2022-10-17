@@ -17,7 +17,7 @@ class Reserva extends Component
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
         $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado, 
-        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay; 
+        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay, $codColor; 
 
     protected $reservaService;
 

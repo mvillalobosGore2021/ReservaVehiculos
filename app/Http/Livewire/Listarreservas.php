@@ -19,7 +19,7 @@ class Listarreservas extends Component
 
     public $userName, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, $descripcionEstado,
     $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
-    $correoUser, $arrCantReservasCount;
+    $correoUser, $arrCantReservasCount, $codColor;
 
     protected $listeners = ['anularReserva'];
 
@@ -41,7 +41,7 @@ class Listarreservas extends Component
           ->select('reservavehiculos.*', 'estados.descripcionEstado', 'estados.codColor', 'comunas.nombreComuna', 'vehiculos.descripcionVehiculo')
           ->where('idUser', '=', $this->idUser)
           ->whereBetween('fechaSolicitud', [Carbon::now()->format('Y-m-d'), Carbon::now()->addMonths(2)->format('Y-m-d')])
-          ->orderBy('fechaSolicitud', 'desc')
+          ->orderBy('fechaSolicitud', 'asc')
           ->paginate(10);
 
           $this->fechaDesde = Carbon::now()->format('d/m/Y');

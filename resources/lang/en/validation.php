@@ -159,10 +159,12 @@ return [
             // 'date_format' => 'El formato de hora fin no es válido.',
         ],
         'idUserSel' => [
-            'required' => 'Seleccione un funcionario.',
+            'required' => 'Seleccione un funcionario.', 
+            'gt' => 'Seleccione un funcionario.', 
         ],        
         'codEstadoSel' => [
             'required' => 'Seleccione Estado de la Reserva.',
+            'gt' => 'Seleccione Estado de la Reserva.',
         ],
         'fechaSolicitudSel' => [
             'required' => 'Debe ingresar fecha de reserva.',
@@ -170,6 +172,7 @@ return [
         ],        
         'codVehiculoSel' => [
             'required' => 'Seleccione Vehículo.',
+            'gt' => 'Seleccione Vehículo.',
         ],        
         'cantPasajeros*' => [
             'required' => 'Ingrese la cantidad de pasajeros.',
@@ -177,9 +180,11 @@ return [
         ],
         'codDivision*' => [
             'required' => 'Seleccione la división.',
+            'gt' => 'Seleccione la división.',
         ],
         'codComuna*' => [
             'required' => 'Seleccione comuna de destino.',
+            'gt' => 'Seleccione comuna de destino.',
         ],
     ],
 
