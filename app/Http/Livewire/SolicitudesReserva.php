@@ -79,8 +79,15 @@ class SolicitudesReserva extends Component
             ->orderBy('fechaSolicitud', 'desc') 
             ->paginate(5);
 
-        // dd($reservasTotales->where('fechaSolicitud', 'like', '%2022-08-09%'));
-        $estadosCmb = Estado::where('codEstado', '!=', 1/*No Confirmado*/)->orderBy('codEstado')->get();//El administrador no ingresa solicitudes No Confirmadas
+
+            $estadosCmb = null;
+     if ($this->flgNuevaReserva == true) {
+        $estadosCmb = Estado::where('codEstado', '=', 2/*Confirmado*/)  
+                       ->orderBy('codEstado')->get();//Para nuevas reservas solamente se ingresan reservas en estado confirmado
+     } else {
+        $estadosCmb = Estado::where('codEstado', '!=', 1/*No Confirmado*/) 
+                       ->orderBy('codEstado')->get();//El administrador no ingresa solicitudes No Confirmadas
+     }
 
         $cmbVehiculos = Vehiculo::all();
 

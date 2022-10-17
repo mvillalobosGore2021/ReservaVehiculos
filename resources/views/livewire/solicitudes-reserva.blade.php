@@ -540,7 +540,7 @@
                            <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y H:i')}}</td>
                            <td class="text-start" nowrap>{{$item['name']}}</td> 
                            <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d/m/Y')}}</span></td>                       
-                           <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};color:white;padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
+                           <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
                            <td class="text-start" nowrap>{{ !empty($item['codVehiculo']) ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
                            <td class="text-start" nowrap>{{$item['nombreComuna']}}</td>
                            <td class="text-center" nowrap>{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}} - {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
@@ -564,7 +564,7 @@
                   </div>
 
                   @if (session()->has('exceptionMessage'))
-                  <div class="row">
+                  <div class="row mt-3">
                     <div class="col-12">
                       <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">

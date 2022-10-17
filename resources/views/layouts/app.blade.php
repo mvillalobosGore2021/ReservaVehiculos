@@ -6,7 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+
     <title>Reserva de Vehiculos</title>
+
+    <!-- Autor: Mario Villalobos P.
+             Correo: mvillalobos@gorebiobio.cl             
+             Fecha de creación: 09-08-2022
+             Ultima modificiación:17-10-2022 MV
+             Objetivo: Ingreso de solicitudes de reservas de vehiculos del Gobierno Regional
+             Unidad: Informática -->
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">

@@ -323,7 +323,7 @@
                         <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
                         <td class="text-start" nowrap>{{$item['name']}}</td>
                         <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</span></td>                       
-                        <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};color:white;padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
+                        <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
                         <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
                         <td class="text-start" nowrap>{{$item['nombreComuna']}}</td>
                         <td class="text-center" nowrap>{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}} - {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
@@ -396,7 +396,7 @@
     <table class="table">
       <tr>
         <td colspan="3" class="fst-italic">
-          <span class="text-primary">Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
+          <span class="text-primary">Haga Click sobre el recuadro para ingresar una solicitud de reserva para el día: <span class="text-success">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
           <span style="display:block;padding-top: 10px;">Solicitudes realizadas para el día: <span class="fw-bolder">{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('d-m-Y')}}</span>.</span>
         </td>
       </tr>
