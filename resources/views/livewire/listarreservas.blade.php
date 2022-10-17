@@ -26,7 +26,7 @@
                   <th scope="col" class="text-start">Hora Inicio</th>
                   <th scope="col" class="text-start">Hora Fin</th>              
                   <th scope="col" class="text-start">Estado</th>
-                  <th scope="col" class="text-start">Destino</th>
+                  <th scope="col" class="text-start" nowrap>Destino</th>
                   <th scope="col" class="text-start">Vehículo</th>                 
                   <th scope="col" class="text-start" class="pe-4" style="text-align: left;">Motivo</th>
                 </tr>
@@ -40,7 +40,7 @@
                   <td class="text-start">{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}</td>
                   <td class="text-start">{{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>           
                   <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};color:white;padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
-                  <td class="text-start glosaTable pe-4">{{$item['nombreComuna']}}</td> 
+                  <td class="text-start nowrap">{{$item['nombreComuna']}}</td> 
                   <td class="text-start" nowrap>{{$item['codVehiculo'] > 0 ? $item['descripcionVehiculo']: 'No Asignado'}}</td>
                   <td class="text-start glosaTable pe-4">{{$item['motivo']}}</td>
                 </tr>

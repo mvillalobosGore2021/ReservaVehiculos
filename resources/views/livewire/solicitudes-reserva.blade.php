@@ -7,7 +7,7 @@
       <div class="card mx-2 mt-3 mb-3 shadow">
         <div class="card-header">
           <div class="row py-md-1 justify-content-center">
-            <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
+            <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div> 
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
               <button type="button" data-tippy-content="Ver solicitudes realizadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch(1)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="setFechaHoySearch(1)"><i class="bi bi-calendar-check"></i> </span>
@@ -158,7 +158,7 @@
                 @if(!empty($item->fechaConfirmacion))
                    {{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}
                 @endif
-              </td> -->          
+              </td> -->
               <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};color:white;padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
               <td class="text-start" nowrap>{{$item->nombreComuna}}</td> 
               <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
@@ -376,8 +376,8 @@
                           <i class="bi bi-list-ul"></i>
                         </span>
                         <select wire:model="codVehiculoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
-                          <option value="">Sel.Vehículo</option> 
-                          @if (!empty( $cmbVehiculos))
+                          <option value="">Sel.Vehículo</option>
+                          @if (!empty( $cmbVehiculos)) 
                             @foreach($cmbVehiculos as $item)
                               <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
                             @endforeach
@@ -388,9 +388,9 @@
                     @error('codVehiculoSel')
                     <div class="col-12 pb-1">
                       @if($flgError == false)
-                          <script>
+                          <!-- <script>
                             movScrollModalById('#codVehiculoId');
-                          </script>
+                          </script> -->
                         @php($flgError = true)
                       @endif
                       <span class="colorerror">{{ $message }}</span>
@@ -649,9 +649,22 @@
       modal.hide();
     }
 
+    window.addEventListener('moveScrollModalById', event => {    
+        const modalBody = document.getElementById("modalBody"); 
+                              
+       
 
-    let el = document.querySelector('.el');
-    let height = el.scrollHeight;
-    el.style.setProperty('--max-height', height + 'px');
+        const element = document.querySelector(event.detail.id);  
+        const topPos = element.getBoundingClientRect().top;
+        
+        modalBody.scrollTo({
+           top: topPos-109,
+           behavior: 'smooth'
+        });
+    });     
+
+    // let el = document.querySelector('.el');
+    // let height = el.scrollHeight;
+    // el.style.setProperty('--max-height', height + 'px');
   </script>
 </div>

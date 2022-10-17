@@ -117,8 +117,8 @@
          moveScrollModal();
     });
 
-    function moveScrollModal() {
-      const modalBody = document.getElementById("modalBody");   
+    function moveScrollModal() { 
+      const modalBody = document.getElementById("modalBody");    
     //const topPos = modalBody.getBoundingClientRect().top;// - menuReserva.offsetTop + window.pageYOffset;
 
         modalBody.scrollTo({
@@ -127,12 +127,12 @@
         });     
     }   
 
-    function movScrollModalById(id) {
+    function movScrollModalById(id) { 
         const modalBody = document.getElementById("modalBody"); 
-                               
+                              
         const element = document.querySelector(id);  
         const topPos = element.getBoundingClientRect().top;
-
+        
         modalBody.scrollTo({
            top: topPos-109,
            behavior: 'smooth'

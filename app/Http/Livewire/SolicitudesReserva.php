@@ -81,9 +81,10 @@ class SolicitudesReserva extends Component
 
 
             $estadosCmb = null;
+
      if ($this->flgNuevaReserva == true) {
         $estadosCmb = Estado::where('codEstado', '=', 2/*Confirmado*/)  
-                       ->orderBy('codEstado')->get();//Para nuevas reservas solamente se ingresan reservas en estado confirmado
+                       ->orderBy('codEstado')->get();//Las reservas nuevas solamente se ingresan en estado confirmado
      } else {
         $estadosCmb = Estado::where('codEstado', '!=', 1/*No Confirmado*/) 
                        ->orderBy('codEstado')->get();//El administrador no ingresa solicitudes No Confirmadas
@@ -101,9 +102,9 @@ class SolicitudesReserva extends Component
         }
 
         $this->dispatchBrowserEvent('iniTooltips');
-        
-
-     
+      
+        //Si es una reserva Nueva la tabla del listado de solicitudes del Modal no se filtra por el usuario seleccionado 
+        $sqlRawStr =  $this->flgNuevaReserva == true ? " 0 = 0 ":" idUser != ". ($this->idUserSel > 0 ? $this->idUserSel:0);       
 
         //Lista de reservas realizadas el mismo dia de la reserva seleccionada
         $reservasFechaSel = collect(Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
@@ -111,7 +112,8 @@ class SolicitudesReserva extends Component
             ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->join('vehiculos', 'reservavehiculos.codVehiculo', '=', 'vehiculos.codVehiculo', 'left outer')
             ->where('fechaSolicitud', '=', $this->fechaSolicitudSel) 
-            ->where('idUser', '!=', $this->idUserSel)
+            // ->where('idUser', '!=', $this->idUserSel)
+            ->WhereRaw($sqlRawStr)
             ->get(['reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'estados.codColor', 'reservavehiculos.codVehiculo', 'vehiculos.descripcionVehiculo', 'comunas.nombreComuna']));
 
         return view('livewire.solicitudes-reserva', compact(['reservasTotales', 'reservasFechaSel', 'estadosCmbSearch', 'estadosCmb', 'cmbVehiculos']));
@@ -185,7 +187,6 @@ class SolicitudesReserva extends Component
 
     public function updated($field, $value)
     {
-
         // if ($field == 'flgUsoVehiculoPersSel') { //Campo opcional no se valida
         //     return true;
         // }
@@ -208,8 +209,8 @@ class SolicitudesReserva extends Component
         $this->resetPage();
 
         if ($field == 'horaInicioSel' || $field == 'horaFinSel') {
-            $this->resetValidation(['horaInicioSel', 'horaFinSel']);
-            $this->resetErrorBag(['horaInicioSel', 'horaFinSel']);
+             $this->resetValidation(['horaInicioSel', 'horaFinSel']);
+             $this->resetErrorBag(['horaInicioSel', 'horaFinSel']);
         }
 
         $this->validateOnly($field, $this->getArrRules());
@@ -226,21 +227,26 @@ class SolicitudesReserva extends Component
                 }
             }
         }
-
-        if ($field == 'codEstadoSel' || $field == 'codVehiculoSel' || 'fechaSolicitudSel') {
+      
+        if ($field == 'codEstadoSel' || $field == 'codVehiculoSel' || $field == 'fechaSolicitudSel') {
+            // dd("Pasé por Acato ".$field, ($field == 'codEstadoSel' || $field == 'codVehiculoSel' || 'fechaSolicitudSel'));
             // dd($this->flgValidateConfirmar);
-            if ($this->flgValidateConfirmar == true) {
-                $this->flgValidateConfirmar = false;
-                $this->resetValidation(['codEstadoSel', 'codVehiculoSel', 'fechaSolicitudSel']);
-                $this->resetErrorBag(['codEstadoSel', 'codVehiculoSel', 'fechaSolicitudSel']);
-            }
+            // if ($this->flgValidateConfirmar == true) {
+            //     $this->flgValidateConfirmar = false; 
+            //     $this->resetValidation(['codEstadoSel', 'codVehiculoSel', 'fechaSolicitudSel']);
+            //     $this->resetErrorBag(['codEstadoSel', 'codVehiculoSel', 'fechaSolicitudSel']);
+            // }  
+
+            $this->resetValidation(['codVehiculoSel']);
+            $this->resetErrorBag(['codVehiculoSel']);   
 
             //dd(!empty($this->validateEstadoConfirmar()), $this->validateEstadoConfirmar(), $this->funcionarioValidate);
             if (!empty($this->validateEstadoConfirmar())) {
-                $this->flgValidateConfirmar = true;
-                $this->addError($field, 'El vehículo ' . $this->descripVehiculoValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $this->flgValidateConfirmar = true; 
+                $this->addError('codVehiculoSel', 'El vehículo ' . $this->descripVehiculoValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $this->dispatchBrowserEvent('moveScrollModalById', ['id' => '#codVehiculoId']);            
             }
-        }
+        }        
     }
 
     public function nuevaReserva()
