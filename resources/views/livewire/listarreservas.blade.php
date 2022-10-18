@@ -86,7 +86,7 @@
               <div class="col-12 col-md-6 ps-4">
                 <div class="row pb-md-1 text-success">
                   <div class="col-12 pb-md-1" id="funcionarioId">
-                    <span class="text-primary">Funcionario:</span> {{$userName}}
+                    <span class="text-primary">{{$sexo == "F" ? "Funcionaria":"Funcionario"}}:</span> {{$userName}}
                   </div>
                   <div class="col-12 col-md-6 py-2 py-md-0">
                     <span class="text-primary">Dia Reserva:</span> {{$fechaModal}}

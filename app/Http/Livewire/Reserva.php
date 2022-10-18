@@ -17,7 +17,7 @@ class Reserva extends Component
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
         $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado, 
-        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay, $codColor; 
+        $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay, $codColor, $sexo; 
 
     protected $reservaService;
 
@@ -32,6 +32,7 @@ class Reserva extends Component
         $this->flgUsoVehiculoPersonal = false;
         $user = Auth::user();
         $this->userName = $user->name;
+        $this->sexo = $user->sexo;
         $this->idUser = $user->id;
         $this->correoUser = $user->email;
         $this->getCalendarMonth(Carbon::now()->month);
@@ -40,9 +41,10 @@ class Reserva extends Component
         $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
         $this->reservaService = new ReservaServices();
         // dd($this->comunasCmb, $this->divisionesCmb);        
-        // dd(SomeExampleClass::someFunction());
+        // dd(SomeExampleClass::someFunction()); 
         //$pruebaService = new PruebaServices();
         //dd($pruebaService->saludo());
+        $this->dispatchBrowserEvent('iniTooltips');
     }
 
     public function render()

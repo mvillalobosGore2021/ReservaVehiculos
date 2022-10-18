@@ -19,13 +19,14 @@ class Listarreservas extends Component
 
     public $userName, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, $descripcionEstado,
     $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
-    $correoUser, $arrCantReservasCount, $codColor;
+    $correoUser, $arrCantReservasCount, $codColor, $sexo;
 
     protected $listeners = ['anularReserva'];
 
     public function mount() {
         $user = Auth::user();
         $this->userName = $user->name;
+        $this->sexo = $user->sexo;
         $this->idUser = $user->id;
         $this->correoUser = $user->email;
         $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();

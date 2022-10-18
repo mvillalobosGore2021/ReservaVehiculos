@@ -141,7 +141,7 @@ public function anularReserva($objInput) {
 
         // $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
         // $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
-        $mailData['resumen'] = "el funcionario <b>".$mailData['funcionario']."</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día";
+        $mailData['resumen'] = ($objInput->userName == "F" ? "la funcionaria":"el funcionario")."<b>".$mailData['funcionario']."</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día";
         
         $emailAdmin = "";
         try {
@@ -251,7 +251,7 @@ public function solicitarReserva($objInput) {
 
             // $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
             // $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
-            $mailData['resumen'] = "el funcionario <b>".$mailData['funcionario']."</b>".($objInput->idReserva > 0 ? " ha <span style='background-color:#EF3B2D;color:white;'>Modificado</span> su reserva solicitada para el día" : " ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una nueva solicitud de reserva para el día");
+            $mailData['resumen'] = ($objInput->userName == "F" ? "la funcionaria":"el funcionario")."<b>".$mailData['funcionario']."</b>".($objInput->idReserva > 0 ? " ha <span style='background-color:#EF3B2D;color:white;'>Modificado</span> su reserva solicitada para el día" : " ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una nueva solicitud de reserva para el día");
             
             $emailAdmin = "";
             try {

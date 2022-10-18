@@ -30,9 +30,9 @@ class SolicitudesReserva extends Component
     public $fechaSolSearch, $codEstadoSearch, $nameSearch, $codVehiculoSel, $codEstadoSel;
 
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
-        $motivoSel, $nameSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
+        $motivoSel, $nameSel, $sexoUserSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
         $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate,
-        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb;
+        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb, $sexoUserLog;
 
     public Collection $inputsTable;
 
@@ -46,6 +46,8 @@ class SolicitudesReserva extends Component
         $user = Auth::user();
         $this->idUserAdmin = $user->id;
         $this->usernameLog = $user->name; 
+        $this->sexoUserLog = $user->sexo;
+
         $this->fechaSearch = "";
         $this->flgValidateConfirmar = false;
         $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get(); 
@@ -137,6 +139,7 @@ class SolicitudesReserva extends Component
         $this->motivoSel = $reservaSel->motivo;
         $this->nameSel = $reservaSel->name;
         $this->emailSel = $reservaSel->email;
+        $this->sexoSel = $reservaSel->sexo;
         $this->idUserSel = $reservaSel->idUser; 
         $this->descripEstadoSel = $reservaSel->descripcionEstado;
         $this->codEstadoSel = $reservaSel->codEstado;
@@ -222,7 +225,7 @@ class SolicitudesReserva extends Component
                     if ($this->buscarReservaFuncionario() == true) {
                         $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
                         $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
-                        $this->addError($field, 'El funcionario ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                        $this->addError($field, 'El funcionario(a) ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
                     }
                 }
             }
@@ -322,13 +325,16 @@ class SolicitudesReserva extends Component
 
                 $reservaVehiculo = Reservavehiculo::where("idReserva",  $this->idReservaSel)->first();      
                 
-                $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;
+                $user = User::where("id", "=",  $this->idUserSel)->first();
+                $this->nameSel = $user->name;
+                $this->sexoUserSel = $user->sexo;
 
                 //Envío de correo  
                 $mailData = [
                     'asunto' => "Notificación: Anulación de Reserva de Vehículo",
                     'resumen' => "<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día",
-                    'funcionario' => $this->nameSel, 
+                    'funcionario' => $this->nameSel,
+                    'sexo' => $this->sexoUserSel,
                     'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                     'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
                     'horaInicio' => $reservaVehiculo->horaInicio,
@@ -357,7 +363,7 @@ class SolicitudesReserva extends Component
                     foreach ($userAdmin as $item) {
                         $emailAdmin = $item->email;
                         $mailData['nomAdmin'] = $item->name;
-                        $mailData['resumen'] = "el funcionario <b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $this->nameSel . "</b> solicitada para el día";
+                        $mailData['resumen'] = ($this->sexoUserLog == "F" ? "la funcionaria":"él funcionario")."<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $this->nameSel . "</b> solicitada para el día";
 
                         if ($item->id == $this->idUserAdmin) {
                             $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
@@ -414,7 +420,7 @@ class SolicitudesReserva extends Component
                 $flgError = true; 
                 $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
                 $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
-                $this->addError('idUserSel', 'El funcionario ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $this->addError('idUserSel', 'El funcionario(a) ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
 
                 $user = User::where('id', '=', $this->idUserSel)->first();
 
@@ -448,7 +454,7 @@ class SolicitudesReserva extends Component
 
                     //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva   
 
-                    $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;
+                    $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;    
 
                     $camposReservaVehiculoArr =  [
                         'idUser' => $this->idUserSel,
@@ -493,6 +499,7 @@ class SolicitudesReserva extends Component
                         'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo":"Notificación: Ingreso de Reserva de Vehículo",
                         'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> su reserva solicitada para el día"):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a su nombre para el día"),
                         'funcionario' => $this->nameSel,
+                        'funcionario' => $this->sexoSel, 
                         'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                         'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
                         'horaInicio' => $this->horaInicioSel,

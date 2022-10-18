@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('rut')->nullable();
             $table->integer('dvRut')->nullable();
             $table->string('name');
+            $table->char('sexo', 1);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

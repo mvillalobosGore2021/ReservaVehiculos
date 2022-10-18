@@ -81,8 +81,8 @@ hr {
       </td>
     </tr>
     <tr> 
-      <td style="color:#282D33;width:185px;"><b>Funcionario(a):</b></td>
-      <td style="color:#746873">Mario Villalobos Pedrero</td>
+      <td style="color:#282D33;width:185px;"><b>{{ $mailData['sexo'] == 'F' ? 'Funcionaria': 'Funcionario' }}:</b></td> 
+      <td style="color:#746873">{{ $mailData['funcionario'] }}</td>
     </tr>
     <tr>
       <td><b>Fecha Creación:</b></td>
