@@ -30,6 +30,11 @@ hr {
 <body>  
 <center>
   <table width="640">
+   <tr>
+      <td colspan="2">
+        <hr>
+      </td>
+    </tr>
     <tr>      
       <td colspan="2" style="margin:0px;padding:0px;">
         <x-encabezadocorreo/>

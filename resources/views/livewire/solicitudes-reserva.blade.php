@@ -264,7 +264,7 @@
                       <input type="hidden" wire:model="idReservaSel">
                       <div class="row">
                         <div class="col-12">
-                          <label>Dia a Reservar</label>
+                          <label>Fecha Reserva</label>
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-calendar4"></i>
