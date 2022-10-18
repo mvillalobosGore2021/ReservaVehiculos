@@ -54,7 +54,7 @@ hr {
     </tr>
     <tr>
       <td colspan="2" style="padding-bottom:10px;padding-left:15px;padding-right:15px;text-align:justify;font-size:15px;">
-       Estimado(a) <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
+      {{ $mailData['sexo'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
        @if ($mailData['codEstado'] == 1 && empty($mailData['nomAdmin'])) 

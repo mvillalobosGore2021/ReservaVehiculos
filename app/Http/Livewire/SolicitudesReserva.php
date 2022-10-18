@@ -363,7 +363,7 @@ class SolicitudesReserva extends Component
                     foreach ($userAdmin as $item) {
                         $emailAdmin = $item->email;
                         $mailData['nomAdmin'] = $item->name;
-                        $mailData['resumen'] = ($this->sexoUserLog == "F" ? "la funcionaria":"él funcionario")."<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $this->nameSel . "</b> solicitada para el día";
+                        $mailData['resumen'] = ($this->sexoUserLog == "F" ? "la funcionaria":"él funcionario")." <b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $this->nameSel . "</b> solicitada para el día";
 
                         if ($item->id == $this->idUserAdmin) {
                             $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
@@ -499,7 +499,7 @@ class SolicitudesReserva extends Component
                         'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo":"Notificación: Ingreso de Reserva de Vehículo",
                         'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> su reserva solicitada para el día"):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a su nombre para el día"),
                         'funcionario' => $this->nameSel,
-                        'funcionario' => $this->sexoSel, 
+                        'sexo' => $this->sexoSel, 
                         'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                         'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
                         'horaInicio' => $this->horaInicioSel,
@@ -526,7 +526,7 @@ class SolicitudesReserva extends Component
                             $emailAdmin = $item->email;
                             $mailData['nomAdmin'] = $item->name; 
 
-                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $this->nameSel. "</b> para el día");
+                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> su reserva para el día "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $this->nameSel. "</b> para el día");
     
                             if ($item->id == $this->idUserAdmin) { 
                                 $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") .$this->nameSel. "</b> para el día");
