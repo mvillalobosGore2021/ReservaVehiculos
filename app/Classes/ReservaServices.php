@@ -298,10 +298,10 @@ public function solicitarReserva($objInput) {
         return [
             'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],
-            'codDivision' => 'required',
-            'codComuna' => 'required',
-            'cantPasajeros' => 'required:gt:0',
-            'motivo' => 'required:max:500',
+            'codDivision' => 'required|gt:0',
+            'codComuna' => 'required|gt:0',
+            'cantPasajeros' => 'required|gt:0|integer|digits_between:1,2',
+            'motivo' => 'required|max:500',
         ];
     }
 }

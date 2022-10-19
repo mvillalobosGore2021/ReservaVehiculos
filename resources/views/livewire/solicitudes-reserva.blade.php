@@ -1,4 +1,16 @@
 <div>
+  @if ($flgAdmin != true)
+    <center>
+      <div class="alert alert-warning border border-warning d-flex justify-content-center" role="alert">
+                  <span class="fs-4 pe-2 pe-md-3">
+                   <i class="bi bi-info-circle-fill"></i>
+                  </span>
+                  <span class="fs-6 fst-italic pt-1">
+                    No Autorizado
+                  </span>
+      </div>
+    </center>
+  @else
   <div class="card m-2 mb-4 m-md-3 mb-md-5">
     <div class="card-header py-3 text-center h3">
       Solicitudes de Reserva
@@ -663,8 +675,28 @@
         });
     });     
 
+    function onlyNumberKey(evt, obj) {
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
+    var flgAsciiNumberOK = false;
+
+    if (ASCIICode == 8 /*Borrar <-*/ || ASCIICode == 46 /*Supr*/ || ASCIICode == 37 /*Atras*/ || ASCIICode == 39 /*Adelante*/ || ASCIICode == 9 /*Tab*/ ) {
+      return true;
+    }
+
+    if (obj.value.length >= obj.maxLength) {
+      return false;
+    }
+
+    if ((ASCIICode > 47 && ASCIICode < 58) || (ASCIICode > 95 && ASCIICode < 106)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
     // let el = document.querySelector('.el');
     // let height = el.scrollHeight;
     // el.style.setProperty('--max-height', height + 'px');
   </script>
+  @endif
 </div>

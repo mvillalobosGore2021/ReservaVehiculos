@@ -177,6 +177,8 @@ return [
         'cantPasajeros*' => [
             'required' => 'Ingrese la cantidad de pasajeros.',
             'gt' => 'Ingrese la cantidad de pasajeros.',
+            'integer' => 'Debe ingresar un valor númerico.',
+            'digits_between' => 'Cantidad no debe superar los dos dígitos.',
         ],
         'codDivision*' => [
             'required' => 'Seleccione la división.',

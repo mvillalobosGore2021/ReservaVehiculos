@@ -1,6 +1,5 @@
 <div>
   <form>
-
     <div class="card shadow mt-4" id="headReservas">
       <div class="card-header py-3 h3 text-center">
         Mis Reservas

@@ -32,7 +32,7 @@ class SolicitudesReserva extends Component
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $sexoUserSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
         $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate,
-        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb, $sexoUserLog;
+        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb, $sexoUserLog, $flgAdmin;
 
     public Collection $inputsTable;
 
@@ -47,6 +47,7 @@ class SolicitudesReserva extends Component
         $this->idUserAdmin = $user->id;
         $this->usernameLog = $user->name; 
         $this->sexoUserLog = $user->sexo;
+        $this->flgAdmin = $user->flgAdmin;
 
         $this->fechaSearch = "";
         $this->flgValidateConfirmar = false;
