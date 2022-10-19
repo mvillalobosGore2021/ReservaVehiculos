@@ -457,7 +457,7 @@ class SolicitudesReserva extends Component
 
                     $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;    
 
-                    $camposReservaVehiculoArr =  [
+                    $camposReservaVehiculoArr =  [ 
                         'idUser' => $this->idUserSel,
                         'prioridad' => $prioridad,
                         // 'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersSel, 
@@ -523,13 +523,13 @@ class SolicitudesReserva extends Component
     
                     $emailAdmin = "";
                     try {
-                        foreach ($userAdmin as $item) {
+                        foreach ($userAdmin as $item) { 
                             $emailAdmin = $item->email;
                             $mailData['nomAdmin'] = $item->name; 
 
                             $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> su reserva para el día "):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") . $this->nameSel. "</b> para el día");
     
-                            if ($item->id == $this->idUserAdmin) { 
+                            if ($item->id == $this->idUserAdmin && $item->id != $this->idUserSel) {
                                 $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> la reserva de "):("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a nombre de <b>") .$this->nameSel. "</b> para el día");
                             }
     
@@ -580,7 +580,7 @@ class SolicitudesReserva extends Component
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'codDivisionSel' => 'required|gt:0',
             'codComunaSel' => 'required|gt:0',
-            'cantPasajerosSel' => 'required|gt:0',
+            'cantPasajerosSel' => 'required|gt:0|integer|digits_between:1,2',
             'motivoSel' => 'required|max:500', 
             'codVehiculoSel' => 'required|gt:0',
         ]; 
