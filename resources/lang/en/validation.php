@@ -169,7 +169,16 @@ return [
         'fechaSolicitudSel' => [
             'required' => 'Debe ingresar fecha de reserva.',
             'after' => 'Fecha de reserva debe ser posterior o igual a la fecha actual.',
-        ],        
+        ],
+        'fechaInicioReserva' => [
+            'required' => 'Debe ingresar fecha de inicio.',
+            'date_format' => 'La fecha de inicio debe tener el siguiente formato: dd/mm/yyyy.',
+        ],      
+        'fechaFinReserva' => [
+            'required' => 'Debe ingresar fecha de fin.',
+            'date_format' => 'La fecha fin debe tener el siguiente formato: dd/mm/yyyy.',
+            'after_or_equal' => 'Fecha fin debe ser mayor o igual a la fecha de inicio.',
+        ],
         'codVehiculoSel' => [
             'required' => 'Seleccione Vehículo.',
             'gt' => 'Seleccione Vehículo.',

@@ -18,7 +18,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Mail\CorreoNotificacion;
-use App\Mail\CorreoAnulacion;
 use Exception;
 
 class SolicitudesReserva extends Component
@@ -27,12 +26,13 @@ class SolicitudesReserva extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $fechaSolSearch, $codEstadoSearch, $nameSearch, $codVehiculoSel, $codEstadoSel;
+    public $fechaSolSearch, $codEstadoSearch, $descripEstadoSearch, $colorEstadoSearch, $nameSearch, $codVehiculoSel, $codEstadoSel;
 
     public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $sexoUserSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
         $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate,
-        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb, $sexoUserLog, $flgAdmin;
+        $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb, $sexoUserLog, $flgAdmin, 
+        $fechaInicioReserva, $fechaFinReserva, $flgSearchRangoFec, $fecInicioResult, $fecFinResult;
 
     public Collection $inputsTable;
 
@@ -53,6 +53,10 @@ class SolicitudesReserva extends Component
         $this->flgValidateConfirmar = false;
         $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get(); 
         $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
+
+        // $this->fechaInicioReserva = Carbon::now()->format('Y-m-01');
+        // $this->fechaFinReserva = Carbon::now()->addMonthsNoOverflow(3); //Se muestran las reservas en un rando de 3 meses
+        // $this->fechaFinReserva =  $this->fechaFinReserva->format('Y-m-' .  $this->fechaFinReserva->daysInMonth);
     }
 
     public function render()
@@ -61,26 +65,51 @@ class SolicitudesReserva extends Component
         $fechaFin = Carbon::now()->addMonthsNoOverflow(3); //Se muestran las reservas en un rando de 3 meses
         $fechaFin = $fechaFin->format('Y-m-' . $fechaFin->daysInMonth);
 
-        $sqlFechaSearch = "";
-        if ($this->flgFechaSearch == 1) {
-            $sqlFechaSearch = "reservavehiculos.created_at like '%" . $this->fechaSearch . "%'";
-        } else {
-            $sqlFechaSearch = "reservavehiculos.fechaSolicitud like '%" . $this->fechaSearch . "%'";
-        }
+        //Busqueda por rango de fecha 
+        // if (empty($this->fechaInicioReserva) && empty($this->fechaFinReserva)) {//Si fecha inicio y fin estan vacias se le asigna un rango de 3 meses
+        //     $this->fechaInicioReserva = $fechaInicio;
+        //     $this->fechaFinReserva = $fechaFin;
+        // } else
+           if (!empty($this->fechaInicioReserva) && !empty($this->fechaFinReserva)) {
+               if ($this->fechaInicioReserva > $this->fechaFinReserva) {//Si fecha inicio es mayor a fecha fin se invierten
+                   $fecIniPaso = $this->fechaInicioReserva;
+                   $this->fechaInicioReserva = $this->fechaFinReserva;
+                   $this->fechaFinReserva = $fecIniPaso;
+               }
 
-        //Se obtienen las reservas para un rango de dos meses
+               $fechaInicio = $this->fechaInicioReserva;
+               $fechaFin = $this->fechaFinReserva;
+            }            
+           else
+            if (!empty($this->fechaInicioReserva) && empty($this->fechaFinReserva)) {
+                $fechaInicio = $this->fechaInicioReserva;
+                $this->fechaFinReserva = $this->fechaInicioReserva;//Si fecha fin esta vacia se le asigna la fecha de inicio 
+                $fechaFin = $this->fechaFinReserva;
+            }
+    
+            $sqlFechaSearch = "reservavehiculos.fechaSolicitud >= '" . $fechaInicio . "' and reservavehiculos.fechaSolicitud <= '" . $fechaFin."'"; 
+         
+
+        //Se obtienen las reservas para un rango de tres meses
         $reservasTotales = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
             ->join('users', 'users.id', '=', 'reservavehiculos.idUser') 
             ->leftJoin('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna') 
             ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo') 
             ->select('reservavehiculos.*', 'users.id', 'users.name', 'estados.descripcionEstado', 'estados.codColor', 'comunas.nombreComuna', 'vehiculos.descripcionVehiculo') 
-            ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaFin])
+            // ->whereBetween('fechaSolicitud', [$fechaInicio, $fechaFin])
             // ->where('reservavehiculos.created_at', 'like', '%' . $this->fechaHoySearch . '%') 
             ->whereRaw($sqlFechaSearch)
             ->where('users.name', 'like', '%' . $this->nameSearch . '%')
             ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
-            ->orderBy('fechaSolicitud', 'asc') 
-            ->paginate(5);
+            ->orderBy('fechaSolicitud', 'asc');
+
+            $reservasTotalesCollect = $reservasTotales->get();
+            if (count($reservasTotalesCollect) > 0) {
+                $this->fecInicioResult = $reservasTotalesCollect[0]->fechaSolicitud;
+                $this->fecFinResult = $reservasTotalesCollect[(count($reservasTotalesCollect)-1)]->fechaSolicitud;
+            }
+
+            $reservasTotales = $reservasTotales->paginate(5);
 
 
             $estadosCmb = null;
@@ -95,7 +124,7 @@ class SolicitudesReserva extends Component
 
         $cmbVehiculos = Vehiculo::all();
 
-        $estadosCmbSearch = Estado::all();
+        $estadosCmbSearch = Estado::all(); 
 
         $this->inputsTable = new Collection();
         foreach ($reservasTotales as $item) {
@@ -176,7 +205,7 @@ class SolicitudesReserva extends Component
 
     public function mostrarTodo()
     {
-        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaSearch']);
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaSearch', 'fechaInicioReserva', 'fechaFinReserva']);
         //$this->dispatchBrowserEvent('iniTooltips');
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
@@ -195,9 +224,20 @@ class SolicitudesReserva extends Component
         //     return true;
         // }
 
+     if ($field == 'codEstadoSearch' && $this->codEstadoSearch > 0) {
+        //$this->estadosCmb = Estado::where('codEstado', '>', 1)->get(); 
+        $estado = Estado::where('codEstado', '=', $this->codEstadoSearch)->first();
+        $this->descripEstadoSearch = $estado->descripcionEstado;
+        $this->colorEstadoSearch =  $estado->codColor; 
+     }
+
+        if ($field == 'flgSearchRangoFec') { //Campo opcional no se valida
+            return true;
+        }
+        
         if ($field == 'flgFechaSearch') {
             if ($this->fechaSearch ==  Carbon::now()->format('Y-m-d')) {
-                $this->flgSearchHoy = $this->flgFechaSearch == 1 ? 1 : 2;
+                $this->flgSearchHoy = $this->flgFechaSearch == 1 ? 1 : 2; 
             }
         }
 
@@ -217,7 +257,7 @@ class SolicitudesReserva extends Component
              $this->resetErrorBag(['horaInicioSel', 'horaFinSel']);
         }
 
-        $this->validateOnly($field, $this->getArrRules());
+        $this->validateOnly($field, $this->getArrRules());         
 
         //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
         if ($this->flgNuevaReserva == true) {
@@ -250,7 +290,7 @@ class SolicitudesReserva extends Component
                 $this->addError('codVehiculoSel', 'El vehículo ' . $this->descripVehiculoValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
                 $this->dispatchBrowserEvent('moveScrollModalById', ['id' => '#codVehiculoId']);            
             }
-        }        
+        }    
     }
 
     public function nuevaReserva()
@@ -287,7 +327,7 @@ class SolicitudesReserva extends Component
                 $reservaVehiculo = Reservavehiculo::where("fechaSolicitud", "=", $this->fechaSolicitudSel)
                     ->join("users", 'users.id', "=", "reservavehiculos.idUser")
                     ->where("codEstado", "=", 2) //Estado 2 = Confirmada
-                    ->where("idUser", "!=", $this->idUserSel)
+                    ->where("idUser", "!=", $this->idUserSel) 
                     // ->whereNotNull("codVehiculo")
                     ->whereRaw("codVehiculo = " . $this->codVehiculoSel . " and codVehiculo IS NOT NULL")->first();
             }
@@ -570,11 +610,13 @@ class SolicitudesReserva extends Component
             ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)->get()) > 0;
     }  
 
-    public function getArrRules() 
+    public function getArrRules()
     {
         $rulesReserva = [
             'idUserSel' => 'required|gt:0',
             'fechaSolicitudSel' => 'required|date_format:Y-m-d|after:yesterday',
+            'fechaInicioReserva' => 'date_format:Y-m-d',
+            'fechaFinReserva' => 'date_format:Y-m-d',//|after_or_equal:fechaInicioReserva',
             'codEstadoSel' => 'required|gt:1',/*Mayor a 1 para omitir el estado No Confirmado*/
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
@@ -584,6 +626,10 @@ class SolicitudesReserva extends Component
             'motivoSel' => 'required|max:500', 
             'codVehiculoSel' => 'required|gt:0',
         ]; 
+
+        // if ($this->flgSearchRangoFec == 1) {
+        //     $rulesReserva = Arr::add($rulesReserva, 'fechaFinReserva', 'date_format:Y-m-d|after_or_equal:fechaInicioReserva');
+        // }
      
 
         // if ($this->flgNuevaReserva == true) {

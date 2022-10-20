@@ -1,15 +1,15 @@
 <div>
   @if ($flgAdmin != true)
-    <center>
-      <div class="alert alert-warning border border-warning d-flex justify-content-center" role="alert">
-                  <span class="fs-4 pe-2 pe-md-3">
-                   <i class="bi bi-info-circle-fill"></i>
-                  </span>
-                  <span class="fs-6 fst-italic pt-1">
-                    No Autorizado
-                  </span>
-      </div>
-    </center>
+  <center>
+    <div class="alert alert-warning border border-warning d-flex justify-content-center" role="alert">
+      <span class="fs-4 pe-2 pe-md-3">
+        <i class="bi bi-info-circle-fill"></i>
+      </span>
+      <span class="fs-6 fst-italic pt-1">
+        No Autorizado
+      </span>
+    </div>
+  </center>
   @else
   <div class="card m-2 mb-4 m-md-3 mb-md-5">
     <div class="card-header py-3 text-center h3">
@@ -19,7 +19,7 @@
       <div class="card mx-2 mt-3 mb-3 shadow">
         <div class="card-header">
           <div class="row py-md-1 justify-content-center">
-            <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div> 
+            <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
               <button type="button" data-tippy-content="Ver solicitudes realizadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch(1)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
                 <span wire:loading.remove wire:target="setFechaHoySearch(1)"><i class="bi bi-calendar-check"></i> </span>
@@ -56,7 +56,7 @@
                 <span class="input-group-text">
                   <i class="bi bi-person"></i>
                 </span>
-                <input type="text" class="form-control" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario(a) que desea buscar" data-tippy-content="Ingrese el nombre del funcionario(a) que desea buscar">
+                <input type="text" class="form-control" id="nameSearch" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario(a) que desea buscar" data-tippy-content="Ingrese el nombre del funcionario(a) que desea buscar">
                 <span class="input-group-text bg-white" id="borrarNameSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
                   <i class="bi bi-x-circle"></i>
                 </span>
@@ -80,31 +80,57 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-3 pt-3">
-              <div class="row">
-                <div class="col-12">
-                  <label>{{$flgFechaSearch == 1 ? 'Fecha Creación':'Fecha Reserva'}}</label> 
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="bi bi-calendar4"></i>
-                    </span>
-                    <input type="date" wire:model.debounce.500ms="fechaSearch" class="form-control" autocomplete="off">
-                    <span class="input-group-text bg-white" id="borrarFechaSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaSearch', '')">
-                      <i class="bi bi-x-circle"></i>
-                    </span>
+            <div class="col-12 col-md-10 mt-3">
+              <div class="card" id="rangoFecReserva">
+                <div class="card-header">
+                  Busqueda por Rango de Fecha
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-12 col-md-4">
+                      <div class="row">
+                        <div class="col-12">
+                          <label>Fecha Desde</label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="bi bi-calendar4"></i>
+                            </span>
+                            <input type="date" wire:model.debounce.500ms="fechaInicioReserva" class="form-control" autocomplete="off">
+                            <span class="input-group-text bg-white" id="fechaInicioReservaDel" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaInicioReserva', '')">
+                              <i class="bi bi-x-circle"></i>
+                            </span>
+                          </div>
+                        </div>
+                        @error('fechaInicioReserva')
+                        <div class="col-12  pt-1">
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <div class="row">
+                        <div class="col-12">
+                          <label>Fecha Hasta</label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="bi bi-calendar4"></i>
+                            </span>
+                            <input type="date" wire:model.debounce.500ms="fechaFinReserva" class="form-control" autocomplete="off">
+                            <span class="input-group-text bg-white" id="fechaFinReservaDel" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaFinReserva', '')">
+                              <i class="bi bi-x-circle"></i>
+                            </span>
+                          </div>
+                        </div>
+                        @error('fechaFinReserva')
+                        <div class="col-12  pt-1">
+                          <span class="colorerror">{{ $message }}</span>
+                        </div>
+                        @enderror
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="col-12  pt-1">
-                  <div class="form-check form-switch" id="idFlgFecSearch{{rand(0, 1000)}}" data-tippy-content="{{$flgFechaSearch == 1 ? 'Desactive la casilla si desea buscar por la fecha de reserva':'Active la casilla si desea buscar por la fecha cuando se realizó la solicitud'}}">
-                    <input class="form-check-input" id="flgFechaSearch" type="checkbox" wire:model.debounce.500ms="flgFechaSearch">
-                    <label class="form-check-label" for="flgFechaSearch">Fecha Creación</label>
-                  </div>
-                </div>
-                <!-- @error('fechaSearch')
-                <div class="col-12  pt-1">
-                  <span class="colorerror">{{ $message }}</span>
-                </div>
-                @enderror -->
               </div>
             </div>
 
@@ -113,7 +139,7 @@
                 <div class="col-12 col-md-5" id="resetSearch">
                   @if(!empty($fechaSearch) && ($flgSearchHoy == 1 || $flgSearchHoy == 2))
                   <button type="button" class="btn btn-dark btn-sm rounded-pill p-1" style="cursor:context-menu;">
-                    {{$flgSearchHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}}
+                    {{$flgSearchHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}} 
                     <div class="d-inline" wire:click="resetSearch" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
                   </button>
                   @endif
@@ -144,13 +170,23 @@
       <div class="table-responsive card mx-2 mt-4 shadow" id="listadoSolReservas">
         <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif ">
           <thead class="table-light">
+           @if(!empty($reservasTotales) && count($reservasTotales) > 0)
+            <tr>
+              <th scope="col" colspan="7" class="ps-4 text-primary py-4">
+                Para los parametros de busqueda se encontraron reservas desde (Terminar esto)
+                <center>
+                  <b>Reservas realizadas Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> Hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
+                </center>
+              </th>
+            </tr>
+            @endif
             <tr>
               <th scope="col" class="ps-4">Funcionario(a)</th>
               <th scope="col" class="text-start">Fecha Creación</th>
               <th scope="col" class="text-start">Fecha Reserva</th>
               <!-- <th scope="col" class="text-center">Hora Inicio</th>
-              <th scope="col" class="text-center">Hora Fin</th> -->             
-              <th scope="col" class="text-start">Estado</th>           
+              <th scope="col" class="text-center">Hora Fin</th> -->
+              <th scope="col" class="text-start">Estado</th>
               <th scope="col" class="text-start">Destino</th>
               <th scope="col" class="text-start">Vehículo</th>
               <th scope="col" class="text-start">Motivo</th>
@@ -163,7 +199,7 @@
             <tr style="height:55px;cursor:pointer;" id="td{{$loop->index}}{{rand(0, 100)}}" wire:click="reservaSel('{{$item->idReserva}}', '1')" data-tippy-content="Click para editar">
               <td nowrap class="ps-4">{{ $item->name}}</td>
               <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
-              <td class="text-start">{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</td>
+              <td class="text-start"><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</b></span></td>
               <!-- <td class="text-center">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
               <td class="text-center">{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td> -->
               <!-- <td class="text-center">
@@ -172,8 +208,8 @@
                 @endif
               </td> -->
               <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};color:white;padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
-              <td class="text-start" nowrap>{{$item->nombreComuna}}</td> 
-              <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
+              <td class="text-start" nowrap>{{$item->nombreComuna}}</td>
+              <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td>
               <td class="glosaTable pe-4">
                 <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
                 {{$item->motivo}}
@@ -181,6 +217,13 @@
 
             </tr>
             @endforeach
+            <tr>
+              <td colspan="7">
+                <center style="font-size:16px;font-style: italic;" class="text-primary">
+                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}} :</b>Desplegando reservas Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> Hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSearch}}</b></span> @endif
+                </center>
+              </td>
+            </tr>
             @else
             <tr>
               <td colspan="7">
@@ -236,7 +279,7 @@
                     <div class="col-12">
                       <div class="row">
                         <div class="col-12" id="inputFunc">
-                          <label>Funcionario(a)</label> 
+                          <label>Funcionario(a)</label>
                           @if ($flgNuevaReserva == true)
                           <div class="input-group">
                             <span class="input-group-text">
@@ -258,7 +301,7 @@
                         </div>
                         @error('idUserSel')
                         <div class="col-12" id="idUserSelError">
-                        @if($flgError == false)
+                          @if($flgError == false)
                           <script>
                             movScrollModalById('#inputFunc');
                           </script>
@@ -286,7 +329,7 @@
                         </div>
                         @error('fechaSolicitudSel')
                         <div class="col-12">
-                        @if($flgError == false)
+                          @if($flgError == false)
                           <script>
                             movScrollModalById('#fechaSolicitudId');
                           </script>
@@ -318,7 +361,7 @@
                         </div>
                         @error('codEstadoSel')
                         <div class="col-12">
-                        @if($flgError == false)
+                          @if($flgError == false)
                           <script>
                             movScrollModalById('#codEstadoId');
                           </script>
@@ -389,10 +432,10 @@
                         </span>
                         <select wire:model="codVehiculoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
                           <option value="">Sel.Vehículo</option>
-                          @if (!empty( $cmbVehiculos)) 
-                            @foreach($cmbVehiculos as $item)
-                              <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
-                            @endforeach
+                          @if (!empty( $cmbVehiculos))
+                          @foreach($cmbVehiculos as $item)
+                          <option value="{{$item->codVehiculo}}">{{$item->descripcionVehiculo}}</option>
+                          @endforeach
                           @endif
                         </select>
                       </div>
@@ -400,10 +443,10 @@
                     @error('codVehiculoSel')
                     <div class="col-12 pb-1">
                       @if($flgError == false)
-                          <!-- <script>
+                      <!-- <script>
                             movScrollModalById('#codVehiculoId');
                           </script> -->
-                        @php($flgError = true)
+                      @php($flgError = true)
                       @endif
                       <span class="colorerror">{{ $message }}</span>
                     </div>
@@ -473,7 +516,7 @@
                         <span class="input-group-text">
                           <i class="bi bi-list-ul"></i>
                         </span>
-                        <select id="codDivision" wire:model="codDivisionSel" @if($codEstadoSel == 3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
+                        <select id="codDivision" wire:model="codDivisionSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel" class="form-select">
                           <option value="">Sel.División</option>
                           @foreach($divisionesCmb as $itemDivision)
                           <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
@@ -501,7 +544,7 @@
                     </div>
                     @error('motivoSel')
                     <div class="col-12">
-                    @if($flgError == false)
+                      @if($flgError == false)
                       <script>
                         movScrollModalById('#motivoId');
                       </script>
@@ -524,38 +567,38 @@
                 </div>
 
                 <div class="col-12 col-md-6 pt-3 pt-md-1">
-                  <div class="table-responsive mx-2"> 
+                  <div class="table-responsive mx-2">
                     <table class="table @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0 && $flgNuevaReserva == false) table-hover @endif ">
                       <!-- table-bordered -->
                       <thead>
                         <tr>
-                          <th scope="col" colspan="7" class="text-start text-success pb-3"> 
-                          <span data-tippy-content="Reservas realizadas por otros funcionarios para el día: {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}">
-                            Reservas realizadas para el día <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}</span>
+                          <th scope="col" colspan="7" class="text-start text-success pb-3">
+                            <span data-tippy-content="Reservas realizadas por otros funcionarios para el día: {{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}">
+                              Reservas realizadas para el día <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($fechaSolicitudSel)->format('d/m/Y')}}</span>
                             </span>
                           </th>
                         </tr>
                         <tr>
-                             <th scope="col" class="text-start" nowrap>Fecha Creación</th>
-                             <th scope="col" class="text-start">Nombre</th>
-                             <th scope="col" class="text-start" nowrap>Fecha Reserva</th>
-                             <th scope="col" class="text-start">Estado</th>
-                             <th scope="col" class="text-start">Vehículo</th>
-                             <th scope="col" class="text-start">Destino</th>                            
-                             <th scope="col" class="text-start" nowrap>Hora Inicio-Fin</th>      
+                          <th scope="col" class="text-start" nowrap>Fecha Creación</th>
+                          <th scope="col" class="text-start">Nombre</th>
+                          <th scope="col" class="text-start" nowrap>Fecha Reserva</th>
+                          <th scope="col" class="text-start">Estado</th>
+                          <th scope="col" class="text-start">Vehículo</th>
+                          <th scope="col" class="text-start">Destino</th>
+                          <th scope="col" class="text-start" nowrap>Hora Inicio-Fin</th>
                         </tr>
                       </thead>
                       <tbody>
                         @if(!empty($reservasFechaSel) && count($reservasFechaSel) > 0)
                         @foreach($reservasFechaSel as $index => $item)
                         <tr id="fila{{$index}}" @if ($flgNuevaReserva==false) style="cursor:pointer;" wire:click="reservaSel('{{$item->idReserva}}', '0')" @endif>
-                           <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y H:i')}}</td>
-                           <td class="text-start" nowrap>{{$item['name']}}</td> 
-                           <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d/m/Y')}}</span></td>                       
-                           <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
-                           <td class="text-start" nowrap>{{ !empty($item['codVehiculo']) ? $item->descripcionVehiculo: 'No Asignado'}}</td> 
-                           <td class="text-start" nowrap>{{$item['nombreComuna']}}</td>
-                           <td class="text-center" nowrap>{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}} - {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
+                          <td class="text-start" nowrap>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y H:i')}}</td>
+                          <td class="text-start" nowrap>{{$item['name']}}</td>
+                          <td class="text-center" nowrap><span style="background-color:#FFD42F;padding-left:4px;padding-right:4px;">{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d/m/Y')}}</span></td>
+                          <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
+                          <td class="text-start" nowrap>{{ !empty($item['codVehiculo']) ? $item->descripcionVehiculo: 'No Asignado'}}</td>
+                          <td class="text-start" nowrap>{{$item['nombreComuna']}}</td>
+                          <td class="text-center" nowrap>{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}} - {{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
                         </tr>
                         @endforeach
                         @else
@@ -661,38 +704,38 @@
       modal.hide();
     }
 
-    window.addEventListener('moveScrollModalById', event => {    
-        const modalBody = document.getElementById("modalBody"); 
-                              
-       
+    window.addEventListener('moveScrollModalById', event => {
+      const modalBody = document.getElementById("modalBody");
 
-        const element = document.querySelector(event.detail.id);  
-        const topPos = element.getBoundingClientRect().top;
-        
-        modalBody.scrollTo({
-           top: topPos-109,
-           behavior: 'smooth'
-        });
-    });     
+
+
+      const element = document.querySelector(event.detail.id);
+      const topPos = element.getBoundingClientRect().top;
+
+      modalBody.scrollTo({
+        top: topPos - 109,
+        behavior: 'smooth'
+      });
+    });
 
     function onlyNumberKey(evt, obj) {
-    var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
-    var flgAsciiNumberOK = false;
+      var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
+      var flgAsciiNumberOK = false;
 
-    if (ASCIICode == 8 /*Borrar <-*/ || ASCIICode == 46 /*Supr*/ || ASCIICode == 37 /*Atras*/ || ASCIICode == 39 /*Adelante*/ || ASCIICode == 9 /*Tab*/ ) {
-      return true;
-    }
+      if (ASCIICode == 8 /*Borrar <-*/ || ASCIICode == 46 /*Supr*/ || ASCIICode == 37 /*Atras*/ || ASCIICode == 39 /*Adelante*/ || ASCIICode == 9 /*Tab*/ ) {
+        return true;
+      }
 
-    if (obj.value.length >= obj.maxLength) {
-      return false;
-    }
+      if (obj.value.length >= obj.maxLength) {
+        return false;
+      }
 
-    if ((ASCIICode > 47 && ASCIICode < 58) || (ASCIICode > 95 && ASCIICode < 106)) {
-      return true;
-    } else {
-      return false;
+      if ((ASCIICode > 47 && ASCIICode < 58) || (ASCIICode > 95 && ASCIICode < 106)) {
+        return true;
+      } else {
+        return false;
+      }
     }
-  }
 
     // let el = document.querySelector('.el');
     // let height = el.scrollHeight;
