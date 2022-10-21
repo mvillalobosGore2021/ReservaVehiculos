@@ -21,16 +21,16 @@
           <div class="row py-md-1 justify-content-center">
             <div class="col-12 text-center h4 py-2">Parámetros de Búsqueda</div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap me-md-4 text-center">
-              <button type="button" data-tippy-content="Ver solicitudes realizadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setFechaHoySearch(1)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
-                <span wire:loading.remove wire:target="setFechaHoySearch(1)"><i class="bi bi-calendar-check"></i> </span>
-                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch(1)" role="status" aria-hidden="true"></span>
+              <button type="button" data-tippy-content="Ver solicitudes ingresadas hoy" class="btn btn-primary btn-sm" style="width:135px;" wire:click="setSolicitudesHoySearch" wire:loading.attr="disabled" wire:target="setSolicitudesHoySearch, mostrarTodo">
+                <span wire:loading.remove wire:target="setSolicitudesHoySearch"><i class="bi bi-calendar-check"></i> </span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setSolicitudesHoySearch" role="status" aria-hidden="true"></span>
                 Solicitudes Hoy
               </button>
             </div>
             <div class="col-12 pb-2 col-md-1 pb-md-0 text-nowrap ms-md-4 me-md-2 text-center">
-              <button type="button" data-tippy-content="Ver reservas solicitadas para el día de hoy" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="setFechaHoySearch(2)" wire:loading.attr="disabled" wire:target="setFechaHoySearch, mostrarTodo">
-                <span wire:loading.remove wire:target="setFechaHoySearch(2)"><i class="bi bi-calendar-check"></i></span>
-                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setFechaHoySearch(2)" role="status" aria-hidden="true"></span>
+              <button type="button" data-tippy-content="Ver reservas solicitadas para el día de hoy" class="btn btn-primary btn-sm ms-md-2" style="width:135px;" wire:click="setReservasHoySearch" wire:loading.attr="disabled" wire:target="setReservasHoySearch, mostrarTodo">
+                <span wire:loading.remove wire:target="setReservasHoySearch"><i class="bi bi-calendar-check"></i></span>
+                <span wire:loading.class="spinner-border spinner-border-sm" wire:target="setReservasHoySearch" role="status" aria-hidden="true"></span>
                 Reservas Hoy
               </button>
             </div>
@@ -52,15 +52,20 @@
           <div class="row ms-1">
             <div class="col-12 col-md-7">
               <label>Nombre Funcionario(a)</label>
-              <div class="input-group">
-                <span class="input-group-text">
+              <div class="input-group pb-1">
+                <span class="input-group-text"> 
                   <i class="bi bi-person"></i>
                 </span>
-                <input type="text" class="form-control" id="nameSearch" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario(a) que desea buscar" data-tippy-content="Ingrese el nombre del funcionario(a) que desea buscar">
+                <input type="text" class="form-control" maxlength="100" id="nameSearch" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario(a) que desea buscar" data-tippy-content="Ingrese el nombre del funcionario(a) que desea buscar">
                 <span class="input-group-text bg-white" id="borrarNameSearch{{rand(0, 100)}}" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('nameSearch', '')">
                   <i class="bi bi-x-circle"></i>
                 </span>
               </div>
+              @if (!empty($nomFuncSearchMsj))
+                 <span>
+                   <a href="JavaScript:moveScrollById('#listadoSolReservas')" class="link-primary" style="font-size:15px;font-style:italic;" data-tippy-content="Click paraVer resultado">{{$nomFuncSearchMsj}}</a>
+                 </span>
+              @endif
             </div>
             <div class="col-12 col-md-3">
               <label>Estado Reserva</label>
@@ -95,7 +100,7 @@
                             <span class="input-group-text">
                               <i class="bi bi-calendar4"></i>
                             </span>
-                            <input type="date" wire:model.debounce.500ms="fechaInicioReserva" class="form-control" autocomplete="off">
+                            <input type="date" wire:model.defer="fechaInicioReserva" class="form-control" autocomplete="off">
                             <span class="input-group-text bg-white" id="fechaInicioReservaDel" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaInicioReserva', '')">
                               <i class="bi bi-x-circle"></i>
                             </span>
@@ -116,7 +121,7 @@
                             <span class="input-group-text">
                               <i class="bi bi-calendar4"></i>
                             </span>
-                            <input type="date" wire:model.debounce.500ms="fechaFinReserva" class="form-control" autocomplete="off">
+                            <input type="date" wire:model.defer="fechaFinReserva" class="form-control" autocomplete="off">
                             <span class="input-group-text bg-white" id="fechaFinReservaDel" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaFinReserva', '')">
                               <i class="bi bi-x-circle"></i>
                             </span>
@@ -129,6 +134,14 @@
                         @enderror
                       </div>
                     </div>
+
+                    <div class="col-12 col-md-4 pt-3 pt-md-4 text-center text-md-start"> 
+                        <button id="btnBuscar" class="btn btn-primary" type="button" wire:click="buscarReservas" wire:loading.attr="disabled" wire:target="buscarReservas">
+                          <span wire:loading.class="spinner-border spinner-border-sm" wire:target="buscarReservas" role="status" aria-hidden="true"></span>
+                          <span wire:loading.remove wire:target="buscarReservas"><i class="bi bi-search"></i></span>
+                          Buscar
+                        </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -139,7 +152,7 @@
                 <div class="col-12 col-md-5" id="resetSearch">
                   @if(!empty($fechaSearch) && ($flgSearchHoy == 1 || $flgSearchHoy == 2))
                   <button type="button" class="btn btn-dark btn-sm rounded-pill p-1" style="cursor:context-menu;">
-                    {{$flgSearchHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}} 
+                    {{$flgSearchHoy == 1 ? 'Solicitudes Realizadas Hoy':'Reservas Para Hoy'}}
                     <div class="d-inline" wire:click="resetSearch" data-tippy-content="Eliminar Filtro"><i class="bi bi-x-circle" style="cursor:pointer;"></i></div>
                   </button>
                   @endif
@@ -170,12 +183,28 @@
       <div class="table-responsive card mx-2 mt-4 shadow" id="listadoSolReservas">
         <table class="table @if(!empty($reservasTotales) && count($reservasTotales) > 0) table-hover @endif ">
           <thead class="table-light">
-           @if(!empty($reservasTotales) && count($reservasTotales) > 0)
+            @if(!empty($reservasTotales) && count($reservasTotales) > 0)
             <tr>
-              <th scope="col" colspan="7" class="ps-4 text-primary py-4">
-                Para los parametros de busqueda se encontraron reservas desde (Terminar esto)
+              <th scope="col" colspan="7" class="ps-4 text-primary py-4"> 
                 <center>
-                  <b>Reservas realizadas Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> Hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
+                  <b>
+                  @if ($flgSolicitudesHoy == 1)
+                       Para el día de hoy {{$cantReservasSearch > 1 ? 'se han realizado':'se ha realizado'}} <span class="text-dark">{{$cantReservasSearch}}</span> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span> 
+                  @else
+                    @if (!empty($nameSearch) || !empty($codEstadoSearch) || !empty($fechaInicioReserva) || !empty($fechaFinReserva))
+                        Para los parámetros de búsqueda {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>           
+                    @else
+                        Para un rango de tres meses {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>   
+                    @endif    
+                  @endif               
+                    
+                  @if ($cantReservasSearch > 1)
+                       Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> 
+                       Hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> 
+                  @endif
+
+                  @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
+                  </b>
                 </center>
               </th>
             </tr>
@@ -219,9 +248,16 @@
             @endforeach
             <tr>
               <td colspan="7">
-                <center style="font-size:16px;font-style: italic;" class="text-primary">
-                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}} :</b>Desplegando reservas Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> Hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSearch}}</b></span> @endif
-                </center>
+                <center style="font-size:16px;font-style: italic;" class="text-primary"> 
+                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}}: </b>Desplegando <b>{{count($reservasTotales)}}</b> {{count($reservasTotales) > 1 ? 'reservas':'reserva'}} 
+                   
+                  @if ($cantReservasSearch > 1)
+                    Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> 
+                    Hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> 
+                  @endif
+
+                  @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSearch}}</b></span> @endif
+                </center> 
               </td>
             </tr>
             @else

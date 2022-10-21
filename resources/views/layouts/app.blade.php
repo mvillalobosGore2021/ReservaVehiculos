@@ -128,6 +128,7 @@
     }   
 
     function movScrollModalById(id) { 
+        alert();
         const modalBody = document.getElementById("modalBody"); 
                               
         const element = document.querySelector(id);  
