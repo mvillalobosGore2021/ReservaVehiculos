@@ -7,6 +7,7 @@ use App\Classes\ReservaServices;
 use App\Models\Reservavehiculo;
 use App\Models\Comuna;
 use App\Models\Division;
+use App\Models\Estado;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
@@ -19,7 +20,7 @@ class Listarreservas extends Component
 
     public $userName, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, $descripcionEstado,
     $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
-    $correoUser, $arrCantReservasCount, $codColor, $sexo;
+    $correoUser, $arrCantReservasCount, $codColor, $sexo, $flgNuevaReserva, $fechaInicioReserva, $fechaFinReserva;
 
     protected $listeners = ['anularReserva'];
 
@@ -31,11 +32,11 @@ class Listarreservas extends Component
         $this->correoUser = $user->email;
         $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();
         $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
+        $this->flgNuevaReserva = false;
        // $this->consultarRerservasUser();
     }
     
-    public function render()
-    {   //Se obtienen las reservas para un rango de tres meses
+    public function render() {   //Se obtienen las reservas para un rango de tres meses    
          $reservasUsuario = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
           ->leftJoin('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
           ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')
@@ -48,7 +49,9 @@ class Listarreservas extends Component
           $this->fechaDesde = Carbon::now()->format('d/m/Y');
           $this->fechaHasta = Carbon::now()->addMonths(2)->format('d/m/Y');
 
-        return view('livewire.listarreservas', compact('reservasUsuario'));
+          $estadosCmbSearch = Estado::all(); 
+
+        return view('livewire.listarreservas', compact('reservasUsuario', 'estadosCmbSearch'));
     }
 
     public function setFechaModal($fechaSel)  {
@@ -70,6 +73,25 @@ class Listarreservas extends Component
         $reservaService = new ReservaServices();
         $reservaService->solicitarReserva($this);
     }
+
+    public function nuevaReserva() {
+        $reservaService = new ReservaServices(); 
+        $reservaService->resetCamposModal($this);        
+        $this->flgNuevaReserva = true;
+        $this->dispatchBrowserEvent('showModal');
+    }
+
+    public function buscarReservas() {
+        $this->validate( 
+            [
+                'fechaInicioReserva' => 'required|date_format:Y-m-d',
+                'fechaFinReserva' => 'required|date_format:Y-m-d|after_or_equal:fechaInicioReserva',
+            ] 
+        ); 
+
+        $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
+    }
+
 
     // public function consultarRerservasUser() {
     //     $fechaInicio = Carbon::now()->format('Y-m-01');

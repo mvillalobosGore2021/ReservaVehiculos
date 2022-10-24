@@ -332,7 +332,7 @@ class SolicitudesReserva extends Component
             // }  
 
             $this->resetValidation(['codVehiculoSel']);
-            $this->resetErrorBag(['codVehiculoSel']);   
+            $this->resetErrorBag(['codVehiculoSel']);
 
             //dd(!empty($this->validateEstadoConfirmar()), $this->validateEstadoConfirmar(), $this->funcionarioValidate);
             if (!empty($this->validateEstadoConfirmar())) {
@@ -340,7 +340,7 @@ class SolicitudesReserva extends Component
                 $this->addError('codVehiculoSel', 'El vehículo ' . $this->descripVehiculoValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
                 $this->dispatchBrowserEvent('moveScrollModalById', ['id' => '#codVehiculoId']);            
             }
-        }    
+        }
     }
 
     public function buscarReservas() {

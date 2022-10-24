@@ -14,18 +14,18 @@
                         Reservar Vehiculo
                     </a> -->
                     <a class="hover-underline-animation @if(request()->routeIs('reserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('reserva') }}">
-                        Reservar Vehiculo
+                        Calendario de Reservas
                     </a>
                 </li>
-                <li class="nav-item pt-2 px-md-2">
+                <li class="nav-item pt-2 px-md-3">
                     <a class="hover-underline-animation @if(request()->routeIs('listarreservas')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('listarreservas') }}">
-                        Mis Reservas                        
+                        Consultar Mis Reservas                        
                     </a>
                 </li>      
                 @if ($flgAdmin  == 1)
                 <li class="nav-item pt-2 px-md-2"> 
                 <a class="hover-underline-animation @if(request()->routeIs('solicitudesreserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('solicitudesreserva') }}">
-                        Solicitudes de Reservas
+                        Gestionar Reservas
                     </a>
                 </li>
                 @endif

@@ -13,7 +13,7 @@
   @else
   <div class="card m-2 mb-4 m-md-3 mb-md-5">
     <div class="card-header py-3 text-center h3">
-      Solicitudes de Reserva
+      Gestionar Solicitudes de Reserva
     </div>
     <div class="card-body">
       <div class="card mx-2 mt-3 mb-3 shadow">
@@ -247,7 +247,7 @@
             </tr>
             @endforeach
             <tr>
-              <td colspan="7">
+              <td colspan="7">  
                 <center style="font-size:16px;font-style: italic;" class="text-primary"> 
                   <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}}: </b>Desplegando <b>{{count($reservasTotales)}}</b> {{count($reservasTotales) > 1 ? 'reservas':'reserva'}} 
                    
