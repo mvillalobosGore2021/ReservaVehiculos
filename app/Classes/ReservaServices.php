@@ -47,7 +47,7 @@ class ReservaServices
     public function setFechaModal($fechaSel, $objInput)
     {
         $objInput->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
-        $objInput->flgNuevaReserva = false; //Modo modificacion
+        $objInput->flgNuevaReserva = false; //Modo modificacion  
 
         $objInput->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
@@ -62,9 +62,11 @@ class ReservaServices
 
         $this->resetCamposModal($objInput);
 
-        if (!empty($reservasFechaUser)) {
+        $objInput->fechaSolicitud = Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'); 
+
+        if (!empty($reservasFechaUser)) { 
             $objInput->idReserva = $reservasFechaUser['idReserva']; 
-            $objInput->fechaSolicitud = $reservasFechaUser['fechaSolicitud'];
+            // $objInput->fechaSolicitud = $reservasFechaUser['fechaSolicitud'];
             $objInput->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $objInput->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
             $objInput->codEstado = $reservasFechaUser['codEstado'];
@@ -207,6 +209,24 @@ class ReservaServices
             $objInput->validate($this->getArrRules()); //Para que se generen nuevamente los msjs            
         }       
 
+          //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
+          if ($objInput->flgNuevaReserva == true && $objInput->buscarReservaFuncionario() == true) {
+            $flgError = true; 
+            $objInput->resetValidation(['idUserSel', 'fechaSolicitud']);
+            $objInput->resetErrorBag(['idUserSel', 'fechaSolicitud']);
+            $objInput->addError('idUserSel', 'Usted ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.');
+
+            $objInput->dispatchBrowserEvent('swal:information', [
+                'icon' => 'error', //'info', 
+                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Usted ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.</span>',
+                //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
+                'timer' => '5000',
+            ]);
+
+            $objInput->dispatchBrowserEvent('moveScrollModal');
+        }
+
+        if ($flgError == false) {
         $msjException = "";
         try {
             DB::beginTransaction();
@@ -299,6 +319,7 @@ class ReservaServices
             session()->flash('exceptionMessage', $e->getMessage());
         }
         $objInput->dispatchBrowserEvent('iniTooltips');
+       }
     }
 
     public function getArrRules()

@@ -194,13 +194,13 @@
                     @if (!empty($nameSearch) || !empty($codEstadoSearch) || !empty($fechaInicioReserva) || !empty($fechaFinReserva))
                         Para los parámetros de búsqueda {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>           
                     @else
-                        Para un rango de tres meses {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>   
+                        {{$cantReservasSearch > 1 ? 'Se encontraron':'Se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas vigentes':'Reserva vigente'}}</span>  
                     @endif    
                   @endif               
                     
                   @if ($cantReservasSearch > 1)
-                       Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> 
-                       Hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> 
+                       desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> 
+                       hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> 
                   @endif
 
                   @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
@@ -246,14 +246,14 @@
 
             </tr>
             @endforeach
-            <tr>
-              <td colspan="7">  
+            <tr id="td{{rand(101, 120)}}">
+              <td colspan="7">   
                 <center style="font-size:16px;font-style: italic;" class="text-primary"> 
-                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}}: </b>Desplegando <b>{{count($reservasTotales)}}</b> {{count($reservasTotales) > 1 ? 'reservas':'reserva'}} 
+                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}}: </b>Desplegando <b>{{count($reservasTotales)}} de {{$cantReservasSearch}}</b> {{count($reservasTotales) > 1 ? 'reservas':'reserva'}} 
                    
                   @if ($cantReservasSearch > 1)
-                    Desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> 
-                    Hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> 
+                    desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> 
+                    hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> 
                   @endif
 
                   @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSearch}}</b></span> @endif
@@ -288,7 +288,7 @@
           <div class="modal-content">
             <div class="modal-header bg-light">
               <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">
-                @if ($flgNuevaReserva == true) Nueva Reserva @else Datos Reserva @endif
+                @if ($flgNuevaReserva == true) Nueva Reserva @else Datos Reserva @endif 
               </h5>
               <div style="margin:auto;" wire:loading wire:target="reservaSel">
                 <div class="spinner-grow text-primary" style="width: 1.1rem; height: 1.1rem;" role="status">

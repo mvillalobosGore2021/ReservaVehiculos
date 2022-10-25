@@ -72,7 +72,6 @@
                 @php($flgPrintDay = 1)
                 @endif
 
-
                 @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
                     <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if($flgCallModal==1) @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif @else data-tippy-content="Día no habilitado" @endif>
                       <span class="pt-1 d-block">
@@ -124,7 +123,8 @@
                 <span class="text-primary">{{$sexo == "F" ? "Funcionaria":"Funcionario"}}:</span> {{$userName}}
               </div>
               <div class="col-12 col-md-6 py-2 py-md-0">
-                <span class="text-primary">Fecha Reserva:</span> {{$fechaSolicitud}}
+                <span class="text-primary">Fecha Reserva:</span> 
+                {{\Carbon\Carbon::parse($fechaSolicitud)->format('d/m/Y')}}
               </div>
               <div class="col-12 col-md-6 pb-2 pb-md-0" id="estadoId">
                 <span class="text-primary">Estado:</span> {{$descripcionEstado}}
@@ -300,8 +300,10 @@
                   <tr>
                     <th scope="col" colspan="8" class="text-start text-success pb-3">
                       <span data-tippy-content="Reservas realizadas por otros funcionarios para el día: {{$fechaSolicitud}}">
-                      <span class="text-success">Reservas realizadas para el día:</span>
-                      <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{$fechaSolicitud}}</span>
+                      <span class="text-success">Reservas realizadas por otros funcionarios para el día:</span>
+                      <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">
+                          {{\Carbon\Carbon::parse($fechaSolicitud)->format('d/m/Y')}}
+                        </span>
                       </span>
                       <input type="hidden" wire:model="fechaSolicitud"> 
                     </th>
@@ -348,7 +350,7 @@
             </div>
 
             @if (session()->has('exceptionMessage'))
-            <div class="row">
+            <div class="row pt-3 mx-3">
               <div class="col-12">
                 <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
                   <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">

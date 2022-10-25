@@ -154,65 +154,108 @@
             <!-- Fin Parametros de busqueda -->
           </div>
         </div>
-        <div class="card p-0 mx-2 mt-4 mb-5 mx-md-1 shadow">
-          <div class="table-responsive-sm" id="listadoSolReservas">
-            <table class="table m-0 table-hover">
-              <thead class="table-light">
-                <tr class="text-center fs-5 text-primary">
-                  <th scope="col" colspan="8" class="py-3">
-                    Usted posee ?Cantidad solicitudes de reservas desde el ?FecDesde hasta el ?fecHasta
-                    <!-- Listado de Reservas de <span class="text-success">{{$userName}}</span>
-                    <br>Desde el <span class="text-success">{{$fechaDesde}}</span> 
-                    Hasta el <span class="text-success">{{$fechaHasta}}</span> -->
-                  </th>
-                </tr>
-                <tr class="text-center">
-                  <th scope="col" class="text-start ps-3">Fecha Creación</th>
-                  <th scope="col" class="text-start">Fecha Reserva</th>
-                  <th scope="col" class="text-start">Hora Inicio</th>
-                  <th scope="col" class="text-start">Hora Fin</th>
-                  <th scope="col" class="text-start">Estado</th>
-                  <th scope="col" class="text-start" nowrap>Destino</th>
-                  <th scope="col" class="text-start">Vehículo</th>
-                  <th scope="col" class="text-start" class="pe-4" style="text-align: left;">Motivo</th>
-                </tr>
-              </thead>
-              <tbody> 
-                @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
-                @foreach($reservasUsuario as $item)
-                <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
-                  <td class="text-start ps-3" nowrap>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y H:i')}}</td>
-                  <td class="text-start">{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d/m/Y')}}</td>
-                  <td class="text-start">{{ \Carbon\Carbon::parse($item['horaInicio'])->format('H:i')}}</td>
-                  <td class="text-start">{{ \Carbon\Carbon::parse($item['horaFin'])->format('H:i')}}</td>
-                  <td class="text-start" nowrap><span style="background-color:{{$item['codColor']}};color:white;padding-left:4px;padding-right:4px;">{{$item['descripcionEstado']}}</span></td>
-                  <td class="text-start nowrap">{{$item['nombreComuna']}}</td>
-                  <td class="text-start" nowrap>{{$item['codVehiculo'] > 0 ? $item['descripcionVehiculo']: 'No Asignado'}}</td>
-                  <td class="text-start glosaTable pe-4">{{$item['motivo']}}</td>
-                </tr>
-                @endforeach
-                @else
-                <tr>
-                  <td colspan="8">
-                    <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
-                      <span class="fs-4 pe-2 pe-md-3">
-                        <i class="bi bi-info-circle-fill"></i></span>
-                      <span class="fs-6 fst-italic pt-1">
-                        No existen reservas para mostrar
-                      </span>
-                    </div>
-                  </td>
-                </tr>
+
+<!-- Inicio tabla solicitudes reservas -->
+<div class="table-responsive card mx-1 mt-4 shadow" id="listadoSolReservas">
+        <table class="table @if(!empty($reservasUsuario) && count($reservasUsuario) > 0) table-hover @endif ">
+          <thead class="table-light">
+            @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
+            <tr>
+              <th scope="col" colspan="7" class="ps-4 text-primary py-4"> 
+                <center>
+                  <b>
+                  @if ($flgSolicitudesHoy == 1)
+                       Para el día de hoy {{$cantReservasSearch > 1 ? 'se han realizado':'se ha realizado'}} <span class="text-dark">{{$cantReservasSearch}}</span> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span> 
+                  @else
+                    @if (!empty($nameSearch) || !empty($codEstadoSearch) || !empty($fechaInicioReserva) || !empty($fechaFinReserva))
+                        Para los parámetros de búsqueda {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>           
+                    @else
+                        {{$cantReservasSearch > 1 ? 'Se encontraron':'Se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas vigentes':'Reserva vigente'}}</span> a su nombre
+                    @endif    
+                  @endif               
+                    
+                  @if ($cantReservasSearch > 1)
+                       desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> 
+                       hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> 
+                  @endif
+
+                  @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
+                  </b>
+                </center>
+              </th>
+            </tr>
+            @endif
+            <tr>
+              <th scope="col" class="ps-4">Fecha Creación</th>
+              <th scope="col" class="text-start">Fecha Reserva</th>
+              <!-- <th scope="col" class="text-center">Hora Inicio</th>
+              <th scope="col" class="text-center">Hora Fin</th> -->
+              <th scope="col" class="text-start">Estado</th>
+              <th scope="col" class="text-start">Destino</th>
+              <th scope="col" class="text-start">Vehículo</th>
+              <th scope="col" class="text-start">Motivo</th>
+              <!-- <th scope="col" style="width:170px;">Acción</th> -->
+            </tr>
+          </thead>
+          <tbody> 
+            @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
+            @foreach($reservasUsuario as $item)
+            <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
+              <td class="ps-4" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
+              <td class="text-start"><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</b></span></td>
+              <!-- <td class="text-center">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
+              <td class="text-center">{{ \Carbon\Carbon::parse($item->horaFin)->format('H:i')}}</td> -->
+              <!-- <td class="text-center">
+                @if(!empty($item->fechaConfirmacion))
+                   {{ \Carbon\Carbon::parse($item->fechaConfirmacion)->format('d/m/Y')}}
                 @endif
-              </tbody>
-            </table>
-          </div>
-          <div class="row mt-3">
-            <div class="col-7 offset-2 col-md-5 offset-md-5 ">
-              {{ $reservasUsuario->links()}}
-            </div>
-          </div>
+              </td> -->
+              <td class="text-start" nowrap><span style="background-color:{{$item->codColor}};color:white;padding-left:4px;padding-right:4px;">{{$item->descripcionEstado}}</span></td>
+              <td class="text-start" nowrap>{{$item->nombreComuna}}</td>
+              <td class="text-start" nowrap>{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td>
+              <td class="glosaTable pe-4">
+                <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
+                {{$item->motivo}}
+              </td>
+
+            </tr>
+            @endforeach
+            <tr id="td{{rand(101, 120)}}">
+              <td colspan="7" style="height: 3.3rem;">  
+                <center style="font-size:16px;font-style: italic;" class="text-primary pt-1"> 
+                  <b>Página {{$reservasUsuario->currentPage()}} de {{$reservasUsuario->lastPage()}}: </b>Desplegando <b>{{count($reservasUsuario)}} @if($cantReservasSearch > 1) de {{$cantReservasSearch}} @endif</b> {{count($reservasUsuario) > 1 ? 'reservas':'reserva'}} 
+                   
+                  @if ($cantReservasSearch > 1)
+                    desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasUsuario) ? \Carbon\Carbon::parse($reservasUsuario[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> 
+                    hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasUsuario) ? \Carbon\Carbon::parse($reservasUsuario[(count($reservasUsuario)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> 
+                  @endif
+
+                  @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSearch}}</b></span> @endif
+                </center> 
+              </td>
+            </tr>
+            @else
+            <tr>
+              <td colspan="7">
+                <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
+                  <span class="fs-4 pe-2 pe-md-3">
+                    <i class="bi bi-info-circle-fill"></i></span>
+                  <span class="fs-6 fst-italic pt-1">
+                    No existen reservas para mostrar
+                  </span>
+                </div>
+              </td>
+            </tr>
+            @endif
+          </tbody>
+        </table>
+      </div>
+      <div class="row mt-3 ">
+        <div class="col-7 offset-0 col-md-5 offset-md-4 mb-4 pt-2">
+          {{ $reservasUsuario->links()}}
         </div>
+      </div>
+<!-- Fin Solicitudes Reservas -->
       </div>
     </div>
 
@@ -515,7 +558,7 @@
                 </div>
 
                 @if (session()->has('exceptionMessage'))
-                <div class="row">
+                <div class="row pt-3 mx-3">
                   <div class="col-12">
                     <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show" role="alert">
                       <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">

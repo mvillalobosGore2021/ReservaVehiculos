@@ -54,7 +54,7 @@
 
         @livewireScripts
     </div>
-    <br><br><br>
+    <br>
     <div class="text-center mx-5 mb-4 text-secondary">
         <hr>
         <span class="d-block">© {{ \Carbon\Carbon::parse(Carbon\Carbon::now())->format('Y')}} Reserva de Vehículos - Desarrollo Interno Unidad de Informática.</span>

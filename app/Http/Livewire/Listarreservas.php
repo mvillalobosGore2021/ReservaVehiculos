@@ -16,12 +16,12 @@ class Listarreservas extends Component
 {
     use WithPagination;
  
-    protected $paginationTheme = 'bootstrap';
+    protected $paginationTheme = 'bootstrap'; 
 
     public $userName, $fechaSolicitud, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, $descripcionEstado,
     $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
     $correoUser, $arrCantReservasCount, $codColor, $sexo, $flgNuevaReserva, $fechaInicioReserva, 
-    $fechaFinReserva, $cantReservasSearch, $flgSolicitudesHoy, $codEstadoSearch;
+    $fechaFinReserva, $cantReservasSearch, $flgSolicitudesHoy, $flgReservasHoy, $codEstadoSearch;
 
     protected $listeners = ['anularReserva'];
 
@@ -43,9 +43,9 @@ class Listarreservas extends Component
         $fechaFin = $fechaFin->format('Y-m-' . $fechaFin->daysInMonth);
 
         //Busqueda por rango de fecha      
-         if ($this->flgSolicitudesHoy == true) {//Logica asociada al Botón Reservas Hoy 
+        if ($this->flgSolicitudesHoy == true || $this->flgReservasHoy == true) {//Logica asociada al Botón Reservas Hoy
             $fechaInicio = Carbon::now()->format('Y-m-d'); 
-            $fechaFin = Carbon::now()->format('Y-m-d');
+            $fechaFin = Carbon::now()->format('Y-m-d');  
          }
          else
            if (!empty($this->fechaInicioReserva) && !empty($this->fechaFinReserva)) {
@@ -54,7 +54,7 @@ class Listarreservas extends Component
             }
 
          if ($this->flgSolicitudesHoy == true) {
-            $sqlFechaSearch = "DATE_FORMAT(reservavehiculos.created_at, '%Y-%m-%m') >= DATE_FORMAT('" . $fechaInicio . "', '%Y-%m-%m') and DATE_FORMAT(reservavehiculos.created_at, '%Y-%m-%m') <= DATE_FORMAT('" . $fechaFin."', '%Y-%m-%m')"; 
+            $sqlFechaSearch = "DATE_FORMAT(reservavehiculos.created_at, '%Y-%m-%d') >= DATE_FORMAT('" . $fechaInicio . "', '%Y-%m-%d') and DATE_FORMAT(reservavehiculos.created_at, '%Y-%m-%d') <= DATE_FORMAT('" . $fechaFin."', '%Y-%m-%d')"; 
          } else { 
             $sqlFechaSearch = "reservavehiculos.fechaSolicitud >= '" . $fechaInicio . "' and reservavehiculos.fechaSolicitud <= '" . $fechaFin."'"; 
          }        
@@ -65,8 +65,10 @@ class Listarreservas extends Component
             ->leftJoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo') 
             ->select('reservavehiculos.*', 'estados.descripcionEstado', 'estados.codColor', 'comunas.nombreComuna', 'vehiculos.descripcionVehiculo') 
             ->whereRaw($sqlFechaSearch)
-            // ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
+            ->where('reservavehiculos.codEstado', 'like', '%' . $this->codEstadoSearch . '%')
             ->orderBy('fechaSolicitud', 'asc');
+
+            // dd($reservasUsuario->toSql());
             
             $reservasUsuarioCollect = $reservasUsuario->get(); 
 
@@ -125,12 +127,12 @@ class Listarreservas extends Component
         $reservaService->anularReserva($this);
     }
 
-    public function solicitarReserva()  {
+    public function solicitarReserva() {
      //Se elimina validacion de busqueda por fechas, para que no valide en el modal
        $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
-        $reservaService = new ReservaServices();
-        $reservaService->solicitarReserva($this);
+       $reservaService = new ReservaServices();
+       $reservaService->solicitarReserva($this);
     }
 
     public function nuevaReserva() {        
@@ -153,18 +155,33 @@ class Listarreservas extends Component
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
     }
 
-    public function setSolicitudesHoySearch() {  
+    public function setReservasHoySearch() {        
+        $this->flgReservasHoy = true; 
+        $this->flgSolicitudesHoy = false; 
+        $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
+        $this->reset(['codEstadoSearch', 'fechaInicioReserva', 'fechaFinReserva']);//Se limpian los demas filtros 
+        $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
+        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
+        $this->resetPage();  
+    }
+
+    public function setSolicitudesHoySearch() {
         //Buscar solicitudes ingresadas en la fecha actual
           $this->flgSolicitudesHoy = true;
-          $this->fechaInicioReserva = Carbon::now()->format('Y-m-d');
-          $this->fechaFinReserva = Carbon::now()->format('Y-m-d'); 
-  
+          $this->flgReservasHoy = false;
           $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
           $this->reset(['codEstadoSearch', 'fechaInicioReserva', 'fechaFinReserva']);//Se limpian los demas filtros 
           $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetPage();  
-      }
+    } 
+ 
+    public function mostrarTodo() { 
+        $this->reset(['codEstadoSearch', 'fechaInicioReserva', 'fechaFinReserva', 'flgSolicitudesHoy', 'flgReservasHoy']);
+        //$this->dispatchBrowserEvent('iniTooltips');
+        $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
+        $this->resetPage();
+    }
 
     public function updated($field, $value)
     {
@@ -173,7 +190,7 @@ class Listarreservas extends Component
         // }
 
      if ($field == 'codEstadoSearch') {
-        $this->descripEstadoSearch = "";
+        $this->descripEstadoSearch = ""; 
         $this->colorEstadoSearch =  ""; 
          if ($this->codEstadoSearch > 0) {
             $estado = Estado::where('codEstado', '=', $this->codEstadoSearch)->first();
@@ -181,11 +198,15 @@ class Listarreservas extends Component
             $this->colorEstadoSearch =  $estado->codColor; 
          }
 
+         $this->flgSolicitudesHoy = false;
+         $this->flgReservasHoy = false;
+
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);        
      }
 
         if ($field == 'fechaInicioReserva' || $field == 'fechaFinReserva') {
             $this->flgSolicitudesHoy = false;
+            $this->flgReservasHoy = false;
         }
 
         $this->resetPage();
@@ -202,7 +223,7 @@ class Listarreservas extends Component
         $this->validateOnly($field, $reservaService->getArrRules());
         
        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
-        if ($this->flgNuevaReserva == true) {
+        if ($this->flgNuevaReserva == true) { 
             if (($field == 'fechaSolicitud')) {
                 if (!empty($this->fechaSolicitud)) {
                     if ($this->buscarReservaFuncionario() == true) {
