@@ -47,6 +47,7 @@ class ReservaServices
     public function setFechaModal($fechaSel, $objInput)
     {
         $objInput->fechaModal = Carbon::parse($fechaSel)->format('d/m/Y');
+        $objInput->flgNuevaReserva = false; //Modo modificacion
 
         $objInput->reservasFechaSel = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
             ->join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
@@ -62,7 +63,8 @@ class ReservaServices
         $this->resetCamposModal($objInput);
 
         if (!empty($reservasFechaUser)) {
-            $objInput->idReserva = $reservasFechaUser['idReserva'];
+            $objInput->idReserva = $reservasFechaUser['idReserva']; 
+            $objInput->fechaSolicitud = $reservasFechaUser['fechaSolicitud'];
             $objInput->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $objInput->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
             $objInput->codEstado = $reservasFechaUser['codEstado'];
@@ -84,8 +86,8 @@ class ReservaServices
 
     public function resetCamposModal($objInput)  {
         $objInput->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
-        $objInput->resetValidation(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-        $objInput->resetErrorBag(['horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $objInput->resetValidation(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $objInput->resetErrorBag(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
     }
 
     public function confirmAnularReserva($objInput)
@@ -189,11 +191,11 @@ class ReservaServices
 
         $flgError = false;
         try {
-            $objInput->validate($objInput->getArrRules());
+            $objInput->validate($this->getArrRules());
         } catch (exception $e) {
             $flgError = true;
         }
-
+        
         if ($flgError == true) {
             $objInput->dispatchBrowserEvent('swal:information', [
                 'icon' => 'error', //'info',
@@ -202,8 +204,8 @@ class ReservaServices
                 'timer' => '5000',
             ]);
 
-            $objInput->validate($this->getArrRules()); //Para que se generen nuevamente los msjs           
-        }
+            $objInput->validate($this->getArrRules()); //Para que se generen nuevamente los msjs            
+        }       
 
         $msjException = "";
         try {
@@ -212,12 +214,12 @@ class ReservaServices
             $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
 
             $reservaVehiculo =  Reservavehiculo::updateOrCreate(
-                ['idReserva' => $objInput->idReserva],
+                ['idReserva' => $objInput->idReserva], 
                 [
                     'idUser' => $objInput->idUser,
                     'prioridad' => $prioridad,
                     //'flgUsoVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal, //Por ahora no se va a utilizar este campo
-                    'fechaSolicitud' => Carbon::createFromFormat('d/m/Y', $objInput->fechaModal)->format('Y-m-d'), // Carbon::parse($objInput->fechaModal)->format('Y/m/d'),
+                    'fechaSolicitud' => $objInput->fechaSolicitud, //Carbon::createFromFormat('d/m/Y', $objInput->fechaSolicitud)->format('Y-m-d'), // Carbon::parse($objInput->fechaModal)->format('Y/m/d'),
                     'horaInicio' => $objInput->horaInicio,
                     'horaFin' => $objInput->horaFin,
                     'codComuna' => $objInput->codComuna,

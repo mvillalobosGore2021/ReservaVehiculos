@@ -74,7 +74,7 @@
 
 
                 @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
-                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif>
+                    <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if($flgCallModal==1) @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif @else data-tippy-content="Día no habilitado" @endif>
                       <span class="pt-1 d-block">
                         {{$countDay}}
                       </span>
@@ -124,7 +124,7 @@
                 <span class="text-primary">{{$sexo == "F" ? "Funcionaria":"Funcionario"}}:</span> {{$userName}}
               </div>
               <div class="col-12 col-md-6 py-2 py-md-0">
-                <span class="text-primary">Dia Reserva:</span> {{$fechaModal}}
+                <span class="text-primary">Fecha Reserva:</span> {{$fechaSolicitud}}
               </div>
               <div class="col-12 col-md-6 pb-2 pb-md-0" id="estadoId">
                 <span class="text-primary">Estado:</span> {{$descripcionEstado}}
@@ -299,11 +299,11 @@
                 <thead>
                   <tr>
                     <th scope="col" colspan="8" class="text-start text-success pb-3">
-                      <span data-tippy-content="Reservas realizadas por otros funcionarios para el día: {{$fechaModal}}">
+                      <span data-tippy-content="Reservas realizadas por otros funcionarios para el día: {{$fechaSolicitud}}">
                       <span class="text-success">Reservas realizadas para el día:</span>
-                      <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{$fechaModal}}</span>
+                      <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{$fechaSolicitud}}</span>
                       </span>
-                      <input type="hidden" wire:model="fechaModal">
+                      <input type="hidden" wire:model="fechaSolicitud"> 
                     </th>
                   </tr>
                   <tr>

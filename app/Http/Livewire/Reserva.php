@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class Reserva extends Component 
 {
-    public $horaInicio, $horaFin, $firstDayMonth, $lastDayMonth, $cantDaysMonth,
+    public $horaInicio, $horaFin, $firstDayMonth, $lastDayMonth, $cantDaysMonth, $fechaSolicitud,
         $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto,
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel,

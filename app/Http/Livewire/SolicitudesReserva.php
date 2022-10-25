@@ -40,7 +40,7 @@ class SolicitudesReserva extends Component
     public $reservasFechaSelPaso;
 
     public function mount()
-    {
+    { 
         $this->userList = User::orderBy('name')->get();
         // $this->estadosCmb = Estado::where('codEstado', '>', 1)->get();
         // Ver por que se pierden los datos del combo estado y el de funcionarios no al crear una nueva reserva
@@ -53,7 +53,7 @@ class SolicitudesReserva extends Component
         $this->fechaSearch = "";
         $this->flgValidateConfirmar = false;
         $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get(); 
-        $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
+        $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get(); 
 
         // $this->fechaInicioReserva = Carbon::now()->format('Y-m-01');
         // $this->fechaFinReserva = Carbon::now()->addMonthsNoOverflow(3); //Se muestran las reservas en un rando de 3 meses
@@ -100,6 +100,7 @@ class SolicitudesReserva extends Component
             ->orderBy('fechaSolicitud', 'asc');
 
             $reservasTotalesCollect = $reservasTotales->get();
+
             //Se obtiene la fecha menor y mayor del resultado de la busqueda 
             $this->cantReservasSearch = "";
             if (count($reservasTotalesCollect) > 0) {
@@ -116,8 +117,6 @@ class SolicitudesReserva extends Component
                    }
               }
             }
-
-           
 
             $reservasTotales = $reservasTotales->paginate(5);
 
@@ -147,7 +146,7 @@ class SolicitudesReserva extends Component
         //Si es una reserva Nueva la tabla del listado de solicitudes del Modal no se filtra por el usuario seleccionado 
         $sqlRawStr =  $this->flgNuevaReserva == true ? " 0 = 0 ":" idUser != ". ($this->idUserSel > 0 ? $this->idUserSel:0);       
 
-        //Lista de reservas realizadas el mismo dia de la reserva seleccionada
+        //Lista de reservas realizadas el mismo dia de la reserva seleccionada 
         $reservasFechaSel = collect(Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado') 
             ->join('comunas', 'reservavehiculos.codComuna', '=', 'comunas.codComuna', 'left outer') 
             ->join('users', 'users.id', '=', 'reservavehiculos.idUser')
@@ -177,7 +176,7 @@ class SolicitudesReserva extends Component
         // $this->flgUsoVehiculoPersSel = $reservaSel->flgUsoVehiculoPersona;
         $this->motivoSel = $reservaSel->motivo;
         $this->nameSel = $reservaSel->name;
-        $this->emailSel = $reservaSel->email;
+        $this->emailSel = $reservaSel->email; 
         $this->sexoSel = $reservaSel->sexo;
         $this->idUserSel = $reservaSel->idUser; 
         $this->descripEstadoSel = $reservaSel->descripcionEstado;
@@ -198,8 +197,8 @@ class SolicitudesReserva extends Component
             $this->dispatchBrowserEvent('showModal');
         }
 
-        $this->resetValidation(['fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
-        $this->resetErrorBag(['fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
+        $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva', 'fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
+        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva', 'fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
     }
 
    
@@ -235,7 +234,7 @@ class SolicitudesReserva extends Component
         $this->resetPage();
     }
 
-    public function setSolicitudesHoySearch() { 
+    public function setSolicitudesHoySearch() {
         //Buscar solicitudes ingresadas en la fecha actual
           $this->flgSolicitudesHoy = true;
           $this->fechaInicioReserva = Carbon::now()->format('Y-m-d');
@@ -246,7 +245,7 @@ class SolicitudesReserva extends Component
           $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetPage();  
-      }
+    }
 
     public function updated($field, $value)
     {
@@ -254,7 +253,7 @@ class SolicitudesReserva extends Component
         //     return true;
         // }
 
-     if ($field == 'codEstadoSearch') {      
+     if ($field == 'codEstadoSearch') {
         $this->descripEstadoSearch = "";
         $this->colorEstadoSearch =  ""; 
          if ($this->codEstadoSearch > 0) {
@@ -332,7 +331,7 @@ class SolicitudesReserva extends Component
             // }  
 
             $this->resetValidation(['codVehiculoSel']);
-            $this->resetErrorBag(['codVehiculoSel']);
+            $this->resetErrorBag(['codVehiculoSel']); 
 
             //dd(!empty($this->validateEstadoConfirmar()), $this->validateEstadoConfirmar(), $this->funcionarioValidate);
             if (!empty($this->validateEstadoConfirmar())) {
@@ -344,7 +343,7 @@ class SolicitudesReserva extends Component
     }
 
     public function buscarReservas() {
-        $this->validate(
+        $this->validate( 
             [
                 'fechaInicioReserva' => 'required|date_format:Y-m-d',
                 'fechaFinReserva' => 'required|date_format:Y-m-d|after_or_equal:fechaInicioReserva',
@@ -356,8 +355,8 @@ class SolicitudesReserva extends Component
 
     public function nuevaReserva()
     {
-        $this->resetCamposModal();
-        $this->flgNuevaReserva = true;
+        $this->resetCamposModal(); 
+        $this->flgNuevaReserva = true; 
         //Se obtienen todos los estados distintos a No Confirmado
         //$this->estadosCmb = Estado::where('codEstado', '>', 1)->get();
         $this->dispatchBrowserEvent('showModal');
@@ -672,12 +671,12 @@ class SolicitudesReserva extends Component
     }  
 
     public function getArrRules()
-    {
+    { 
         $rulesReserva = [
             'idUserSel' => 'required|gt:0',
             'fechaSolicitudSel' => 'required|date_format:Y-m-d|after:yesterday',
-            'fechaInicioReserva' => 'date_format:Y-m-d',
-            'fechaFinReserva' => 'date_format:Y-m-d',//|after_or_equal:fechaInicioReserva',
+            // 'fechaInicioReserva' => 'date_format:Y-m-d',
+            // 'fechaFinReserva' => 'date_format:Y-m-d',//|after_or_equal:fechaInicioReserva', 
             'codEstadoSel' => 'required|gt:1',/*Mayor a 1 para omitir el estado No Confirmado*/
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],

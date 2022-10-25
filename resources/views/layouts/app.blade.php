@@ -135,7 +135,7 @@
         
         modalBody.scrollTo({
            top: topPos-109,
-           behavior: 'smooth'
+           behavior: 'smooth' 
         });
     }
 </script>
