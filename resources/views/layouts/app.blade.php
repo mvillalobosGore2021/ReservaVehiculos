@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
-    <title>Reserva de Vehiculos</title>
+    <title>Reserva de Vehículos</title>
 
     <!-- Autor: Mario Villalobos P.
              Correo: mvillalobos@gorebiobio.cl             
@@ -137,6 +137,16 @@
            top: topPos-109,
            behavior: 'smooth' 
         });
+    }
+
+    function shakeButton() {
+      var btnBuscar = document.getElementById('btnBuscar');     
+      btnBuscar.classList.add("btnBuscar1");
+    }
+
+    function deleteClassShake() {
+      var btnBuscar = document.getElementById('btnBuscar');
+      btnBuscar.classList.remove("btnBuscar1");
     }
 </script>
 

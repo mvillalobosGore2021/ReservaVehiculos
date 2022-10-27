@@ -80,4 +80,3 @@ Route::middleware([
     //     return view('livewire.listarreservas');
     // })->name('listarreservas');
 });
-

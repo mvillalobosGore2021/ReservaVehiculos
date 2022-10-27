@@ -43,7 +43,7 @@ return [
     'digits_between' => 'The :attribute must be between :min and :max digits.',
     'dimensions' => 'The :attribute has invalid image dimensions.',
     'distinct' => 'The :attribute field has a duplicate value.',
-    'email' => 'The :attribute must be a valid email address.',
+    'email' => 'The :attribute must be a valid email address.', 
     'ends_with' => 'The :attribute must end with one of the following: :values.',
     'enum' => 'The selected :attribute is invalid.',
     'exists' => 'The selected :attribute is invalid.',
@@ -174,10 +174,10 @@ return [
             'required' => 'Ingrese fecha desde.',
             'date_format' => 'La fecha de inicio debe tener el siguiente formato: dd/mm/yyyy.',
         ],      
-        'fechaFinReserva' => [
+        'fechaFinReserva' => [ 
             'required' => 'Ingrese fecha hasta.',
             'date_format' => 'Fecha hasta debe tener el siguiente formato: dd/mm/yyyy.',
-            'after_or_equal' => 'Fecha hasta debe ser mayor o igual a la fecha de inicio.',
+            'after_or_equal' => 'Fecha hasta debe ser mayor o igual a fecha desde.',
         ],
         'codVehiculoSel' => [
             'required' => 'Seleccione Vehículo.',
@@ -196,6 +196,12 @@ return [
         'codComuna*' => [
             'required' => 'Seleccione comuna de destino.',
             'gt' => 'Seleccione comuna de destino.',
+        ],
+        'email' => [
+            'required' => 'Ingrese correo electrónico',
+        ],
+        'password' => [
+            'required' => 'Ingrese contraseña',
         ],
     ],
 

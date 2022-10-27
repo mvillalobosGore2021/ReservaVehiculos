@@ -9,6 +9,7 @@
         </span>
       </div>
       <div class="card-body" id="card{{$randId}}">
+
         <input wire:model="mesSelStr" type="hidden">
         <input wire:model="mesSel" type="hidden">
         <input wire:model="agnoSel" type="hidden">

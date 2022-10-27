@@ -44,6 +44,7 @@
                     Cerrar Sesi&oacute;n
                 </a>                
             </form>
+                <a href="{{ route('profile.show') }}">Cambiar Contraseña</a>
             </div>
         </div>
     </div>

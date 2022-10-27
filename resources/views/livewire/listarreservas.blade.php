@@ -94,7 +94,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-calendar4"></i>
                               </span>
-                              <input type="date" wire:model.defer="fechaFinReserva" class="form-control" autocomplete="off">
+                              <input type="date" wire:model.defer="fechaFinReserva" onfocusout="shakeButton()" class="form-control" autocomplete="off">
                               <span class="input-group-text bg-white" id="fechaFinReservaDel" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaFinReserva', '')">
                                 <i class="bi bi-x-circle"></i>
                               </span>
@@ -109,7 +109,7 @@
                       </div>
 
                       <div class="col-12 col-md-4 pt-3 pt-md-4 text-center text-md-start">
-                        <button id="btnBuscar" class="btn btn-primary" type="button" wire:click="buscarReservas" wire:loading.attr="disabled" wire:target="buscarReservas">
+                        <button id="btnBuscar" class="btn btn-primary" type="button" onclick="deleteClassShake()" wire:click="buscarReservas" wire:loading.attr="disabled" wire:target="buscarReservas">
                           <span wire:loading.class="spinner-border spinner-border-sm" wire:target="buscarReservas" role="status" aria-hidden="true"></span>
                           <span wire:loading.remove wire:target="buscarReservas"><i class="bi bi-search"></i></span>
                           Buscar
@@ -200,7 +200,7 @@
           <tbody> 
             @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
             @foreach($reservasUsuario as $item)
-            <tr class="text-center" style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
+            <tr style="cursor:pointer;" wire:click="setFechaModal('{{ \Carbon\Carbon::parse($item['fechaSolicitud'])->format('d-m-Y')}}')" data-tippy-content="Click para ver reserva">
               <td class="ps-4" nowrap>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i')}}</td>
               <td class="text-start"><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{ \Carbon\Carbon::parse($item->fechaSolicitud)->format('d/m/Y')}}</b></span></td>
               <!-- <td class="text-center">{{ \Carbon\Carbon::parse($item->horaInicio)->format('H:i')}}</td>
@@ -707,5 +707,10 @@
       //myModal2.show();
       modal.hide();
     }
+
+    
+    document.addEventListener('livewire:load', () => {
+      deleteClassShake();
+    });
   </script>
 </div>

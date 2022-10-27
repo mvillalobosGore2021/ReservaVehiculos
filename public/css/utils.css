@@ -1,107 +1,106 @@
+/* Ocultar Flechas input number */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
- /* Ocultar Flechas input number */
-    /* Chrome, Safari, Edge, Opera */
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
 
-    /* Firefox */
-    input[type=number] {
-      -moz-appearance: textfield;
-    }
+/* Type date onlick event hidden calendar icon  */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
 
-    /* Type date onlick event hidden calendar icon  */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        background: transparent;
-        bottom: 0;
-        color: transparent;
-        cursor: pointer;
-        height: auto;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: auto;
-    }
+/* Type date onlick event hidden time icon  */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
 
-    /* Type date onlick event hidden time icon  */
-    input[type="time"]::-webkit-calendar-picker-indicator {
-        background: transparent;
-        bottom: 0;
-        color: transparent;
-        cursor: pointer;
-        height: auto;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: auto;
-    }
+/* Type date onlick event hidden time icon  */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
 
-     /* Type date onlick event hidden time icon  */
-     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-        background: transparent;
-        bottom: 0;
-        color: transparent;
-        cursor: pointer;
-        height: auto;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: auto;
-    }
+.date-ini {
+    display: inline;
+}
 
-    .date-ini {
-        display:inline;
-    }
+.date-fin {
+    display: inline;
+}
 
-    .date-fin {
-        display:inline;
-    }
+.time-ini {
+    display: inline;
+}
 
-    .time-ini {
-        display:inline;
-    }
+.time-fin {
+    display: inline;
+}
 
-    .time-fin {
-        display:inline;
-    }
+.bgcolorday:hover {
+    background-color: #edfbfe;
+    cursor: pointer;
+}
 
-    .bgcolorday:hover {
-        background-color:#EDFBFE;
-        cursor:pointer;
-    }
+.thDaysofweek {
+    width: 25px;
+    text-align: center;
+}
 
-    .thDaysofweek {
-       width:25px;
-       text-align: center;
-    }
+.displayNone {
+    display: none;
+}
 
-    .displayNone {
-        display: none;
-     }
+.colorerror {
+    color: #ff0000;
+    font-size: 14px;
+}
 
-     .colorerror {
-        color: #ff0000;   
-        font-size: 14px;
-    }
+.glosaTable {
+    text-align: justify;
+}
 
-    .glosaTable {
-        text-align: justify;
-    }
+.size-icon {
+    font-size: 22px;
+}
+.size-icon:hover {
+    font-size: 25px;
+    transition: 0.1s;
+}
 
-    .size-icon {
-        font-size: 22px;
-    }
-    .size-icon:hover {
-        font-size: 25px;
-        transition: 0.1s;      
-    }
-
-    /* .link-azul {
+/* .link-azul {
         color:#0B5ED7;
     }
 
@@ -128,7 +127,7 @@
       
     } */
 
-    /* 
+/* 
     Colores banner Sponsors Laravel News Fondo: #FFFEF0 Titulo text:negro resumen: #656873 Texto:#F89823 Fondo de texto o para color de icono: #591E5D 
     color #7D8AB0 para los botones del menu 
     Color de fondo de la página #F5F8FF
@@ -140,94 +139,137 @@
     #464799 #138D75 #DF5B00 #FD435F #09B1FF #97DD0C Color para estado Confirmado 
     */
 
-    .hover-underline-animation {
-        text-decoration:none;
-        display: inline-block;
-        position: relative;
-        color:#0B5ED7;
-        /* ; */
-      }      
-      
-      .hover-underline-animation:after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        transform: scaleX(0);
-        height: 2px;
-        bottom: 0;
-        left: 0;
-        background-color: #0B5ED7;
-        transform-origin: bottom right;
-        transition: transform 0.38s ease-out;
-      }
-      
-    .hover-underline-animation:hover:after {
-      transform: scaleX(1);
-      transform-origin: bottom left;
-    }
+.hover-underline-animation {
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    color: #0b5ed7;
+    /* ; */
+}
 
+.hover-underline-animation:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #0b5ed7;
+    transform-origin: bottom right;
+    transition: transform 0.38s ease-out;
+}
 
-    /* Efecto rebote Loading */
-    @keyframes bouncing-loader {
-        to {
-          opacity: 0.1;
-          transform: translate3d(0, -16px, 0);
-        }
-      }
-      
-      .bouncing-loader {
-        display: flex;
-        justify-content: center;
-      }
-      
-      .bouncing-loader > div {
-        width: 16px;
-        height: 16px;
-        margin: 3rem 0.2rem;
-        background: #8385aa;
-        border-radius: 50%;
-        animation: bouncing-loader 0.6s infinite alternate;
-      }
-      
-      .bouncing-loader > div:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      
-      .bouncing-loader > div:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-    /* Fin Efecto rebote Loading */
+.hover-underline-animation:hover:after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
 
+/* Efecto rebote Loading */
+@keyframes bouncing-loader {
+    to {
+        opacity: 0.1;
+        transform: translate3d(0, -16px, 0);
+    }
+}
 
-    /*Ver mas columna Motivo*/
-    .el {
-      transition: max-height 1s;
-      overflow: hidden;
-      max-height: 0;
-    }
-    
-    .trigger:hover > .el {
-      max-height: var(--max-height);
-    }
+.bouncing-loader {
+    display: flex;
+    justify-content: center;
+}
 
-    .classTippy {
-      color:#0B5ED7;
-    }
+.bouncing-loader > div {
+    width: 16px;
+    height: 16px;
+    margin: 3rem 0.2rem;
+    background: #8385aa;
+    border-radius: 50%;
+    animation: bouncing-loader 0.6s infinite alternate;
+}
 
-    .classTippy2 {
-      color:white;
-    }
-    
-    .tippy-box[data-theme~='tablereservas'] {
-      background-color: #EBF7FE; 
-      color: #21293C;
-    }
-    
-    .tippy-box[data-animation='rotate'][data-state='hidden'] {
-      opacity: 0;
-      transform: rotate(90deg);
-    }
+.bouncing-loader > div:nth-child(2) {
+    animation-delay: 0.2s;
+}
 
-    .tippy-box[data-inertia][data-state='visible'] {
-      transition-timing-function: cubic-bezier(0.1, 0.7, 1.0, 0.1);
-    }
+.bouncing-loader > div:nth-child(3) {
+    animation-delay: 0.4s;
+}
+/* Fin Efecto rebote Loading */
+
+/*Ver mas columna Motivo*/
+.el {
+    transition: max-height 1s;
+    overflow: hidden;
+    max-height: 0;
+}
+
+.trigger:hover > .el {
+    max-height: var(--max-height);
+}
+
+.classTippy {
+    color: #0b5ed7;
+}
+
+.classTippy2 {
+    color: white;
+}
+
+.tippy-box[data-theme~="tablereservas"] {
+    background-color: #ebf7fe;
+    color: #21293c;
+}
+
+.tippy-box[data-animation="rotate"][data-state="hidden"] {
+    opacity: 0;
+    transform: rotate(90deg);
+}
+
+.tippy-box[data-inertia][data-state="visible"] {
+    transition-timing-function: cubic-bezier(0.1, 0.7, 1, 0.1);
+}
+
+/* 
+Efecto Zoom on Hover
+#btnBuscar {   
+    transition: all 0.3s ease-in-out;
+}
+
+#btnBuscar:hover {
+  transform: scale(1.1);
+} */
+
+/* Efecto Shake */
+.btnBuscar1 {   
+  transition: all 0.3s ease-in-out;
+  animation: swing 1s ease;
+  animation-iteration-count: 1;
+}
+
+/* #btnBuscar:hover {
+  animation: swing 1s ease;
+  animation-iteration-count: 1;
+} */
+
+@keyframes swing {
+  15% {
+    transform: translateX(5px);
+  }
+  30% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+  65% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+/* Fin Efecto Shake */
+
