@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Listarreservas;
 // use App\Http\Livewire\Menureserva;
 use App\Http\Livewire\SolicitudesReserva;
+use App\Http\Livewire\Cambiarpass;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified'
 ])->get('/listarreservas', Listarreservas::class)->name('listarreservas');
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->get('/Cambiarpass', Cambiarpass::class)->name('cambiarpass');
 
 
 Route::middleware([

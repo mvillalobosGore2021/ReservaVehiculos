@@ -23,7 +23,7 @@
                                     <span class="input-group-text px-2 py-0">
                                         <i class="bi bi-envelope" style="font-size:1rem;"></i>
                                     </span>
-                                    <input type="email" name="email" class="form-control" id="email" placeholder="Correo" required="required" autofocus="autofocus">
+                                    <input type="email" name="email" class="form-control" id="email" placeholder="Correo" required="required" autofocus="autofocus" autocomplete="email">
                                 </div>
                             </div>
 
@@ -33,7 +33,7 @@
                                     <span class="input-group-text px-2 py-0">
                                         <i class="bi bi-key" style="font-size:1.6rem;"></i>
                                     </span>
-                                    <input type="password" name="password" class="form-control" id="password" placeholder="Contraseña" required="required" autocomplete="current-password">
+                                    <input type="password" name="password" class="form-control" id="password" placeholder="Contraseña" required="required" autocomplete="password">
                                     <span class="input-group-text bg-white px-2 py-0" style="cursor:pointer;">
                                         <i class="bi bi-eye-fill" id="togglePassword" style="font-size:1.2rem;"></i>
                                     </span>

@@ -202,6 +202,13 @@ return [
         ],
         'password' => [
             'required' => 'Ingrese contraseña',
+            'confirmed' => 'La contraseña de confirmación no coincide'
+        ],
+        'current_password' => [
+            'required' => 'Ingrese su contraseña actual',
+        ],
+        'password_confirmation' =>[
+            'required' => 'Ingrese contraseña de confirmación',
         ],
     ],
 

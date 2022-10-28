@@ -34,17 +34,21 @@
                 </li>             -->
             </ul>     
             <div class="d-flex justify-content-center pe-1 pe-md-5 mb-4 mb-md-2 pt-2">
+            
               <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <span class="d-block fst-italic text-secondary pb-2" style="font-size:15px;">
+                <span class="d-block fst-italic text-secondary ps-2 pb-2" style="font-size:0.95rem;">
                   <i class="bi bi-person-circle"></i> {{$userName}}
                 </span>
-                <a href="{{ route('logout') }}" class="btn btn-outline-primary ms-2" role="button" onclick="event.preventDefault();
+                <a href="{{ route('logout') }}" class="d-block btn btn-outline-primary ms-2 p-1" role="button" onclick="event.preventDefault();
                     this.closest('form').submit();">
                     Cerrar Sesi&oacute;n
-                </a>                
+                </a>       
+                <div class="d-block pt-2 ps-2 pb-1" style="font-style:italic;">
+                   <a href="{{ route('cambiarpass') }}" class="d-block" style="font-size:0.95rem;">Cambiar Contraseña</a>
+                </div>
             </form>
-                <a href="{{ route('profile.show') }}">Cambiar Contraseña</a>
+                
             </div>
         </div>
     </div>

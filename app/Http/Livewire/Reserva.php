@@ -7,7 +7,9 @@ use App\Classes\ReservaServices;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Comuna;
 use App\Models\Division;
+use App\Models\User;
 use Illuminate\Support\Arr;
+
 
 class Reserva extends Component 
 {
@@ -45,6 +47,7 @@ class Reserva extends Component
         //$pruebaService = new PruebaServices();
         //dd($pruebaService->saludo());
         $this->dispatchBrowserEvent('iniTooltips');
+      
     }
 
     public function render()
