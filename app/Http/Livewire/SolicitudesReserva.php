@@ -293,7 +293,7 @@ class SolicitudesReserva extends Component
                 $this->flgSearchHoy = $this->flgFechaSearch == 1 ? 1 : 2;
             } else {
                 $this->flgSearchHoy = 0;
-            } 
+            }
         }
 
         if ($field == 'fechaInicioReserva' || $field == 'fechaFinReserva' || $field == 'nameSearch') {

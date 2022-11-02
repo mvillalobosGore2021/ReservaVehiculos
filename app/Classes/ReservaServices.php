@@ -66,7 +66,7 @@ class ReservaServices
 
         if (!empty($reservasFechaUser)) { 
             $objInput->idReserva = $reservasFechaUser['idReserva']; 
-            // $objInput->fechaSolicitud = $reservasFechaUser['fechaSolicitud'];
+            // $objInput->fechaSolicitud = $reservasFechaUser['fechaSolicitud']; 
             $objInput->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $objInput->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
             $objInput->codEstado = $reservasFechaUser['codEstado'];
@@ -169,7 +169,7 @@ class ReservaServices
 
             $objInput->dispatchBrowserEvent('swal:information', [
                 'icon' => '', //'info',
-                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">Su reserva ha sido anulada y notificada con exito.</span>',
+                'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">Su reserva ha sido anulada y notificada.</span>',
             ]);
 
             $objInput->dispatchBrowserEvent('closeModal');
@@ -188,12 +188,12 @@ class ReservaServices
     }
 
     public function solicitarReserva($objInput)
-    {
+    { 
         // dd($objInput->horaInicio, $objInput->horaFin); 
 
         $flgError = false;
         try {
-            $objInput->validate($this->getArrRules());
+            $objInput->validate($this->getArrRules($objInput));
         } catch (exception $e) {
             $flgError = true;
         }
@@ -203,10 +203,10 @@ class ReservaServices
                 'icon' => 'error', //'info',
                 'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor revíselos y corríjalos.</span>',
                 //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
-                'timer' => '5000',
+                'timer' => '5000', 
             ]);
 
-            $objInput->validate($this->getArrRules()); //Para que se generen nuevamente los msjs            
+            $objInput->validate($this->getArrRules($objInput)); //Para que se generen nuevamente los msjs            
         }       
 
           //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
@@ -214,11 +214,11 @@ class ReservaServices
             $flgError = true; 
             $objInput->resetValidation(['idUserSel', 'fechaSolicitud']);
             $objInput->resetErrorBag(['idUserSel', 'fechaSolicitud']);
-            $objInput->addError('idUserSel', 'Usted ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.');
+            $objInput->addError('idUserSel', 'Usted ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $objInput->fechaSolicitud)->format('d-m-Y') . '.');
 
             $objInput->dispatchBrowserEvent('swal:information', [
                 'icon' => 'error', //'info', 
-                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Usted ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.</span>',
+                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Usted ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $objInput->fechaSolicitud)->format('d-m-Y') . '.</span>',
                 //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
                 'timer' => '5000',
             ]);
@@ -260,7 +260,7 @@ class ReservaServices
                 'funcionario' => $objInput->userName,
                 'sexo' => $objInput->sexo,
                 'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
-                'fechaReserva' => $objInput->fechaModal,
+                'fechaReserva' => Carbon::parse($objInput->fechaSolicitud)->format('d/m/Y'), 
                 'horaInicio' => $objInput->horaInicio,
                 'horaFin' => $objInput->horaFin,
                 'descripcionEstado' => $descripcionEstado,
@@ -300,7 +300,7 @@ class ReservaServices
 
             $this->getReservas($objInput);
 
-            $mensaje = $objInput->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y enviada.' : 'Su solicitud de reserva ha sido ingresada y enviada.';
+            $mensaje = $objInput->idReserva > 0 ? 'Su solicitud de reserva ha sido modificada y notificada a los administradores del sistema.' : 'Su solicitud de reserva ha sido ingresada y notificada a los administradores del sistema.';
 
             $objInput->dispatchBrowserEvent('swal:information', [
                 'icon' => '', //'info',
@@ -322,15 +322,23 @@ class ReservaServices
        }
     }
 
-    public function getArrRules()
-    {
-        return [
-            'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],
-            'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],
+    public function getArrRules($objInput) 
+    { 
+        $rules = [
+            // 'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],            
+            'horaInicio' => 'required|date_format:H:i',
+            // 'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],            
+            'horaFin' => 'required|date_format:H:i|after:horaInicio',
             'codDivision' => 'required|gt:0',
-            'codComuna' => 'required|gt:0',
+            'codComuna' => 'required|gt:0', 
             'cantPasajeros' => 'required|gt:0|integer|digits_between:1,2',
             'motivo' => 'required|max:500',
         ];
+        
+        if ($objInput->flgNuevaReserva == true) {
+            $rules = Arr::add($rules, 'fechaSolicitud',  'required|date_format:Y-m-d|after:yesterday');
+        }
+       
+       return $rules;
     }
 }

@@ -148,6 +148,28 @@
       var btnBuscar = document.getElementById('btnBuscar');
       btnBuscar.classList.remove("btnBuscar1");
     }
+
+    window.addEventListener('swal:information', event => { 
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 5500,
+        timerProgressBar: false,
+        showCloseButton: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+
+      Toast.fire({
+        icon: event.detail.icon,
+        title: event.detail.title,
+        html: event.detail.mensaje,
+      })
+    });
+    
 </script>
 
 </html>

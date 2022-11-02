@@ -698,40 +698,31 @@
     // })
 
 
-    function shakeButton() {
-      var btnBuscar = document.getElementById('btnBuscar');     
-      btnBuscar.classList.add("btnBuscar1");
-    }
-
-    function deleteClassShake() {
-      var btnBuscar = document.getElementById('btnBuscar');
-      btnBuscar.classList.remove("btnBuscar1");
-    }
-
+    
     document.addEventListener('livewire:load', () => {
       deleteClassShake();
     });
 
-    window.addEventListener('swal:information', event => {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'center',
-        showConfirmButton: false,
-        timer: 5500,
-        timerProgressBar: false,
-        showCloseButton: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      })
+    // window.addEventListener('swal:information', event => { 
+    //   const Toast = Swal.mixin({
+    //     toast: true,
+    //     position: 'center',
+    //     showConfirmButton: false,
+    //     timer: 5500,
+    //     timerProgressBar: false,
+    //     showCloseButton: true,
+    //     didOpen: (toast) => {
+    //       toast.addEventListener('mouseenter', Swal.stopTimer)
+    //       toast.addEventListener('mouseleave', Swal.resumeTimer)
+    //     }
+    //   })
 
-      Toast.fire({
-        icon: event.detail.icon,
-        title: event.detail.title,
-        html: event.detail.mensaje,
-      })
-    });
+    //   Toast.fire({
+    //     icon: event.detail.icon,
+    //     title: event.detail.title,
+    //     html: event.detail.mensaje,
+    //   })
+    // });
 
 
     const container = document.getElementById("modalReserva");

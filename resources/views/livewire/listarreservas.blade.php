@@ -1,5 +1,6 @@
 <div>
   <form>
+  @csrf
     <div class="card m-2 mb-4 m-md-3 mb-md-5">
       <div class="card-header py-3 text-center h3">
         Consultar Mis Reservas
@@ -297,7 +298,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-calendar4"></i>
                           </span>
-                          <input type="date" wire:model.debounce.500ms="fechaSolicitud" wire:loading.attr="disabled" wire:target="guardarReservaSel" class="date-ini form-control" autocomplete="off">
+                          <input type="date" wire:model.debounce.500ms="fechaSolicitud" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="date-ini form-control" autocomplete="off">
                         </div>
                       </div>
                       @error('fechaSolicitudSel')

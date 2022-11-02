@@ -14,60 +14,50 @@ class Cambiarpass extends Component
 
     public $current_password, $password, $password_confirmation;
 
+  
     public function render()
     {
-        // dd("Pase por render ", $this->current_password, $this->password, $this->password_confirmation);
-        return view('livewire.cambiarpass');
+        return view('livewire.cambiarpass'); 
     }
 
     public function cambiarPass()
-    {
+    {  
+               $this->validate($this->getArrRules());
 
-      
-        //Ver por que no envia mensaje a la vista
-
-        // try {
-        //    $this->resetValidation(['current_password', 'password', 'password_confirmation']);
-        //    $this->resetErrorBag(['current_password', 'password', 'password_confirmation']);
-           $this->validate($this->getArrRules());
-        // } catch(exception $e) {
-        //     dd("Validate ".$e->getMessage());
-        // }
-
-        // dd("Pase por cambiarPass ", $this->current_password, $this->password, $this->password_confirmation);
-
-        // try {           
-
-            // dd(($this->password != $this->password_confirmation));
-
-            //Se comprueba que la nueva pass y la confirm sean iguales
-            // if ($this->password != $this->password_confirmation) {
-            //     $this->addError('password_confirmation', 'La nueva contraseña y la de confirmación son distintas.');
-            //     dd("La nueva contraseña y la de confirmación son distintas");
-            // } else {
+               try {
                 $user = Auth::user();
                 
                 if (! Hash::check($this->current_password, $user->password)) {
-                    dd("Contraseña incorrecta");
                     $this->addError('current_password', 'Contraseña incorrecta'); 
                 } else {
-                    try {
+                
                         $user = User::whereId($user->id)->update(['password' => Hash::make($this->password)]);
-                        dd("Password Cambiada con exito");
-                    } catch (exception $e) {
-                        dd("Error al modificar la Password " . $e->getMessage());
-                    }
+                       
+                        $this->reset(['current_password', 'password', 'password_confirmation']);
+                         $this->resetValidation(['current_password', 'password', 'password_confirmation']);
+                         $this->resetErrorBag(['current_password', 'password', 'password_confirmation']);
+                         
+                         $this->dispatchBrowserEvent('swal:information', [
+                            'icon' => '',//info 
+                            'mensaje' => '<i class="bi bi-info-circle text-info" style="font-size:2rem;"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">Su contraseña ha sido modificada</span>',
+                        ]); 
+
+                        return redirect('/login'); 
                 }
-            // }
-        // } catch (exception $e) {
-        //     dd($e->getMessage());
-        // }
+            } catch (exception $e) {
+                session()->flash('exceptionMessage', $e->getMessage());
+            }
     }
+
+  
+//   public function updated($field, $value) {
+//     $this->validateOnly($field, $this->getArrRules());    
+//   }
 
     public function getArrRules() {
         return [
             'current_password' => ['required', 'string'],
-            'password' => ['required', 'string', new Password, 'confirmed'],
+        'password' => ['required', 'string', new Password, 'confirmed'],
         ];
     }
 }

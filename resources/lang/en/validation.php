@@ -156,6 +156,7 @@ return [
         ],
         'horaFin*' => [
             'required' => 'Debe ingresar hora fin.',
+            'after' => 'Hora fin debe ser posterior a hora inicio.'
             // 'date_format' => 'El formato de hora fin no es válido.',
         ],
         'idUserSel' => [
@@ -202,7 +203,8 @@ return [
         ],
         'password' => [
             'required' => 'Ingrese contraseña',
-            'confirmed' => 'La contraseña de confirmación no coincide'
+            'confirmed' => 'La nueva contraseña y la de confirmación no coinciden',   
+            // 'length' => 'La contraseña debe tener al menos :length caracteres y contener al menos un carácter en mayúscula'        
         ],
         'current_password' => [
             'required' => 'Ingrese su contraseña actual',

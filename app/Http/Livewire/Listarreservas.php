@@ -106,7 +106,7 @@ class Listarreservas extends Component
 
     public function setFechaModal($fechaSel)  {      
       //Se elimina validacion de busqueda por fechas, para que no valide en el modal
-       $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
+       $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']); 
        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
 
         $reservaService = new ReservaServices();
@@ -220,7 +220,7 @@ class Listarreservas extends Component
         $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
 
         $reservaService = new ReservaServices();
-        $this->validateOnly($field, $reservaService->getArrRules());
+        $this->validateOnly($field, $reservaService->getArrRules($this));
         
        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
         if ($this->flgNuevaReserva == true) { 
