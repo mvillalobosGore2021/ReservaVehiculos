@@ -142,7 +142,7 @@ class Reserva extends Component
 
         $reservaService = new ReservaServices();
 
-        $this->validateOnly($field, $reservaService->getArrRules());
+        $this->validateOnly($field, $reservaService->getArrRules($this)); 
     }
 
 
