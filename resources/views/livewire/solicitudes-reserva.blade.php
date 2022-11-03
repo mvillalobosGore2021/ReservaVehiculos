@@ -53,7 +53,7 @@
             <div class="col-12 col-md-7">
               <label>Nombre Funcionario(a)</label>
               <div class="input-group pb-1">
-                <span class="input-group-text"> 
+                <span class="input-group-text">
                   <i class="bi bi-person"></i>
                 </span>
                 <input type="text" class="form-control" maxlength="100" id="nameSearch" wire:model.debounce.250ms="nameSearch" placeholder="Nombre del funcionario(a) que desea buscar" data-tippy-content="Ingrese el nombre del funcionario(a) que desea buscar">
@@ -62,9 +62,9 @@
                 </span>
               </div>
               @if (!empty($nomFuncSearchMsj))
-                 <span>
-                   <a href="JavaScript:moveScrollById('#listadoSolReservas')" class="link-primary" style="font-size:15px;font-style:italic;" data-tippy-content="Click paraVer resultado">{{$nomFuncSearchMsj}}</a>
-                 </span>
+              <span>
+                <a href="JavaScript:moveScrollById('#listadoSolReservas')" class="link-primary" style="font-size:15px;font-style:italic;" data-tippy-content="Click paraVer resultado">{{$nomFuncSearchMsj}}</a>
+              </span>
               @endif
             </div>
             <div class="col-12 col-md-3">
@@ -120,8 +120,8 @@
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-calendar4"></i>
-                            </span>                            
-                            <input type="date" wire:model.defer="fechaFinReserva" onfocusout="shakeButton()" class="form-control" autocomplete="off"> 
+                            </span>
+                            <input type="date" wire:model.defer="fechaFinReserva" onfocusout="shakeButton()" class="form-control" autocomplete="off">
                             <span class="input-group-text bg-white" id="fechaFinReservaDel" style="cursor:pointer;" data-tippy-content="Borrar" wire:click="$set('fechaFinReserva', '')">
                               <i class="bi bi-x-circle"></i>
                             </span>
@@ -135,12 +135,12 @@
                       </div>
                     </div>
 
-                    <div class="col-12 col-md-4 pt-3 pt-md-4 text-center text-md-start"> 
-                        <button id="btnBuscar" class="btn btn-primary" type="button" onclick="deleteClassShake()" wire:click="buscarReservas" wire:loading.attr="disabled" wire:target="buscarReservas">
-                          <span wire:loading.class="spinner-border spinner-border-sm" wire:target="buscarReservas" role="status" aria-hidden="true"></span>
-                          <span wire:loading.remove wire:target="buscarReservas"><i class="bi bi-search"></i></span>
-                          Buscar
-                        </button>
+                    <div class="col-12 col-md-4 pt-3 pt-md-4 text-center text-md-start">
+                      <button id="btnBuscar" class="btn btn-primary" type="button" onclick="deleteClassShake()" wire:click="buscarReservas" wire:loading.attr="disabled" wire:target="buscarReservas">
+                        <span wire:loading.class="spinner-border spinner-border-sm" wire:target="buscarReservas" role="status" aria-hidden="true"></span>
+                        <span wire:loading.remove wire:target="buscarReservas"><i class="bi bi-search"></i></span>
+                        Buscar
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -185,25 +185,25 @@
           <thead class="table-light">
             @if(!empty($reservasTotales) && count($reservasTotales) > 0)
             <tr>
-              <th scope="col" colspan="7" class="ps-4 text-primary py-4"> 
+              <th scope="col" colspan="7" class="ps-4 text-primary py-4">
                 <center>
                   <b>
-                  @if ($flgSolicitudesHoy == 1)
-                       Para el día de hoy {{$cantReservasSearch > 1 ? 'se han realizado':'se ha realizado'}} <span class="text-dark">{{$cantReservasSearch}}</span> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span> 
-                  @else
-                    @if (!empty($nameSearch) || !empty($codEstadoSearch) || !empty($fechaInicioReserva) || !empty($fechaFinReserva))
-                        Para los parámetros de búsqueda {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>           
+                    @if ($flgSolicitudesHoy == 1)
+                    Para el día de hoy {{$cantReservasSearch > 1 ? 'se han realizado':'se ha realizado'}} <span class="text-dark">{{$cantReservasSearch}}</span> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>
                     @else
-                        {{$cantReservasSearch > 1 ? 'Se encontraron':'Se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas vigentes':'Reserva vigente'}}</span>  
-                    @endif    
-                  @endif               
-                    
-                  @if ($cantReservasSearch > 1)
-                       desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span> 
-                       hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span> 
-                  @endif
+                    @if (!empty($nameSearch) || !empty($codEstadoSearch) || !empty($fechaInicioReserva) || !empty($fechaFinReserva))
+                    Para los parámetros de búsqueda {{$cantReservasSearch > 1 ? 'se encontraron':'se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas':'Reserva'}}</span>
+                    @else
+                    {{$cantReservasSearch > 1 ? 'Se encontraron':'Se encontró'}} <span class="text-dark">{{$cantReservasSearch}}</span><span class="text-success"> {{$cantReservasSearch > 1 ? 'Reservas vigentes':'Reserva vigente'}}</span>
+                    @endif
+                    @endif
 
-                  @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
+                    @if ($cantReservasSearch > 1)
+                    desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecInicioResult)->format('d/m/Y')}}</span>
+                    hasta el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{\Carbon\Carbon::parse($fecFinResult)->format('d/m/Y')}}</span>
+                    @endif
+
+                    @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;">{{$descripEstadoSearch}}</span> @endif
                   </b>
                 </center>
               </th>
@@ -247,17 +247,17 @@
             </tr>
             @endforeach
             <tr id="td{{rand(101, 120)}}">
-              <td colspan="7">   
-                <center style="font-size:16px;font-style: italic;" class="text-primary"> 
-                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}}: </b>Desplegando <b>{{count($reservasTotales)}} de {{$cantReservasSearch}}</b> {{count($reservasTotales) > 1 ? 'reservas':'reserva'}} 
-                   
+              <td colspan="7">
+                <center style="font-size:16px;font-style: italic;" class="text-primary">
+                  <b>Página {{$reservasTotales->currentPage()}} de {{$reservasTotales->lastPage()}}: </b>Desplegando <b>{{count($reservasTotales)}} de {{$cantReservasSearch}}</b> {{count($reservasTotales) > 1 ? 'reservas':'reserva'}}
+
                   @if ($cantReservasSearch > 1)
-                    desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span> 
-                    hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b> 
+                  desde el <span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;"><b>{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[0]->fechaSolicitud)->format('d/m/Y'):''}}</b></span>
+                  hasta el <b><span style="background-color:#FFD42F;color:black;padding-left:4px;padding-right:4px;">{{!empty($reservasTotales) ? \Carbon\Carbon::parse($reservasTotales[(count($reservasTotales)-1)]->fechaSolicitud)->format('d/m/Y'):''}}</span></b>
                   @endif
 
                   @if ($codEstadoSearch > 0) en estado <span style="background-color:{{$colorEstadoSearch}};color:black;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSearch}}</b></span> @endif
-                </center> 
+                </center>
               </td>
             </tr>
             @else
@@ -288,7 +288,7 @@
           <div class="modal-content">
             <div class="modal-header bg-light">
               <h5 class="modal-title ps-3 text-primary" id="modalReservaLabel">
-                @if ($flgNuevaReserva == true) Nueva Reserva @else Datos Reserva @endif 
+                @if ($flgNuevaReserva == true) Nueva Reserva @else Datos Reserva @endif
               </h5>
               <div style="margin:auto;" wire:loading wire:target="reservaSel">
                 <div class="spinner-grow text-primary" style="width: 1.1rem; height: 1.1rem;" role="status">
@@ -310,13 +310,18 @@
               <!-- <input type="text" id="myInput" class="form-control"> -->
               @php($flgError = false)
               <div class="row">
+             
                 <div class="col-12 col-md-6 ps-4">
                   <div class="row mb-2">
+                  <div class="col-12 mt-1 mb-2">                   
+                   <span class="fs-6 fst-italic text-success">
+                    <b>La reserva se encuentra en estado</b> <span style="background-color:{{$colorEstadoSel}};color:white;padding-left:4px;padding-right:4px;"><b>{{$descripEstadoSel}}</b></span>  
+                   </span>
+                     </div>
                     <div class="col-12">
                       <div class="row">
                         <div class="col-12" id="inputFunc">
                           <label>Funcionario(a)</label>
-                          @if ($flgNuevaReserva == true)
                           <div class="input-group">
                             <span class="input-group-text">
                               <i class="bi bi-person"></i>
@@ -330,10 +335,6 @@
                               @endif
                             </select>
                           </div>
-                          @else
-                          <input type="hidden" wire:model="idUserSel">
-                          <span class="text-success">{{$nameSel}}</span>
-                          @endif
                         </div>
                         @error('idUserSel')
                         <div class="col-12" id="idUserSelError">
@@ -680,7 +681,15 @@
                 Guardar
                 <span wire:loading.remove wire:target="guardarReservaSel"><i class="bi bi-send pt-1"></i></span>
                 <span wire:loading.class="spinner-border spinner-border-sm" wire:target="guardarReservaSel" role="status" aria-hidden="true"></span>
+              </button> 
+
+              @if($idReservaSel > 0)
+              <button type="button" class="btn btn-danger" @if($codEstadoSel==3) disabled @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva">
+                Anular Reserva
+                <span id="anularIcon"><i class="bi bi-x-circle"></i></i></span>
+                <span id="spinnerAnularReserva"></span>
               </button>
+              @endif
             </div>
           </div>
         </div>
@@ -698,7 +707,7 @@
     // })
 
 
-    
+
     document.addEventListener('livewire:load', () => {
       deleteClassShake();
     });

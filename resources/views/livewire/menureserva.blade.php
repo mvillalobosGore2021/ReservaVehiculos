@@ -40,10 +40,14 @@
                 <span class="d-block fst-italic text-secondary ps-2 pb-2" style="font-size:0.95rem;">
                   <i class="bi bi-person-circle"></i> {{$userName}}
                 </span>
-                <a href="{{ route('logout') }}" class="d-block btn btn-outline-primary ms-2 p-1" role="button" onclick="event.preventDefault();
+
+                <a href="{{ route('logout') }}" class="btn btn-outline-primary btn-sm d-block p-1" style="font-size:0.97rem;" role="button" onclick="event.preventDefault();
                     this.closest('form').submit();">
-                    Cerrar Sesi&oacute;n
-                </a>       
+                    <!-- <span class="d-inline fw-bold" style="font-size:1.13rem;"><i class="bi bi-door-open"></i></span> <span class="d-inline">Cerrar Sesi&oacute;n</span> -->
+                    <span class="d-inline" style="font-size:1.12rem;font-weight:700;"><i class="bi bi-power"></i></span> <span class="d-inline" style="font-size:0.96rem;">Cerrar Sesi&oacute;n</span>
+                </a>
+
+
                 <div class="d-block pt-2 ps-2 pb-1" style="font-style:italic;">
                    <a href="{{ route('cambiarpass') }}" class="d-block" style="font-size:0.95rem;">Cambiar Contraseña</a>
                 </div>

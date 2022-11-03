@@ -646,53 +646,6 @@
       })
     });
 
-    window.addEventListener('swal:confirm', event => {
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-primary m-2',
-          cancelButton: 'btn btn-danger m-2'
-        },
-        buttonsStyling: false
-      })
-
-      swalWithBootstrapButtons.fire({
-        title: event.detail.title,
-        html: event.detail.text,
-        icon: 'warning',
-        showCancelButton: true,
-        showCloseButton: true,
-        confirmButtonText: 'Confirmar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: false
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.livewire.emit('anularReserva');
-        }
-      })
-    });
-
-    document.addEventListener('livewire:load', () => {
-      window.livewire.on('anularReserva', () => {
-        var element = document.getElementById("spinnerAnularReserva");
-        var element2 = document.getElementById("anularIcon");
-        element.classList.add("spinner-border");
-        element.classList.add("spinner-border-sm");
-        element2.classList.add("d-none");
-        document.getElementById("btnCerrar").disabled = true;
-        document.getElementById("btnIconClose").disabled = true;
-        document.getElementById("btnSolicitarReserva").disabled = true;
-        document.getElementById("btnAnularReserva").disabled = true;
-        document.getElementById("horaInicio").disabled = true;
-        document.getElementById("horaFin").disabled = true;
-        document.getElementById("motivo").disabled = true;
-        document.getElementById("codComuna").disabled = true;
-        document.getElementById("codDivision").disabled = true;
-        document.getElementById("cantPasajeros").disabled = true;
-        // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
-      });
-    });
-
-
     const container = document.getElementById("modalReserva");
     const modal = new bootstrap.Modal(container);
 

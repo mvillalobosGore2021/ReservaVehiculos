@@ -472,31 +472,7 @@
     })
   });
 
-  window.addEventListener('swal:confirm', event => {
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-primary m-2',
-        cancelButton: 'btn btn-danger m-2'
-      },
-      buttonsStyling: false
-    })
-
-    swalWithBootstrapButtons.fire({
-      title: event.detail.title,
-      html: event.detail.text,
-      icon: 'warning',
-      showCancelButton: true,
-      showCloseButton: true,
-      confirmButtonText: 'Confirmar',
-      cancelButtonText: 'Cancelar',
-      reverseButtons: false
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.livewire.emit('anularReserva');
-      }
-    })
-  });
-
+  
   document.addEventListener('livewire:load', () => {
     window.livewire.on('anularReserva', () => {
       var element = document.getElementById("spinnerAnularReserva");

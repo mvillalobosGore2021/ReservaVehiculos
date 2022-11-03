@@ -26,9 +26,9 @@ class SolicitudesReserva extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $fechaSolSearch, $codEstadoSearch, $descripEstadoSearch, $colorEstadoSearch, $cantReservasSearch, $nameSearch, $codVehiculoSel, $codEstadoSel;
+    public $fechaSolSearch, $codEstadoSearch, $descripEstadoSearch, $colorEstadoSearch, $colorEstadoSel, $cantReservasSearch, $nameSearch, $codVehiculoSel, $codEstadoSel;
 
-    public $idReservaSel, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
+    public $idReservaSel, $idReservaOrigin, $fechaSolicitudSel, $horaInicioSel, $horaFinSel, $descripEstadoSel, $flgUsoVehiculoPersSel,
         $motivoSel, $nameSel, $sexoUserSel, $flgNuevaReserva, $userList, $idUserSel, $emailSel, $usernameLog, $idUserAdmin, $flgSearchHoy,
         $fechaSearch, $flgFechaSearch, $flgValidateConfirmar, $funcionarioValidate, $descripVehiculoValidate,
         $codComunaSel, $codDivisionSel, $cantPasajerosSel, $comunasCmb, $divisionesCmb, $sexoUserLog, $flgAdmin, 
@@ -38,6 +38,8 @@ class SolicitudesReserva extends Component
     public Collection $inputsTable;
 
     public $reservasFechaSelPaso;
+
+    protected $listeners = ['anularReserva'];
 
     public function mount()
     { 
@@ -122,13 +124,14 @@ class SolicitudesReserva extends Component
 
             $estadosCmb = null;
 
-     if ($this->flgNuevaReserva == true) {
+    //  if ($this->flgNuevaReserva == true) {
         $estadosCmb = Estado::where('codEstado', '=', 2/*Confirmado*/)  
-                       ->orderBy('codEstado')->get();//Las reservas nuevas solamente se ingresan en estado confirmado
-     } else {
-        $estadosCmb = Estado::where('codEstado', '!=', 1/*No Confirmado*/) 
-                       ->orderBy('codEstado')->get();//El administrador no ingresa solicitudes No Confirmadas
-     }
+                       ->orderBy('codEstado')->get();//Las reservas nuevas y/o modificadas solamente se ingresan en estado confirmado
+    //  } else {
+    //     $estadosCmb = Estado::where('codEstado', '!=', 1/*No Confirmado*/) //El administrador no ingresa solicitudes No Confirmadas
+    //     where('codEstado', '!=', 1/*No Confirmado*/)
+    //                    ->orderBy('codEstado')->get();
+    //  }
 
         $cmbVehiculos = Vehiculo::all();
 
@@ -170,6 +173,7 @@ class SolicitudesReserva extends Component
         //dd($reservaSel);
         $this->flgNuevaReserva = false;
         $this->idReservaSel = $reservaSel->idReserva;
+        $this->idReservaOrigin = $reservaSel->idReserva; //Se utiliza para realizar validacion en function guardarReservaSel
         $this->fechaSolicitudSel = $reservaSel->fechaSolicitud;
         $this->horaInicioSel = Carbon::createFromFormat('H:i:s', $reservaSel->horaInicio)->format('H:i');
         $this->horaFinSel = Carbon::createFromFormat('H:i:s', $reservaSel->horaFin)->format('H:i');
@@ -179,8 +183,9 @@ class SolicitudesReserva extends Component
         $this->emailSel = $reservaSel->email; 
         $this->sexoSel = $reservaSel->sexo;
         $this->idUserSel = $reservaSel->idUser; 
-        $this->descripEstadoSel = $reservaSel->descripcionEstado;
-        $this->codEstadoSel = $reservaSel->codEstado;
+        $this->descripEstadoSel = $reservaSel->descripcionEstado;  
+        $this->colorEstadoSel = $reservaSel->codColor;
+        $this->codEstadoSel = $reservaSel->codEstado; 
         $this->codVehiculoSel = $reservaSel->codVehiculo;
         $this->codComunaSel = $reservaSel->codComuna;
         $this->codDivisionSel = $reservaSel->codDivision;
@@ -269,7 +274,7 @@ class SolicitudesReserva extends Component
          if ($this->codEstadoSearch > 0) {
             $estado = Estado::where('codEstado', '=', $this->codEstadoSearch)->first();
             $this->descripEstadoSearch = $estado->descripcionEstado;
-            $this->colorEstadoSearch =  $estado->codColor; 
+            $this->colorEstadoSearch =  $estado->codColor;  
          }
 
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
@@ -287,7 +292,7 @@ class SolicitudesReserva extends Component
             }
         }
 
-        if ($field == 'fechaSearch') { 
+        if ($field == 'fechaSearch') {
             //dd($this->fechaSearch, Carbon::now()->format('Y-m-d'));
             if ($this->fechaSearch ==  Carbon::now()->format('Y-m-d')) {
                 $this->flgSearchHoy = $this->flgFechaSearch == 1 ? 1 : 2;
@@ -321,16 +326,16 @@ class SolicitudesReserva extends Component
         }
 
         //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
-        if ($this->flgNuevaReserva == true) {
-            if (($field == 'idUserSel' || $field == 'fechaSolicitudSel')) {
-                if ($this->idUserSel > 0 && !empty($this->fechaSolicitudSel)) {
+        if (($field == 'idUserSel' || $field == 'fechaSolicitudSel')) {
+            if ($this->idUserSel > 0 && !empty($this->fechaSolicitudSel)) {
+                if ($this->flgNuevaReserva == true || ($this->flgNuevaReserva == false && $this->idReservaSel != $this->idReservaOrigin)) {  /*Si en modo modificacion se cambia el funcionario que realizó originalemente la reserva se válida que no posea una reserva pára el mismo dia*/
                     if ($this->buscarReservaFuncionario() == true) {
                         $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
                         $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
                         $this->addError($field, 'El funcionario(a) ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
                     }
                 }
-            }
+            }        
         }
       
         if ($field == 'codEstadoSel' || $field == 'codVehiculoSel' || $field == 'fechaSolicitudSel') {
@@ -425,22 +430,31 @@ class SolicitudesReserva extends Component
         return $reservaVehiculo;
     }
 
-    public function guardarReservaSel()
+    public function confirmAnularReserva()
     {
-        $msjException = ""; 
+        $this->dispatchBrowserEvent('swal:confirm', [
+            'type' => 'warning',
+            'title' => 'Anulación de Reserva',
+            'text' => '¿Está seguro(a) que desea Anular la reserva?',
+        ]);
+        $this->dispatchBrowserEvent('iniTooltips');
+    }
 
-        if ($this->codEstadoSel == 3 && $this->flgNuevaReserva == false/*Modo modificacion*/) { //Estado 3 = Anular, no se validan los datos
+    public function anularReserva() {
+         $msjException = "";
+        // if ($this->codEstadoSel == 3 && $this->flgNuevaReserva == false/*Modo modificacion*/) { //Estado 3 = Anular, no se validan los datos
             try {
                 DB::beginTransaction();
 
+                //Cambiando estado de la reserva a Anulada
                 Reservavehiculo::where("idReserva",  $this->idReservaSel)
-                    ->update(["codEstado" => $this->codEstadoSel, "idUserModificacion" => $this->idUserAdmin]);
+                    ->update(["codEstado" => 3 /*Anulado*/ /*$this->codEstadoSel*/, "idUserModificacion" => $this->idUserAdmin]);
 
                 $reservaVehiculo = Reservavehiculo::where("idReserva",  $this->idReservaSel)->first();      
                 
-                $user = User::where("id", "=",  $this->idUserSel)->first();
-                $this->nameSel = $user->name;
-                $this->sexoUserSel = $user->sexo;
+                // $user = User::where("id", "=",  $this->idUserSel)->first();
+                // $this->nameSel = $user->name;
+                // $this->sexoUserSel = $user->sexo;
 
                 //Envío de correo  
                 $mailData = [
@@ -489,11 +503,10 @@ class SolicitudesReserva extends Component
                     throw $e;
                 }
 
-                $this->dispatchBrowserEvent('swal:information', [
+                $this->dispatchBrowserEvent('swal:information', [ 
                     'icon' => '', //'info',
-                    'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">La reserva de ' . $this->nameSel . ' ha sido anulada y notificada con éxito.</span>',
+                    'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">La reserva ha sido <span style="background-color:#EF3B2D;color:white;">Anulada</span> y notificada '.($this->sexoUserSel == "M" ? "al funcionario ":"a la funcionaria ") .'<b>'.$this->nameSel .'</b></span>',
                 ]);
-
 
                 $this->dispatchBrowserEvent('closeModal');
 
@@ -501,23 +514,31 @@ class SolicitudesReserva extends Component
             } catch (exception $e) {
                 DB::rollBack();
                 $this->dispatchBrowserEvent('swal:information', [
-                    'icon' => 'error', //'info',
+                    'icon' => 'error', //'info', 
                     'title' => '<span class="fs-6 text-primary" style="font-weight:430;">No fue posible anular la reserva. ' . $msjException . '</span>',
                 ]);
                 session()->flash('exceptionMessage', $e->getMessage());
             }
-        } else {
-            $flgError = false;
-            try { 
-                $this->validate($this->getArrRules());                 
-            } catch (exception $e) {
-                $flgError = true;
-            } 
+    }
 
-            // dd($flgError, $this->getArrRules());
+    public function guardarReservaSel()
+    {  
+        $flgError = false;
+        try { 
+            $this->validate($this->getArrRules());                 
+        } catch (exception $e) {
+            $flgError = true;
+        } 
+
+        $msjException = "";  
+
+        $user = User::where("id", "=",  $this->idUserSel)->first();
+
+        $this->nameSel = $user->name;
+        $this->emailSel = $user->email;
+        $this->sexoUserSel = $user->sexo;
 
             if ($flgError == true) {
-                // dd("Entre aca");
                 $this->dispatchBrowserEvent('swal:information', [
                     'icon' => 'error', //'info',
                     'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor revíselos y corríjalos.</span>',
@@ -525,11 +546,12 @@ class SolicitudesReserva extends Component
                     'timer' => '5000',
                 ]);
 
-                $this->validate($this->getArrRules()); //Para que se generen nuevamente los msjs           
+                $this->validate($this->getArrRules()); //Para que se generen nuevamente los msjs            
             }
 
             //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
-            if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
+            if ($this->flgNuevaReserva == true || ($this->flgNuevaReserva == false && $this->idReservaSel != $this->idReservaOrigin)) {  /*Si en modo modificacion se cambia el funcionario que realizó originalemente la reserva se válida que no posea una reserva pára el mismo dia*/
+                if ($this->buscarReservaFuncionario() == true) { 
                 $flgError = true; 
                 $this->resetValidation(['idUserSel', 'fechaSolicitudSel']);
                 $this->resetErrorBag(['idUserSel', 'fechaSolicitudSel']);
@@ -545,7 +567,7 @@ class SolicitudesReserva extends Component
                 ]);
 
                 $this->dispatchBrowserEvent('moveScrollModal');
-            } else
+            } }else
                 //Validar que el vehiculo no este asignado en otra reserva confirmada para el dia seleccionado 
                 if (!empty($this->validateEstadoConfirmar())) {
                     $flgError = true;
@@ -567,9 +589,7 @@ class SolicitudesReserva extends Component
 
                     //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva   
 
-                    $this->nameSel = (User::where("id", "=",  $this->idUserSel)->first())->name;    
-
-                    $camposReservaVehiculoArr =  [ 
+                    $camposReservaVehiculoArr =  [
                         'idUser' => $this->idUserSel,
                         'prioridad' => $prioridad,
                         // 'flgUsoVehiculoPersonal' => $this->flgUsoVehiculoPersSel, 
@@ -606,7 +626,7 @@ class SolicitudesReserva extends Component
                     );
 
                     $estado = Estado::where('codEstado', '=', $this->codEstadoSel)->first();
- 
+
                     //Envío de correo  
                     $mailData = [
                         'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo":"Notificación: Ingreso de Reserva de Vehículo",
@@ -624,7 +644,7 @@ class SolicitudesReserva extends Component
                     ]; 
 
                     try { 
-                        //Mail al postulante 
+                        //Mail al postulante  
                         Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
                     } catch (exception $e) {
                         $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
@@ -673,7 +693,6 @@ class SolicitudesReserva extends Component
                     session()->flash('exceptionMessage', $e->getMessage());
                 }
             }
-        }
     }
 
     public function buscarReservaFuncionario()
@@ -682,14 +701,18 @@ class SolicitudesReserva extends Component
             ->where('fechaSolicitud', '=', $this->fechaSolicitudSel)->get()) > 0;
     }  
 
+
+    // Revisar por que NO esta validando el campo codEstadoSel al guardar la reserva
+    // Al anular queda cargando y NO anula
+
     public function getArrRules()
-    { 
+    {  
         $rulesReserva = [
             'idUserSel' => 'required|gt:0',
             'fechaSolicitudSel' => 'required|date_format:Y-m-d|after:yesterday',
             // 'fechaInicioReserva' => 'date_format:Y-m-d',
             // 'fechaFinReserva' => 'date_format:Y-m-d',//|after_or_equal:fechaInicioReserva', 
-            'codEstadoSel' => 'required|gt:1',/*Mayor a 1 para omitir el estado No Confirmado*/
+            'codEstadoSel' => 'required|gt:0',/*Mayor a 1 para omitir el estado No Confirmado*/ 
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'codDivisionSel' => 'required|gt:0',

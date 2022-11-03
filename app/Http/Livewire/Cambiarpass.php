@@ -16,12 +16,12 @@ class Cambiarpass extends Component
 
   
     public function render()
-    {
+    {        
         return view('livewire.cambiarpass'); 
     }
 
     public function cambiarPass()
-    {  
+    {   
                $this->validate($this->getArrRules());
 
                try {
@@ -38,11 +38,16 @@ class Cambiarpass extends Component
                          $this->resetErrorBag(['current_password', 'password', 'password_confirmation']);
                          
                          $this->dispatchBrowserEvent('swal:information', [
-                            'icon' => '',//info 
-                            'mensaje' => '<i class="bi bi-info-circle text-info" style="font-size:2rem;"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">Su contraseña ha sido modificada</span>',
+                            'icon' => 'success',//info 
+                            'mensaje' => '<span class="text-primary">Su contraseña se ha cambiado exitosamente.</span>',
+                            // 'position' => 'top',
                         ]); 
+                        
+                         $this->dispatchBrowserEvent('moveScroll', ['id' => '#spinnerRedirect']);
 
-                        return redirect('/login'); 
+                        session()->flash('flgGuardar', true);
+
+                        // return redirect('/login'); 
                 }
             } catch (exception $e) {
                 session()->flash('exceptionMessage', $e->getMessage());
