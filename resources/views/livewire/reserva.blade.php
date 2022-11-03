@@ -1,7 +1,8 @@
 <div>
   <form>
-
-    <div class="card shadow mt-4" id="headReservas">
+  @csrf
+    <div class="pt-0 pt-md-1"></div>
+    <div class="card shadow mt-2 mt-md-3" id="headReservas">
       <div class="card-header py-3 h3 text-center">
         Calendario de Reservas de Vehículos
         <span class="d-block fst-italic text-secondary pt-1" style="font-size:15px;">

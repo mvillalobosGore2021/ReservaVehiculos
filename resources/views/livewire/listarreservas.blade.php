@@ -1,7 +1,8 @@
 <div>
   <form>
   @csrf
-    <div class="card m-2 mb-4 m-md-3 mb-md-5">
+  <div class="pt-0 pt-md-1"></div>
+    <div class="card mt-2 mb-4 mt-md-3 mb-md-5">
       <div class="card-header py-3 text-center h3">
         Consultar Mis Reservas
       </div>

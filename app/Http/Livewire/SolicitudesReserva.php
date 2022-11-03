@@ -703,7 +703,7 @@ class SolicitudesReserva extends Component
 
 
     // Revisar por que NO esta validando el campo codEstadoSel al guardar la reserva
-    // Al anular queda cargando y NO anula
+    // Al anular queda cargando y NO anula 
 
     public function getArrRules()
     {  

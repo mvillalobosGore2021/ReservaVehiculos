@@ -1,4 +1,6 @@
 <div>
+<form>
+  @csrf
   @if ($flgAdmin != true)
   <center>
     <div class="alert alert-warning border border-warning d-flex justify-content-center" role="alert">
@@ -11,7 +13,8 @@
     </div>
   </center>
   @else
-  <div class="card m-2 mb-4 m-md-3 mb-md-5">
+  <div class="pt-0 pt-md-1"></div>
+  <div class="card mt-2 mb-4 mt-md-3 mb-md-5">
     <div class="card-header py-3 text-center h3">
       Gestionar Solicitudes de Reserva
     </div>
@@ -793,4 +796,5 @@
     // el.style.setProperty('--max-height', height + 'px');
   </script>
   @endif
+  </form>
 </div>
