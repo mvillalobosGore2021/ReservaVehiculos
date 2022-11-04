@@ -155,7 +155,7 @@ class Listarreservas extends Component
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
     }
 
-    public function setReservasHoySearch() {        
+    public function setReservasHoySearch() {
         $this->flgReservasHoy = true; 
         $this->flgSolicitudesHoy = false; 
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
@@ -239,6 +239,5 @@ class Listarreservas extends Component
     public function buscarReservaFuncionario() {
         return count(Reservavehiculo::where('idUser', '=', $this->idUser)
             ->where('fechaSolicitud', '=', $this->fechaSolicitud)->get()) > 0;
-    }  
-
+    }
 }

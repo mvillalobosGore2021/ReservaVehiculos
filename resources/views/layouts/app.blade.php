@@ -38,6 +38,10 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
+
+    <!-- dselect library for livesearch in form-select-->
+      <link rel="stylesheet" href="css/dselect.css" />
+      <script src="js/dselect.js"></script>
 </head>
 <!-- class="font-sans antialiased" -->
 <body  style="margin-top:150px;background-color: #F5F8FF;font-family:Nunito;">
