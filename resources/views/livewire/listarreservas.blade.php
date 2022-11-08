@@ -7,6 +7,16 @@
         Consultar Mis Reservas
       </div>
       <div class="card-body mt-2 mx-3">
+      <div class="alert alert-info border border-info mb-4 shadow" role="alert">
+      <h4 class="alert-heading text-center fw-bold fs-5">Consultar Mis reservas</h4>
+      <hr>
+          <p class="fs-6 fst-italic pt-1 mx-3" style="text-align:justify;text-indent: 30px;">
+          <span class="fw-bold fs-4 text-white" style="background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">E</span>n la opción <b>Consultar Mis Reservas</b> usted podrá ingresar <b>Nuevas Reservas</b>, buscar sus reservas ya ingresadas y editarlas. 
+            Al presionar el botón <b>Solicitudes Hoy</b> se desplegarán 
+            sus reservas ingresadas el día de hoy, al presionar <b>Reservas Hoy</b> se desplegarán sus solicitudes de reservas ingresadas para el día de hoy. <b>Mostrar Todo</b> desplegará
+            todas sus solicitudes de reservas a partir de la fecha actual hasta un rango de tres meses.
+          </p>
+        </div>
         <div class="card shadow">
           <div class="card-header">
             <div class="row py-md-2 justify-content-center">
@@ -581,16 +591,16 @@
             <button type="button" id="btnCerrar" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva">
               Cerrar <i class="bi bi-x-lg"></i>
             </button>
-            <button type="button" id="btnSolicitarReserva" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva">
+            <button type="button" id="btnGuardar" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva">
               {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}} 
               <span wire:loading.remove wire:target="solicitarReserva,anularReserva"><i class="bi bi-send pt-1"></i></span>
               <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva,anularReserva" role="status" aria-hidden="true"></span>
             </button>
-            @if($idReserva > 0)
-            <button type="button" class="btn btn-danger" @if($codEstado==3) disabled @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
+            @if($codEstadoOrig != 3 && $idReserva > 0)  
+            <button type="button" class="btn btn-danger" id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
               Anular Reserva
               <span id="anularIcon"><i class="bi bi-x-circle"></i></i></span>
-              <span id="spinnerAnularReserva"></span>
+              <span id="spinnerAnularReserva"></span> 
             </button>
             @endif
           </div>

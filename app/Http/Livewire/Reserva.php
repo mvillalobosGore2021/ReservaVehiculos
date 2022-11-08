@@ -14,11 +14,11 @@ use Illuminate\Support\Arr;
 class Reserva extends Component 
 {
     public $horaInicio, $horaFin, $flgNuevaReserva, $firstDayMonth, $lastDayMonth, $cantDaysMonth, $fechaSolicitud,
-        $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto,
+        $monthNow, $monthNowStr, $nextMontStr, $yearNow, $yearNextMont, $flgBisiesto, 
         $fechaModal, $flgNextMonth, $monthSel, $yearSel, $openModal, $flgUsoVehiculoPersonal,
         $motivo, $userName, $idUser, $idReserva, $reservas, $reservasFechaSel,
         $arrCantReservasCount, $dayNow, $diaActual, $mesSel, $agnoSel, $mesSelStr, $mesActual, $randId,
-        $diasRestantesMesActual, $fechaActual, $diasMesesAnt, $correoUser, $codEstado, $descripcionEstado, 
+        $diasRestantesMesActual, $fechaActual, $fechaSiguiente, $fechaUltima, $diasMesesAnt, $correoUser, $codEstado, $codEstadoOrig, $descripcionEstado, 
         $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, $arrMonthDisplay, $codColor, $sexo; 
 
     protected $reservaService;
@@ -37,7 +37,7 @@ class Reserva extends Component
         $this->sexo = $user->sexo;
         $this->idUser = $user->id;
         $this->correoUser = $user->email;
-        $this->getCalendarMonth(Carbon::now()->month);
+        $this->getCalendarMonth(Carbon::now()->month."_".Carbon::now()->year, 0); 
         $this->diasMesesAnt = 0;
         $this->comunasCmb = Comuna::orderBy('nombreComuna', 'asc')->get();
         $this->divisionesCmb = Division::orderBy('nombreDivision', 'asc')->get();
@@ -61,7 +61,7 @@ class Reserva extends Component
        
          //dd($this->fechaActual->firstOfMonth()->dayOfWeek);                                          
         
-          $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaActual->month, ['mes'=>$this->arrMeses[$this->fechaActual->month-1], 'agno' => $this->fechaActual->year, 'primerDiaSemana' => $this->fechaActual->firstOfMonth()->dayOfWeek == 0?7:$this->fechaActual->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaActual->lastOfMonth()->dayOfWeek == 0?7:$this->fechaActual->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $this->fechaActual->daysInMonth]);  
+          $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaActual->month.'_'.$this->fechaActual->year, ['mesNumber'=>$this->fechaActual->month, 'mes'=>$this->arrMeses[$this->fechaActual->month-1], 'agno' => $this->fechaActual->year, 'primerDiaSemana' => $this->fechaActual->firstOfMonth()->dayOfWeek == 0?7:$this->fechaActual->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaActual->lastOfMonth()->dayOfWeek == 0?7:$this->fechaActual->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $this->fechaActual->daysInMonth]);  
           $this->mesSel = $this->fechaActual->month;
           $this->mesActual = $this->fechaActual->month;
          
@@ -71,21 +71,21 @@ class Reserva extends Component
           $this->firstDayMonth = $this->fechaActual->firstOfMonth()->dayOfWeek; 
           $this->lastDayMonth = $this->fechaActual->lastOfMonth()->dayOfWeek;
   
-          $fechaSiguiente = Carbon::now()->addMonthsNoOverflow(); //addMonthsNoOverflow para que cuando finalice el mes no agregue dos meses 
-          $diasSiguienteMes = $fechaSiguiente->daysInMonth;
-          $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaSiguiente->month, ['mes'=>$this->arrMeses[$fechaSiguiente->month-1], 'agno' => $fechaSiguiente->year, 'primerDiaSemana' => $fechaSiguiente->firstOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaSiguiente->lastOfMonth()->dayOfWeek == 0?7:$fechaSiguiente->lastOfMonth()->dayOfWeek,'cantDiasMes' => $fechaSiguiente->daysInMonth]);  
+          $this->fechaSiguiente = Carbon::now()->addMonthsNoOverflow(); //addMonthsNoOverflow para que cuando finalice el mes no agregue dos meses 
+          $diasSiguienteMes = $this->fechaSiguiente->daysInMonth; 
+          $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaSiguiente->month.'_'.$this->fechaSiguiente->year, ['mesNumber'=>$this->fechaSiguiente->month, 'mes'=>$this->arrMeses[$this->fechaSiguiente->month-1], 'agno' => $this->fechaSiguiente->year, 'primerDiaSemana' => $this->fechaSiguiente->firstOfMonth()->dayOfWeek == 0?7:$this->fechaSiguiente->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaSiguiente->lastOfMonth()->dayOfWeek == 0?7:$this->fechaSiguiente->lastOfMonth()->dayOfWeek,'cantDiasMes' => $this->fechaSiguiente->daysInMonth]);  
         
-          $this->diasRestantesMesActual = $this->fechaActual->daysInMonth - Carbon::now()->format('d') * 1 + 1;//Calculo de los dias restantes para que termine el mes, se le suma uno para incluir el dia actual
+          $this->diasRestantesMesActual = $this->fechaActual->daysInMonth - Carbon::now()->format('d') * 1 + 1;//Cálculo de los dias restantes para que termine el mes, se le suma uno para incluir el dia actual
          //Si los dos meses no suman 60 dias se agrega otro mes
           if (( $this->diasRestantesMesActual+$diasSiguienteMes) < 60) {
-              $fechaUltima = Carbon::now()->addMonthsNoOverflow(2);
-              $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $fechaUltima->month, ['mes'=>$this->arrMeses[$fechaUltima->month-1], 'agno' => $fechaUltima->year, 'primerDiaSemana' => $fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $fechaUltima->daysInMonth]);     
+              $this->fechaUltima = Carbon::now()->addMonthsNoOverflow(2); 
+              $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaUltima->month.'_'.$this->fechaUltima->year, ['mesNumber'=>$this->fechaUltima->month, 'mes'=>$this->arrMeses[$this->fechaUltima->month-1], 'agno' => $this->fechaUltima->year, 'primerDiaSemana' => $this->fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$this->fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$this->fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $this->fechaUltima->daysInMonth]);     
           }
         //Fin Calculo Despliege de 60 dias  
     }
     
-    public function getCalendarMonth($mesSel)
-    {
+    public function getCalendarMonth($mesSel, $flgMoveScroll)
+    {      
         $this->calculoDespliegue60Dias();
         $reservaService = new ReservaServices();
         $reservaService->getReservas($this);
@@ -93,24 +93,28 @@ class Reserva extends Component
           $this->diasMesesAnt = 0;
         if ($this->arrMonthDisplay[$mesSel]['mes'] == last($this->arrMonthDisplay)['mes']) {
             if (count($this->arrMonthDisplay) == 2) {
-                $this->diasMesesAnt = $this->diasRestantesMesActual;
+                $this->diasMesesAnt = $this->diasRestantesMesActual; 
             } else { //Sino el array contiene 3 meses 
-                //Se suman los dias restantes del primer mes mas los del segundo
-                $this->diasMesesAnt = $this->diasRestantesMesActual + $this->arrMonthDisplay[$mesSel-1]['cantDiasMes'];
+                //Se suman los dias restantes del primer mes mas los del segundo     
+                $this->diasMesesAnt = $this->diasRestantesMesActual + $this->arrMonthDisplay[$this->fechaSiguiente->month.'_'.$this->fechaSiguiente->year]['cantDiasMes'];
             }
-        } 
+        }
 
         //$diasMesesAnt 
 
         $itemMesSel = $this->arrMonthDisplay[$mesSel];
-        $this->mesSelStr = $this->arrMeses[$mesSel-1];
-        $this->mesSel = $mesSel;
-        $this->agnoSel = $itemMesSel['agno'];
+        $this->mesSelStr = $this->arrMeses[(explode('_',  $mesSel)[0])*1-1]; //Se extrae solo el mes (la clave esta compuesta por mes año), la posicion es el mes-1 
+        $this->mesSel = (explode('_',  $mesSel)[0])*1; //Se extrae solo el mes (la clave esta compuesta por mes año) //$mesSel;
+        $this->agnoSel = $itemMesSel['agno']; 
         $this->cantDaysMonth = $itemMesSel['cantDiasMes'];
         $this->firstDayMonth = $itemMesSel['primerDiaSemana']; 
-        $this->lastDayMonth = $itemMesSel['ultimoDiaSemana'];
+        $this->lastDayMonth = $itemMesSel['ultimoDiaSemana']; 
         
-        $this->dispatchBrowserEvent('iniTooltips');
+        $this->dispatchBrowserEvent('iniTooltips'); 
+
+        if ($flgMoveScroll == 1) {
+            $this->dispatchBrowserEvent('moveScroll', ['id' => '#headTableCalendar']);
+        }
     } 
     
     // public function getReservasFechaSel($fechaSel) {

@@ -17,9 +17,9 @@ class Listarreservas extends Component
     use WithPagination;
  
     protected $paginationTheme = 'bootstrap'; 
-
-    public $userName, $fechaSolicitud, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, $descripcionEstado,
-    $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
+  
+    public $userName, $fechaSolicitud, $idUser, $fechaDesde, $fechaHasta, $idReserva, $horaInicio, $horaFin, $codEstado, 
+    $codEstadoOrig, $descripcionEstado, $motivo, $flgUsoVehiculoPersonal, $fechaModal, $codComuna, $codDivision, $cantPasajeros, $comunasCmb, $divisionesCmb, 
     $correoUser, $arrCantReservasCount, $codColor, $sexo, $flgNuevaReserva, $fechaInicioReserva, 
     $fechaFinReserva, $cantReservasSearch, $flgSolicitudesHoy, $flgReservasHoy, $codEstadoSearch;
 
@@ -38,7 +38,7 @@ class Listarreservas extends Component
     }
     
     public function render() {   
-        $fechaInicio = Carbon::now()->format('Y-m-01');
+        $fechaInicio = Carbon::now()->format('Y-m-d');//Carbon::now()->format('Y-m-01');
         $fechaFin = Carbon::now()->addMonthsNoOverflow(3); //Se muestran las reservas en un rango de 3 meses
         $fechaFin = $fechaFin->format('Y-m-' . $fechaFin->daysInMonth);
 

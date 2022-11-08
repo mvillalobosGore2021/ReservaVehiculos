@@ -1,6 +1,7 @@
 <div>
   <form>
   @csrf
+  <!-- <div class="donut"></div> Spinner -->
     <div class="pt-0 pt-md-1"></div>
     <div class="card shadow mt-2 mt-md-3" id="headReservas">
       <div class="card-header py-3 h3 text-center">
@@ -17,15 +18,17 @@
         <input wire:model="cantDaysMonth" type="hidden">
         <input wire:model="firstDayMonth" type="hidden">
         <input wire:model="lastDayMonth" type="hidden">
-
-        <div class="alert alert-info border border-info d-flex justify-content-center mx-4 shadow" role="alert">
-          <span class="fs-4 pe-2 pe-md-3">
-            <i class="bi bi-info-circle-fill"></i></span>
-          <span class="fs-6 fst-italic pt-1">
-            Haga click sobre el día en el cuál desea realizar su reserva. El calendario se encuentran habilitado dentro de un rango de 60 días.
-          </span>
-        </div>
-        <div class="table-responsive-sm mx-4 my-4">
+      
+      <div class="alert alert-info border border-info mb-4 mx-4 shadow" role="alert">
+      <h4 class="alert-heading text-center fw-bold fs-5">Calendario de reservas</h4>
+      <hr>
+          <p class="fs-6 fst-italic pt-1 mx-3" style="text-align:justify;text-indent: 30px;">
+          <span class="fw-bold fs-4 text-white" style="background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">
+          E</span>n el presente calendario usted podrá ingresar nuevas solicitudes de reservas haciendo click en el día en el cuál desea 
+          reservar. El calendario se encuentra habilitado en un rango de 60 días. 
+          </p>
+        </div>        
+        <div class="table-responsive-sm mx-4 my-4" id="headTableCalendar">
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -34,7 +37,7 @@
                     <div class="col-12 col-md-5 ps-md-0">
                       <div class="input-group py-3 justify-content-center">
                         @foreach($arrMonthDisplay as $mesIndex => $item)
-                        <button wire:click="getCalendarMonth({{$mesIndex}})" class="btn {{$mesSel == $mesIndex ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$item['mes']}}</button>
+                          <button wire:click="getCalendarMonth('{{$item['mesNumber']}}_{{$item['agno']}}', 1)" class="btn {{$mesSel == $mesIndex ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$item['mes']}}</button>
                         @endforeach
                         <!-- <button wire:click="getCalendarMonth(0)" class="btn {{$flgNextMonth == 0 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$monthNowStr}}</button>
                         <button wire:click="getCalendarMonth(1)" class="btn {{$flgNextMonth == 1 ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$nextMontStr}}</button> -->
@@ -74,7 +77,7 @@
                 @php($flgPrintDay = 1)
                 @endif
 
-                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d'))
+                @if ($flgPrintDay == 1 && ($countDay < ($cantDaysMonth+1)) ) @php($flgCallModal=0) @if((($mesActual==$mesSel && $countDay> $dayNow-1) || $mesSel != $mesActual) && ($countDay + $diasMesesAnt) < 61) @php($flgCallModal=1) @endif @php($fechaKeyArr=\Carbon\Carbon::parse($agnoSel."-".$mesSel."-".$countDay)->format('Y-m-d')) 
                     <td id="dayTD{{rand(0,1000)}}" class="thDaysofweek @if (!empty($arrCantReservasCount[$fechaKeyArr])) classTippy  @endif {{$flgCallModal == 1 ? 'bgcolorday':'text-secondary bg-light'}}" @if($flgCallModal==1) wire:click="setFechaModal('{{$countDay}}-{{$mesSel}}-{{$agnoSel}}')" @endif  @if($flgCallModal==1) @if (!empty($arrCantReservasCount[$fechaKeyArr])) data-template="td{{\Carbon\Carbon::parse($arrCantReservasCount[$fechaKeyArr]['fechaSolicitud'])->format('Ymd')}}" @else data-tippy-content="Haga Click sobre el recuadro para ingresar una solicitud de reserva el día: {{$countDay}}-{{$mesSel}}-{{$agnoSel}}." @endif @else data-tippy-content="Día no habilitado" @endif>
                       <span class="pt-1 d-block">
                         {{$countDay}}
@@ -105,7 +108,6 @@
         </table>
       </div>
     </div>
-</div>
 
 <!-- Modal -->
 <div wire:ignore.self class="modal fade pt-0" id="modalReserva" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -242,7 +244,7 @@
               <div class="col-12">
                 <label>División</label>
                 <div class="input-group">
-                  <span class="input-group-text">
+                  <span class="input-group-text"> 
                     <i class="bi bi-list-ul"></i>
                   </span>
                   <select id="codDivision" wire:model="codDivision" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva" class="form-select">
@@ -373,13 +375,13 @@
         <button type="button" id="btnCerrar" class="btn btn-danger" style="width:175px;" onclick="ocultarModal();" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
           Cerrar <i class="bi bi-x-lg"></i>
         </button>
-        <button type="button" id="btnSolicitarReserva" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
+        <button type="button" id="btnGuardar" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva">
           {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
           <span wire:loading.remove wire:target="solicitarReserva, anularReserva"><i class="bi bi-send pt-1"></i></span>
           <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva, anularReserva" role="status" aria-hidden="true"></span>
         </button>
-        @if($idReserva > 0)
-        <button type="button" class="btn btn-danger" @if($codEstado==3) disabled @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
+        @if($codEstadoOrig != 3 && $idReserva > 0) 
+        <button type="button" class="btn btn-danger" id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="solicitarReserva, anularReserva, confirmAnularReserva">
           Anular Reserva
           <span id="anularIcon"><i class="bi bi-x-circle"></i></i></span>
           <span id="spinnerAnularReserva"></span>
@@ -474,28 +476,6 @@
   });
 
   
-  document.addEventListener('livewire:load', () => {
-    window.livewire.on('anularReserva', () => {
-      var element = document.getElementById("spinnerAnularReserva");
-      var element2 = document.getElementById("anularIcon");
-      element.classList.add("spinner-border");
-      element.classList.add("spinner-border-sm");
-      element2.classList.add("d-none");
-      document.getElementById("btnCerrar").disabled = true;
-      document.getElementById("btnIconClose").disabled = true;
-      document.getElementById("btnSolicitarReserva").disabled = true;
-      document.getElementById("btnAnularReserva").disabled = true;
-      document.getElementById("horaInicio").disabled = true;
-      document.getElementById("horaFin").disabled = true;
-      document.getElementById("motivo").disabled = true;
-      document.getElementById("codComuna").disabled = true;
-      document.getElementById("codDivision").disabled = true;
-      document.getElementById("cantPasajeros").disabled = true;
-      // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
-    });
-  });
-
-
   const container = document.getElementById("modalReserva");
   const modal = new bootstrap.Modal(container);
 

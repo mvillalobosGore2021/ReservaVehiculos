@@ -13,7 +13,8 @@ class Cambiarpass extends Component
 {
 
     public $current_password, $password, $password_confirmation;
-
+    
+    protected $listeners = ['anularReserva'];
   
     public function render()
     {        
@@ -64,5 +65,17 @@ class Cambiarpass extends Component
             'current_password' => ['required', 'string'],
         'password' => ['required', 'string', new Password, 'confirmed'],
         ];
+    }
+
+    public function confirmAnularReserva() {
+        $this->dispatchBrowserEvent('swal:confirmanular', [
+            'type' => 'warning',
+            'title' => 'Anulación de Reserva',
+            'text' => '¿Está seguro(a) que desea Anular la reserva?',
+        ]);       
+    }
+
+    public function anularReserva() {
+       dd("Pase por aca");
     }
 }

@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
-    <title>Reserva de Vehículos</title>
+    <title>Reserva de Vehículos</title> 
 
     <!-- Autor: Mario Villalobos P.
              Correo: mvillalobos@gorebiobio.cl             
@@ -35,13 +35,11 @@
     <!-- Scripts -->
     <!-- <script src="{{ mix('js/app.js') }}" defer></script> -->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
 
-    <!-- dselect library for livesearch in form-select-->
-      <link rel="stylesheet" href="css/dselect.css" />
-      <script src="js/dselect.js"></script>
+  
 </head>
 <!-- class="font-sans antialiased" -->
 <body  style="margin-top:150px;background-color: #F5F8FF;font-family:Nunito;">
@@ -52,10 +50,7 @@
             {{$slot}}
         </main>
 
-        @stack('modals')
-
-        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script> -->
-
+        
         @livewireScripts
     </div>
     <br>
@@ -153,10 +148,10 @@
       btnBuscar.classList.remove("btnBuscar1");
     }
 
-    window.addEventListener('swal:information', event => { 
+    window.addEventListener('swal:information', event => {
       const Toast = Swal.mixin({
         toast: true,
-        position: ((event.detail.position != 'center') ? event.detail.position:'center'),
+        position: 'center',//((event.detail.position != 'center') ? event.detail.position:'center'),
         showConfirmButton: false,
         timer: 5500,
         timerProgressBar: false,
@@ -174,7 +169,7 @@
       })
     });
 
-    window.addEventListener('swal:confirm', event => {
+    window.addEventListener('swal:confirmAnular', event => {
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-primary m-2',
@@ -194,27 +189,37 @@
         reverseButtons: false
       }).then((result) => {
         if (result.isConfirmed) {
-          window.livewire.emit('anularReserva');
+          window.livewire.emit('anularReserva'); 
         }
       })
     });
+  
 
     document.addEventListener('livewire:load', () => {
       window.livewire.on('anularReserva', () => {
-        var element = document.getElementById("spinnerAnularReserva");
+        var element = document.getElementById("spinnerAnularReserva"); 
         var element2 = document.getElementById("anularIcon");
         element.classList.add("spinner-border");
         element.classList.add("spinner-border-sm");
         element2.classList.add("d-none");
-        document.getElementById("btnCerrar").disabled = true;
-        document.getElementById("btnIconClose").disabled = true;
-        document.getElementById("btnSolicitarReserva").disabled = true;
-        document.getElementById("btnAnularReserva").disabled = true;
+
+        document.getElementById("btnCerrar").disabled = true;      
+        document.getElementById("btnIconClose").disabled = true;   
+        document.getElementById("btnGuardar").disabled = true;
+        document.getElementById("btnAnularReserva").disabled = true;    
+
+      if (document.getElementById("idFuncionario") != null) {
+        document.getElementById("idFuncionario").disabled = true;
+        document.getElementById("fechaSolicitud").disabled = true;
+        document.getElementById("codEstado").disabled = true;
+        document.getElementById("codVehiculo").disabled = true;
+      }
+   
         document.getElementById("horaInicio").disabled = true;
-        document.getElementById("horaFin").disabled = true;
+        document.getElementById("horaFin").disabled = true;      
         document.getElementById("motivo").disabled = true;
         document.getElementById("codComuna").disabled = true;
-        document.getElementById("codDivision").disabled = true;
+        document.getElementById("codDivision").disabled = true; 
         document.getElementById("cantPasajeros").disabled = true;
         // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
       });

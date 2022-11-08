@@ -70,6 +70,7 @@ class ReservaServices
             $objInput->horaInicio = Carbon::parse($reservasFechaUser['horaInicio'])->format('H:i');
             $objInput->horaFin = Carbon::parse($reservasFechaUser['horaFin'])->format('H:i');
             $objInput->codEstado = $reservasFechaUser['codEstado'];
+            $objInput->codEstadoOrig = $reservasFechaUser['codEstado'];
             $objInput->codColor = $reservasFechaUser['codColor'];
             $objInput->descripcionEstado = $reservasFechaUser['descripcionEstado'];
             $objInput->codComuna = $reservasFechaUser['codComuna'];
@@ -94,7 +95,7 @@ class ReservaServices
 
     public function confirmAnularReserva($objInput)
     {
-        $objInput->dispatchBrowserEvent('swal:confirm', [
+        $objInput->dispatchBrowserEvent('swal:confirmAnular', [
             'type' => 'warning',
             'title' => 'Anulación de Reserva',
             'text' => '¿Está seguro(a) que desea Anular su reserva?',
@@ -102,8 +103,7 @@ class ReservaServices
         $objInput->dispatchBrowserEvent('iniTooltips');
     }
 
-    public function anularReserva($objInput)
-    {
+    public function anularReserva($objInput) {
         $msjException = "";
         try {
             DB::beginTransaction();
