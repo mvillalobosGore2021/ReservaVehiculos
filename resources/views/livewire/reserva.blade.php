@@ -27,9 +27,7 @@
           E</span>n el presente calendario usted podrá ingresar nuevas solicitudes de reservas haciendo click en el día en el cuál desea 
           reservar. El calendario se encuentra habilitado en un rango de 60 días. 
           </p>
-        </div>   
-        
-       
+        </div>  
 
         <div class="table-responsive-sm mx-2 mx-md-4 my-4" id="headTableCalendar">
           <table class="table table-bordered">

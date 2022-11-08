@@ -8,7 +8,6 @@
             <span class="navbar-toggler-icon"></span> 
         </button> -->
 
-
             <button class="navbar-toggler hamburger hamburger--spin" type="button" onclick="toggleBurgerMenu()" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>

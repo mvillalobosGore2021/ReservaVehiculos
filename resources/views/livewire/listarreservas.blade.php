@@ -6,11 +6,11 @@
       <div class="card-header py-3 text-center h3">
         Consultar Mis Reservas
       </div>
-      <div class="card-body mt-2 mx-3">
+      <div class="card-body mt-2 mx-2 mx-md-3">
       <div class="alert alert-info border border-info mb-4 shadow" role="alert">
       <h4 class="alert-heading text-center fw-bold fs-5">Consultar Mis reservas</h4>
       <hr>
-          <p class="fs-6 fst-italic pt-1 mx-3" style="text-align:justify;text-indent: 30px;">
+          <p class="fs-6 fst-italic pt-1 mx-2 mx-md-3" style="text-align:justify;text-indent: 30px;">
           <span class="fw-bold fs-4 text-white" style="background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">E</span>n la opción <b>Consultar Mis Reservas</b> usted podrá ingresar <b>Nuevas Reservas</b>, buscar sus reservas ya ingresadas y editarlas. 
             Al presionar el botón <b>Solicitudes Hoy</b> se desplegarán 
             sus reservas ingresadas el día de hoy, al presionar <b>Reservas Hoy</b> se desplegarán sus solicitudes de reservas ingresadas para el día de hoy. <b>Mostrar Todo</b> desplegará
