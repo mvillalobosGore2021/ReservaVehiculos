@@ -166,8 +166,8 @@
             const type = inputPass.getAttribute('type') === 'password' ? 'text' : 'password';
             inputPass.setAttribute('type', type);
             // toggle the eye slash icon
-            iconPass.classList.toggle('bi-eye-slash-fill');
-        }
+            iconPass.classList.toggle('bi-eye-slash-fill'); 
+        }       
 
         function redirectLogin() {
             window.location = "/login";

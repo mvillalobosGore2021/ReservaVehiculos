@@ -19,7 +19,7 @@
         <input wire:model="firstDayMonth" type="hidden">
         <input wire:model="lastDayMonth" type="hidden">
       
-      <div class="alert alert-info border border-info mb-4 mx-4 shadow" role="alert">
+      <div class="alert alert-info border border-info mb-4 mx-2 mx-md-4 shadow" role="alert"> 
       <h4 class="alert-heading text-center fw-bold fs-5">Calendario de reservas</h4>
       <hr>
           <p class="fs-6 fst-italic pt-1 mx-3" style="text-align:justify;text-indent: 30px;">
@@ -27,8 +27,11 @@
           E</span>n el presente calendario usted podrá ingresar nuevas solicitudes de reservas haciendo click en el día en el cuál desea 
           reservar. El calendario se encuentra habilitado en un rango de 60 días. 
           </p>
-        </div>        
-        <div class="table-responsive-sm mx-4 my-4" id="headTableCalendar">
+        </div>   
+        
+       
+
+        <div class="table-responsive-sm mx-2 mx-md-4 my-4" id="headTableCalendar">
           <table class="table table-bordered">
             <thead>
               <tr>
