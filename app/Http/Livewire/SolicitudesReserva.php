@@ -227,7 +227,7 @@ class SolicitudesReserva extends Component
 
     public function mostrarTodo()
     {
-        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaSearch', 'fechaInicioReserva', 'fechaFinReserva']);
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj']); 
         //$this->dispatchBrowserEvent('iniTooltips');
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
@@ -248,7 +248,7 @@ class SolicitudesReserva extends Component
         //   $this->fechaFinReserva = Carbon::now()->format('Y-m-d');  
   
           $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-          $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva']);//Se limpian los demas filtros 
+          $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj']);//Se limpian los demas filtros 
           $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetPage();  
@@ -261,7 +261,7 @@ class SolicitudesReserva extends Component
         // $this->fechaFinReserva = Carbon::now()->format('Y-m-d');  
 
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva']);//Se limpian los demas filtros 
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj']);//Se limpian los demas filtros 
         $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
         $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
         $this->resetPage();  
@@ -280,15 +280,17 @@ class SolicitudesReserva extends Component
             $estado = Estado::where('codEstado', '=', $this->codEstadoSearch)->first();
             $this->descripEstadoSearch = $estado->descripcionEstado;
             $this->colorEstadoSearch =  $estado->codColor;  
-            if ($this->flgReservasHoy == true || $this->flgSolicitudesHoy == true) {
-                $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
-                $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']); 
-                $this->reset(['fechaInicioReserva', 'fechaFinReserva']); 
-            }
          }
 
+           //Para que busque con el rango por defecto fecha actual hasta tres meses
+           if ($this->flgReservasHoy == true || $this->flgSolicitudesHoy == true) {
+            $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
+            $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']); 
+            $this->reset(['fechaInicioReserva', 'fechaFinReserva']); 
+        }
+
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-        $this->reset(['nameSearch']);//Se limpian el filtro por nombre  
+        $this->reset(['nameSearch', 'nomFuncSearchMsj']);//Se limpian el filtro por nombre  
         $this->resetPage();  
      }
 
@@ -302,7 +304,7 @@ class SolicitudesReserva extends Component
             }
         }
 
-        if ($field == 'fechaSearch') {
+        if ($field == 'fechaSearch') { 
             //dd($this->fechaSearch, Carbon::now()->format('Y-m-d'));
             if ($this->fechaSearch ==  Carbon::now()->format('Y-m-d')) {
                 $this->flgSearchHoy = $this->flgFechaSearch == 1 ? 1 : 2;
@@ -314,7 +316,6 @@ class SolicitudesReserva extends Component
         if ($field == 'fechaInicioReserva' || $field == 'fechaFinReserva' || $field == 'nameSearch') {
             $this->flgSolicitudesHoy = false;
             $this->flgReservasHoy = false;
-
         }
 
         $this->resetPage();
@@ -332,7 +333,14 @@ class SolicitudesReserva extends Component
         $this->flgNomFuncSearch = false;
         $this->nomFuncSearchMsj = "";
         if ($field == 'nameSearch' && strlen($value) > 0) {
-            $this->flgNomFuncSearch = true; //Indicador para crear mensaje informativo en el metodo render        
+            $this->flgNomFuncSearch = true; //Indicador para crear mensaje informativo en el metodo render    
+           
+            //Para que busque con el rango por defecto fecha actual hasta tres meses
+            if ($this->flgReservasHoy == true || $this->flgSolicitudesHoy == true) {
+                $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
+                $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']); 
+                $this->reset(['fechaInicioReserva', 'fechaFinReserva']); 
+            }
         }
 
         //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
