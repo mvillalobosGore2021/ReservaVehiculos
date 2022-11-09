@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reservavehiculo extends Model   
 {
-    use HasFactory;
+    use HasFactory; 
 
     protected $primaryKey = 'idReserva';
 
     protected $fillable = ['idUser', 'motivo', 'codComuna', 'prioridad', 'flgUsoVehiculoPersonal', 
-    'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'codVehiculo', 'horaInicio', 
-    'horaFin', 'idUserCreacion', 'idUserModificacion', 'codComuna', 'codDivision', 'cantPasajeros'];
-}
+    'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'codVehiculo', 'horaInicio',  
+    'horaFin', 'idUserCreacion', 'idUserModificacion', 'codDivision', 'cantPasajeros'];
+} 
