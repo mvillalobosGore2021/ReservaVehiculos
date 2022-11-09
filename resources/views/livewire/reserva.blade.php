@@ -110,7 +110,7 @@
       </div>
     </div>
 
-<!-- Modal -->
+<!-- Modal --> 
 <div wire:ignore.self class="modal fade pt-0" id="modalReserva" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-xl modal-dialog-scrollable pt-1">
     <div class="modal-content">
@@ -396,7 +396,7 @@
 <!-- Fin Modal -->
 
 <!-- Inicio Tooltip Reservas realizadas para el día seleccionado  -->
-@if (!empty($arrCantReservasCount))
+@if (!empty($arrCantReservasCount)) 
 <div style="display:none">
   @foreach($arrCantReservasCount as $index => $itemReserva)
   <div id="td{{\Carbon\Carbon::parse($itemReserva['fechaSolicitud'])->format('Ymd')}}">

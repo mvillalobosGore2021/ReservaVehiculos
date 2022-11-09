@@ -90,7 +90,7 @@
             },
             theme: 'tablereservas',
             allowHTML: true,
-            touch: true, //Toolstips para moviles
+            touch: false, //Toolstips para moviles
             animation: 'scale-extreme',
             placement: 'bottom',
             duration: 450, //Tiempo que se demora el despliegue
@@ -240,7 +240,7 @@
   }
 }
 
-var x = window.matchMedia("(max-width: 700px)");
+var x = window.matchMedia("(max-width: 700px)"); 
 myFunction(x); // Call listener function at run time
 x.addListener(myFunction); // Attach listener function on state changes
 //Fin MediaQuery

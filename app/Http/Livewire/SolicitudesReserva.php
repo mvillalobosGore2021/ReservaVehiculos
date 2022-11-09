@@ -437,7 +437,7 @@ class SolicitudesReserva extends Component
 
     public function confirmAnularReserva()
     {
-        $this->dispatchBrowserEvent('swal:confirm', [
+        $this->dispatchBrowserEvent('swal:confirmAnular', [
             'type' => 'warning',
             'title' => 'Anulación de Reserva',
             'text' => '¿Está seguro(a) que desea Anular la reserva?',
@@ -637,7 +637,7 @@ class SolicitudesReserva extends Component
                     $mailData = [
                         'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo":"Notificación: Ingreso de Reserva de Vehículo",
                         'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> su reserva solicitada para el día"):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a su nombre para el día"),
-                        'funcionario' => $this->nameSel,
+                        'funcionario' => $this->nameSel, 
                         'sexo' => $this->sexoSel, 
                         'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                         'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
