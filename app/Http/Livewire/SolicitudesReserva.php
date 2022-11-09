@@ -227,7 +227,7 @@ class SolicitudesReserva extends Component
 
     public function mostrarTodo()
     {
-        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj']); 
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj', 'flgNomFuncSearch']); 
         //$this->dispatchBrowserEvent('iniTooltips');
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
@@ -248,7 +248,7 @@ class SolicitudesReserva extends Component
         //   $this->fechaFinReserva = Carbon::now()->format('Y-m-d');  
   
           $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-          $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj']);//Se limpian los demas filtros 
+          $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj', 'flgNomFuncSearch']);//Se limpian los demas filtros 
           $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
           $this->resetPage();  
@@ -261,7 +261,7 @@ class SolicitudesReserva extends Component
         // $this->fechaFinReserva = Carbon::now()->format('Y-m-d');  
 
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj']);//Se limpian los demas filtros 
+        $this->reset(['codEstadoSearch', 'nameSearch', 'fechaInicioReserva', 'fechaFinReserva', 'nomFuncSearchMsj', 'flgNomFuncSearch']);//Se limpian los demas filtros 
         $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
         $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
         $this->resetPage();  
@@ -290,7 +290,7 @@ class SolicitudesReserva extends Component
         }
 
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
-        $this->reset(['nameSearch', 'nomFuncSearchMsj']);//Se limpian el filtro por nombre  
+        $this->reset(['nameSearch', 'nomFuncSearchMsj', 'flgNomFuncSearch']);//Se limpian el filtro por nombre  
         $this->resetPage();  
      }
 
