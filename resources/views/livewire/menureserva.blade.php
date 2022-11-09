@@ -16,7 +16,8 @@
 
             <div class="collapse navbar-collapse ps-md-4" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item pt-3 pt-md-2">
+                    <li><hr></li>
+                    <li class="nav-item pt-3 pt-md-2 ps-2 ps-md-0">
                         <!-- <a class="nav-link  @if(request()->routeIs('reserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('reserva') }}">
                         Reservar Vehiculo
                     </a> -->
@@ -24,13 +25,13 @@
                             Calendario de Reservas
                         </a>
                     </li>                   
-                    <li class="nav-item pt-2 px-md-3">
+                    <li class="nav-item pt-2 ps-2 ps-md-3">
                         <a class=" my-0 hover-underline-animation @if(request()->routeIs('listarreservas')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('listarreservas') }}">
                             Consultar Mis Reservas
                         </a>
                     </li>
                     @if ($flgAdmin == 1)
-                    <li class="nav-item pt-2 px-md-2">
+                    <li class="nav-item pt-2 ps-2 ps-md-3">
                         <a class="hover-underline-animation @if(request()->routeIs('solicitudesreserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('solicitudesreserva') }}">
                             Gestionar Reservas
                         </a>

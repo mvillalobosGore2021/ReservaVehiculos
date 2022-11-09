@@ -17,6 +17,9 @@
     <div class="card mt-2 mb-4 mt-md-3 mb-md-5">
       <div class="card-header py-3 text-center h3">
         Gestionar Solicitudes de Reserva
+        <span class="d-block fst-italic text-secondary pt-1" style="font-size:15px;">
+          Fecha Actual: <i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse(now())->format('d/m/Y')}}
+        </span>
       </div>
       <div class="card-body">
         <div class="card mx-2 mt-3 mb-3 shadow">
@@ -246,9 +249,10 @@
                   <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
                   {{$item->motivo}}
                 </td>
-
               </tr>
               @endforeach
+              </tbody>
+              <tfoot>
               <tr id="td{{rand(101, 120)}}">
                 <td colspan="7">
                   <center style="font-size:16px;font-style: italic;" class="text-primary">
@@ -263,7 +267,9 @@
                   </center>
                 </td>
               </tr>
+              </tfoot>
               @else
+              <tfoot>
               <tr>
                 <td colspan="7">
                   <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
@@ -275,8 +281,8 @@
                   </div>
                 </td>
               </tr>
-              @endif
-            </tbody>
+              </tfoot>
+              @endif          
           </table>
         </div>
         <div class="row mt-3 ">

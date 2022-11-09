@@ -64,13 +64,15 @@
 <script>
     initToolTips();
 
+    var flgMediaQuerySmall = true;
+
     window.addEventListener('iniTooltips', event => {
         initToolTips();
     });
 
     function initToolTips() {
         tippy('[data-tippy-content]', {
-            touch: true, //Habilita Toolstips para moviles
+            touch: false, //Habilita Toolstips para moviles
             animation: 'scale-extreme',
             placement: 'bottom',
             duration: 450, //Tiempo que se demora el despliegue
@@ -104,7 +106,11 @@
             const menuReserva = document.getElementById("menureserva");
                                
             const element = document.querySelector(id);
-            const topPos = element.getBoundingClientRect().top - menuReserva.offsetTop + window.pageYOffset;
+            var topPos = element.getBoundingClientRect().top - menuReserva.offsetTop + window.pageYOffset; 
+
+            if (flgMediaQuerySmall == true) {//Si la pantalla es menor a 700px se aumenta el offset a top
+                topPos += 25;
+            }
 
             window.scrollTo({
                top: topPos,
@@ -224,6 +230,20 @@
         // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
       });
     });
+
+//Inicio MediaQuery
+ function myFunction(x) { 
+  if (x.matches) { // If media query matches 
+    flgMediaQuerySmall = true;
+  } else {
+    flgMediaQuerySmall = false;
+  }
+}
+
+var x = window.matchMedia("(max-width: 700px)");
+myFunction(x); // Call listener function at run time
+x.addListener(myFunction); // Attach listener function on state changes
+//Fin MediaQuery
     
 </script>
 

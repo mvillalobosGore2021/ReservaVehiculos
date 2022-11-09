@@ -113,7 +113,7 @@ class Reserva extends Component
         $this->dispatchBrowserEvent('iniTooltips'); 
 
         if ($flgMoveScroll == 1) {
-            $this->dispatchBrowserEvent('moveScroll', ['id' => '#headTableCalendar']);
+            $this->dispatchBrowserEvent('moveScroll', ['id' => '#headCalendar']);
         }
     } 
     

@@ -5,6 +5,9 @@
     <div class="card mt-2 mb-4 mt-md-3 mb-md-5">
       <div class="card-header py-3 text-center h3">
         Consultar Mis Reservas
+        <span class="d-block fst-italic text-secondary pt-1" style="font-size:15px;">
+          Fecha Actual: <i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse(now())->format('d/m/Y')}}
+        </span>
       </div>
       <div class="card-body mt-2 mx-2 mx-md-3">
       <div class="alert alert-info border border-info mb-4 shadow" role="alert">
@@ -231,7 +234,9 @@
               </td>
 
             </tr>
-            @endforeach
+            @endforeach            
+          </tbody>
+            <tfoot>
             <tr id="td{{rand(101, 120)}}">
               <td colspan="7" style="height: 3.3rem;">  
                 <center style="font-size:16px;font-style: italic;" class="text-primary pt-1"> 
@@ -246,7 +251,9 @@
                 </center> 
               </td>
             </tr>
+            </tfoot>
             @else
+            <tfoot>
             <tr>
               <td colspan="7">
                 <div class="alert alert-success border border-success d-flex justify-content-center my-3 mx-3 mx-md-5 my-md-4" role="alert">
@@ -258,8 +265,8 @@
                 </div>
               </td>
             </tr>
+            </tfoot>
             @endif
-          </tbody>
         </table>
       </div>
       <div class="row mt-3 ">

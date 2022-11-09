@@ -29,13 +29,13 @@
           </p>
         </div>  
 
-        <div class="table-responsive-sm mx-2 mx-md-4 my-4" id="headTableCalendar">
-          <table class="table table-bordered">
+        <div class="table-responsive-sm mx-2 mx-md-4 my-4">
+          <table class="table table-bordered" >
             <thead>
               <tr>
                 <th scope="col" colspan="7">
                   <div class="row">
-                    <div class="col-12 col-md-5 ps-md-0">
+                    <div class="col-12 col-md-5 ps-md-0" id="headCalendar">
                       <div class="input-group py-3 justify-content-center">
                         @foreach($arrMonthDisplay as $mesIndex => $item)
                           <button wire:click="getCalendarMonth('{{$item['mesNumber']}}_{{$item['agno']}}', 1)" class="btn {{$mesSel == $mesIndex ? 'btn-primary':'btn-outline-primary'}}" type="button">{{$item['mes']}}</button>
