@@ -184,7 +184,7 @@ class SolicitudesReserva extends Component
         $this->motivoSel = $reservaSel->motivo;
         $this->nameSel = $reservaSel->name;
         $this->emailSel = $reservaSel->email; 
-        $this->sexoSel = $reservaSel->sexo;      
+        $this->sexoUserSel = $reservaSel->sexo;      
         $this->idUserSel = $reservaSel->idUser; 
         $this->descripEstadoSel = $reservaSel->descripcionEstado;  
         $this->colorEstadoSel = $reservaSel->codColor;
@@ -547,7 +547,7 @@ class SolicitudesReserva extends Component
         } catch (exception $e) {
             $flgError = true;
         } 
-
+ 
         $msjException = "";  
       
 
@@ -652,7 +652,7 @@ class SolicitudesReserva extends Component
                         'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo":"Notificación: Ingreso de Reserva de Vehículo",
                         'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripAccionEstado."</span> su reserva solicitada para el día"):("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:".$estado->codColor.";color:white;'>".$estado->descripcionEstado."</span> a su nombre para el día"),
                         'funcionario' => $this->nameSel, 
-                        'sexo' => $this->sexoSel, 
+                        'sexo' => $this->sexoUserSel, 
                         'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
                         'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
                         'horaInicio' => $this->horaInicioSel,

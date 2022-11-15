@@ -173,10 +173,11 @@
 <!-- Inicio tabla solicitudes reservas -->
 <div class="table-responsive card mx-1 mt-4 shadow" id="listadoSolReservas">
         <table class="table @if(!empty($reservasUsuario) && count($reservasUsuario) > 0) table-hover @endif ">
-          <thead class="table-light">
-            @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)
+          <thead > 
+            @if(!empty($reservasUsuario) && count($reservasUsuario) > 0)             
             <tr>
               <th scope="col" colspan="7" class="ps-4 text-primary py-4"> 
+              
                 <center>
                   <b>
                   @if ($flgSolicitudesHoy == 1)

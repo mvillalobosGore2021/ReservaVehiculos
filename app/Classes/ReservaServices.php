@@ -271,7 +271,7 @@ class ReservaServices
 
             try {
                 //Mail al postulante 
-                Mail::to($objInput->correoUser)->send(new CorreoNotificacion($mailData));
+                Mail::to($objInput->correoUser)->send(new CorreoNotificacion($mailData)); 
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $objInput->correoUser . '</span>';
                 throw $e;

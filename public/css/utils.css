@@ -141,6 +141,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     
     Color botones sitio https://ibt.uai.asimov.cl/visualizations
     #464799 #138D75 #DF5B00 #FD435F #09B1FF #97DD0C Color para estado Confirmado 
+     Ver display de columnas
+     Color Tabla Tailwind: background-color:#F7FAFC; color letra:#718096; 
+     https://tailwindcomponents.com/component/table-ui-with-tailwindcss-and-alpinejs
     */
 
 .hover-underline-animation {
