@@ -9,8 +9,8 @@
         </button> -->
 
             <button class="navbar-toggler hamburger hamburger--spin" type="button" onclick="toggleBurgerMenu()" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="hamburger-box">
-                    <span class="hamburger-inner"></span>
+            <b class="text-secondary pe-2">Menú</b>  <span class="hamburger-box">
+                     <span class="hamburger-inner"></span>
                 </span>
             </button>
 

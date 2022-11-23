@@ -58,7 +58,11 @@ hr {
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
        @if ($mailData['codEstado'] == 1 && empty($mailData['nomAdmin'])) 
-          <br><span style="background-color:#EF3B2D;color:white;">Importante!: </span><span style="background-color:#3980BB;color:white;">Su solicitud de reserva aún no se encuentra confirmada, se le notificará a su correo cuando su reserva cambie de estado.</span> 
+         <br><br><span style="background-color:#EF3B2D;color:white;">Importante!: </span><span style="background-color:#3980BB;color:white;">Su solicitud de reserva aún no se encuentra confirmada, se le notificará a su correo cuando su reserva cambie de estado.</span> 
+       @endif
+
+       @if ($mailData['codEstado'] == 3 && empty($mailData['nomAdmin'])) 
+         <br><br><span style="background-color:#EF3B2D;color:white;">Motivo de la Anulación:</span> <b>{{ $mailData['motivoAnulacion'] }}</b>
        @endif
        <br><br>
        Saludos cordiales.

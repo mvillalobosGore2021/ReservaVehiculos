@@ -183,13 +183,17 @@ return [
         'codVehiculoSel' => [
             'required' => 'Seleccione Vehículo.',
             'gt' => 'Seleccione Vehículo.',
-        ],        
+        ],
+        'rutConductorSel' => [
+            'required' => 'Seleccione Conductor.',
+            'gt' => 'Seleccione Conductor.',
+        ],  
         'cantPasajeros*' => [
             'required' => 'Ingrese la cantidad de pasajeros.',
             'gt' => 'Ingrese la cantidad de pasajeros.',
             'integer' => 'Debe ingresar un valor númerico.',
             'digits_between' => 'Cantidad no debe superar los dos dígitos.',
-        ],
+        ],        
         'codDivision*' => [
             'required' => 'Seleccione la división.',
             'gt' => 'Seleccione la división.',

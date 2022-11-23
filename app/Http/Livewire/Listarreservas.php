@@ -80,8 +80,6 @@ class Listarreservas extends Component
                 $this->cantReservasSearch = count($reservasUsuarioCollect);                
             }
 
-          
-
         $reservasUsuario = $reservasUsuario->paginate(5);
 
         $this->dispatchBrowserEvent('iniTooltips');
@@ -178,6 +176,8 @@ class Listarreservas extends Component
  
     public function mostrarTodo() { 
         $this->reset(['codEstadoSearch', 'fechaInicioReserva', 'fechaFinReserva', 'flgSolicitudesHoy', 'flgReservasHoy']);
+        $this->flgReservasHoy = false;
+        $this->flgSolicitudesHoy = false;
         //$this->dispatchBrowserEvent('iniTooltips');
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);
         $this->resetPage();
@@ -198,7 +198,7 @@ class Listarreservas extends Component
             $this->colorEstadoSearch =  $estado->codColor; 
          }
 
-         $this->flgSolicitudesHoy = false;
+         $this->flgSolicitudesHoy = false; 
          $this->flgReservasHoy = false;
 
         $this->dispatchBrowserEvent('moveScroll', ['id' => '#listadoSolReservas']);        

@@ -13,5 +13,6 @@ class Reservavehiculo extends Model
 
     protected $fillable = ['idUser', 'motivo', 'codComuna', 'prioridad', 'flgUsoVehiculoPersonal', 
     'fechaSolicitud', 'fechaConfirmacion', 'codEstado', 'codVehiculo', 'horaInicio',  
-    'horaFin', 'idUserCreacion', 'idUserModificacion', 'codDivision', 'cantPasajeros'];
+    'horaFin', 'idUserCreacion', 'idUserModificacion', 'codDivision', 'cantPasajeros',
+    'rutConductor', 'motivoAnulacion'];
 } 
