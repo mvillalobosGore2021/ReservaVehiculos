@@ -264,6 +264,7 @@
       // }
 
       document.getElementById("btnAnularReserva").disabled = true;
+      
 
       // if (document.getElementById("idFuncionario") != null) { 
         document.getElementById("idFuncionario").disabled = true;
@@ -280,6 +281,7 @@
       document.getElementById("horaInicio").disabled = true; 
       document.getElementById("horaFin").disabled = true;
       document.getElementById("motivo").disabled = true;
+      document.getElementById("motivoAnulacion").disabled = true;
       document.getElementById("codComuna").disabled = true;
       document.getElementById("codDivision").disabled = true;
       document.getElementById("cantPasajeros").disabled = true;

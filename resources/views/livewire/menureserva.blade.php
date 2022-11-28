@@ -21,18 +21,18 @@
                         <!-- <a class="nav-link  @if(request()->routeIs('reserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('reserva') }}">
                         Reservar Vehiculo
                     </a> -->
-                        <a class="hover-underline-animation @if(request()->routeIs('reserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('reserva') }}">
+                        <a class="@if(request()->routeIs('reserva')) link-primary custom-underline @else link-secondary hover-underline-animation @endif" aria-current="page" href="{{ route('reserva') }}">
                             Calendario de Reservas
                         </a>
                     </li>                   
                     <li class="nav-item pt-2 ps-2 ps-md-3">
-                        <a class=" my-0 hover-underline-animation @if(request()->routeIs('listarreservas')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('listarreservas') }}">
+                        <a class=" my-0  @if(request()->routeIs('listarreservas')) link-primary custom-underline @else link-secondary hover-underline-animation @endif" aria-current="page" href="{{ route('listarreservas') }}">
                             Consultar Mis Reservas
                         </a>
                     </li>
-                    @if ($flgAdmin == 1)
+                    @if ($flgAdmin == 1) 
                     <li class="nav-item pt-2 ps-2 ps-md-3">
-                        <a class="hover-underline-animation @if(request()->routeIs('solicitudesreserva')) link-primary @else link-secondary @endif" aria-current="page" href="{{ route('solicitudesreserva') }}">
+                        <a class=" @if(request()->routeIs('solicitudesreserva')) link-primary custom-underline @else link-secondary hover-underline-animation @endif" aria-current="page" href="{{ route('solicitudesreserva') }}">
                             Gestionar Reservas
                         </a>
                     </li>

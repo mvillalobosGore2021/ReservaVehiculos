@@ -149,11 +149,18 @@ Fondo: #FFFEF0, Color de la letra: #8894A0 (El titulo dejarlo negro), Color del 
      https://tailwindcomponents.com/component/table-ui-with-tailwindcss-and-alpinejs
     */
 
+.custom-underline { 
+  text-decoration: none; 
+  border-bottom:2px solid #0b5ed7; 
+  padding-bottom: 1px;
+}
+
 .hover-underline-animation {
     text-decoration: none;
     display: inline-block;
     position: relative;
     color: #0b5ed7;
+    padding-bottom: 2px;
     /* ; */
 }
 

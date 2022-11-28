@@ -18,6 +18,7 @@ class CreateConductorsTable extends Migration
             $table->unsignedInteger('rutConductor');
             $table->char('dvRutConductor', 1);
             $table->string('nombreConductor');
+            $table->string('mail');
             $table->timestamps();
         });
     }

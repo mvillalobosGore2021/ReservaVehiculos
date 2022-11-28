@@ -490,6 +490,62 @@
                         </div>
                       </div>
                     </div>
+
+                    <div class="row">
+                      <div class="col-12 pb-2 col-md-5 mt-md-0"> 
+                        <div class="row">
+                          <div class="col-12" id="cantPasajerosId">
+                            <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
+                            <div class="input-group">
+                              <span class="input-group-text">
+                                <i class="bi bi-people"></i>
+                              </span>
+                              <input type="text" id="cantPasajeros" @if($codEstadoSel==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajerosSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                            </div>
+                          </div>
+                          @error('cantPasajerosSel')
+                          <div class="col-12 pb-1">
+                            @if($flgError == false)
+                            <script>
+                              movScrollModalById('#cantPasajerosId');
+                            </script>
+                            @php($flgError = true)
+                            @endif
+                            <span class="colorerror">{{ $message }}</span>
+                          </div>
+                          @enderror
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <div class="row">
+                          <div class="col-12" id="codComunaId">
+                            <label>Comuna destino</label>
+                            <div class="input-group">
+                              <span class="input-group-text">
+                                <i class="bi bi-signpost-2"></i>
+                              </span>
+                              <select id="codComuna" wire:model="codComunaSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
+                                <option value="">Sel. Comuna destino</option>
+                                @foreach($comunasCmb as $itemComuna)
+                                <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                          @error('codComunaSel')
+                          <div class="col-12 pb-1">
+                            @if($flgError == false)
+                            <script>
+                              movScrollModalById('#codComunaId');
+                            </script>
+                            @php($flgError = true)
+                            @endif 
+                            <span class="colorerror">{{ $message }}</span>
+                          </div>
+                          @enderror
+                        </div>
+                      </div>
+                    </div>
                     <!-- Si el estado selecionado es confirmado se muestran los siguientes campos -->
                     @if($codEstadoSel == 2)
                     <div class="row pb-2">
@@ -551,62 +607,7 @@
                       @enderror
                     </div>
                     @endif
-
-                    <div class="row">
-                      <div class="col-12 pb-2 col-md-6 mt-md-0">
-                        <div class="row">
-                          <div class="col-12" id="cantPasajerosId">
-                            <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
-                            <div class="input-group">
-                              <span class="input-group-text">
-                                <i class="bi bi-people"></i>
-                              </span>
-                              <input type="text" id="cantPasajeros" @if($codEstadoSel==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajerosSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
-                            </div>
-                          </div>
-                          @error('cantPasajerosSel')
-                          <div class="col-12 pb-1">
-                            @if($flgError == false)
-                            <script>
-                              movScrollModalById('#cantPasajerosId');
-                            </script>
-                            @php($flgError = true)
-                            @endif
-                            <span class="colorerror">{{ $message }}</span>
-                          </div>
-                          @enderror
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <div class="row">
-                          <div class="col-12" id="codComunaId">
-                            <label>Comuna destino</label>
-                            <div class="input-group">
-                              <span class="input-group-text">
-                                <i class="bi bi-signpost-2"></i>
-                              </span>
-                              <select id="codComuna" wire:model="codComunaSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
-                                <option value="">Sel. Comuna destino</option>
-                                @foreach($comunasCmb as $itemComuna)
-                                <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
-                                @endforeach
-                              </select>
-                            </div>
-                          </div>
-                          @error('codComunaSel')
-                          <div class="col-12 pb-1">
-                            @if($flgError == false)
-                            <script>
-                              movScrollModalById('#codComunaId');
-                            </script>
-                            @php($flgError = true)
-                            @endif
-                            <span class="colorerror">{{ $message }}</span>
-                          </div>
-                          @enderror
-                        </div>
-                      </div>
-                    </div>
+                  
 
                     <div class="row pt-2 pt-md-0 pb-2" id="divisionId">
                       <div class="col-12">

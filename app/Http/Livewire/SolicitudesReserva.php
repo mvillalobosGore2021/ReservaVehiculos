@@ -176,7 +176,7 @@ class SolicitudesReserva extends Component
     }
 
     public function reservaSel($idReservaSel, $openModal)
-    {
+    { 
         $this->flgNuevaReserva = false;
         // dd($idReservaSel, $openModal);
         $reservaSel = Reservavehiculo::join('estados', 'estados.codEstado', '=', 'reservavehiculos.codEstado')
@@ -210,8 +210,8 @@ class SolicitudesReserva extends Component
         $this->codVehiculoSel = $reservaSel->codVehiculo;
         $this->codComunaSel = $reservaSel->codComuna;
         $this->codDivisionSel = $reservaSel->codDivision;
-        $this->cantPasajerosSel = $reservaSel->cantPasajeros;
-
+        $this->cantPasajerosSel = $reservaSel->cantPasajeros; 
+        $this->rutConductorSel = $reservaSel->rutConductor;
 
         // //Lista de reservas realizadas el mismo dia de la reserva seleccionada
         // $this->reservasFechaSelPaso = collect(Reservavehiculo::join('users', 'users.id', '=', 'reservavehiculos.idUser')
@@ -224,8 +224,8 @@ class SolicitudesReserva extends Component
             $this->dispatchBrowserEvent('showModal');
         }
 
-        $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva', 'fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
-        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva', 'fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
+        $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva', 'fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'rutConductorSel','horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
+        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva', 'fechaSolicitudSel', 'motivoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codVehiculoSel', 'rutConductorSel', 'horaInicioSel', 'horaFinSel', 'codComunaSel', 'codDivisionSel', 'cantPasajerosSel']);
     }
 
 
@@ -418,9 +418,9 @@ class SolicitudesReserva extends Component
 
     public function resetCamposModal()
     {
-        $this->reset(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
-        $this->resetValidation(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
-        $this->resetErrorBag(['idReservaSel', 'codVehiculoSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
+        $this->reset(['idReservaSel', 'codVehiculoSel',  'rutConductorSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
+        $this->resetValidation(['idReservaSel', 'codVehiculoSel',  'rutConductorSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
+        $this->resetErrorBag(['idReservaSel', 'codVehiculoSel',  'rutConductorSel', 'fechaSolicitudSel', 'horaInicioSel', 'horaFinSel', 'motivoSel', 'flgUsoVehiculoPersSel', 'descripEstadoSel', 'idUserSel', 'nameSel', 'codEstadoSel', 'codDivisionSel', 'codComunaSel', 'cantPasajerosSel']);
     }
 
     protected function validateEstadoConfirmar()
@@ -543,6 +543,7 @@ class SolicitudesReserva extends Component
                 'horaFin' => $reservaVehiculo->horaFin,
                 'descripcionEstado' => "Anulada",
                 'codEstado' => $reservaVehiculo->codEstado,
+                'flgConductor' => false,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
                 'motivoAnulacion' => $reservaVehiculo->motivoAnulacion,
                 'motivo' => $reservaVehiculo->motivo,
@@ -624,7 +625,7 @@ class SolicitudesReserva extends Component
 
         $this->nameSel = $user->name;
         $this->emailSel = $user->email;
-        $this->sexoUserSel = $user->sexo;
+        $this->sexoUserSel = $user->sexo; 
 
         //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
         if ($this->flgNuevaReserva == true || ($this->flgNuevaReserva == false && $this->idReservaSel != $this->idReservaOrigin)) {  /*Si en modo modificacion se cambia el funcionario que realizó originalemente la reserva se válida que no posea una reserva pára el mismo dia*/
@@ -649,11 +650,23 @@ class SolicitudesReserva extends Component
             //Validar que el vehiculo no este asignado en otra reserva confirmada para el dia seleccionado 
             if (!empty($this->validateEstadoConfirmar())) {
                 $flgError = true;
-                $this->addError('codVehiculoSel', 'El vehículo ' . $this->descripVehiculoValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+                $this->addError('rutConductorSel', 'El vehículo ' . $this->descripVehiculoValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
+
+                $this->dispatchBrowserEvent('swal:information', [ 
+                    'icon' => 'error', //'info',
+                    'title' => '<span class="fs-6 text-primary" style="font-weight:450;">El vehículo <span class="fs-6 text-success" style="font-weight:450;">' . $this->descripVehiculoValidate . '</span> <span class="fs-6 text-primary" style="font-weight:430;">ya se encuentra asignado a </span><span class="fs-6 text-success" style="font-weight:430;">' . $this->funcionarioValidate . '</span><span class="fs-6 text-primary" style="font-weight:430;"> en una reserva confirmada para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '</span>',
+                    //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
+                    'timer' => '5000',
+                ]);
+            }
+            else
+              if (!empty($this->validateConductor())) {                
+                $flgError = true;
+                $this->addError('rutConductorSel', 'El conductor ' . $this->nombreConductorValidate . ' ya se encuentra asignado a ' . $this->funcionarioValidate . ' en una reserva confirmada para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '.');
 
                 $this->dispatchBrowserEvent('swal:information', [
                     'icon' => 'error', //'info',
-                    'title' => '<span class="fs-6 text-primary" style="font-weight:450;">El vehículo <span class="fs-6 text-success" style="font-weight:450;">' . $this->descripVehiculoValidate . '</span> <span class="fs-6 text-primary" style="font-weight:430;">ya se encuentra asignado a </span><span class="fs-6 text-success" style="font-weight:430;">' . $this->funcionarioValidate . '</span><span class="fs-6 text-primary" style="font-weight:430;"> en una reserva confirmada para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '</span>',
+                    'title' => '<span class="fs-6 text-primary" style="font-weight:450;">El conductor <span class="fs-6 text-success" style="font-weight:450;">' . $this->nombreConductorValidate . '</span> <span class="fs-6 text-primary" style="font-weight:430;">ya se encuentra asignado a </span><span class="fs-6 text-success" style="font-weight:430;">' . $this->funcionarioValidate . '</span><span class="fs-6 text-primary" style="font-weight:430;"> en una reserva confirmada para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitudSel)->format('d-m-Y') . '</span>',
                     //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
                     'timer' => '5000',
                 ]);
@@ -665,7 +678,7 @@ class SolicitudesReserva extends Component
                 // 'idUser', 'motivo', 'prioridad', 'flgUsoVehiculoPersonal', 'fechaSolicitud', 'fechaConfirmacion', 'codEstado'
                 $prioridad = 0; //Calcular del listado de reserva por orden de llegada, dar la posibilidad de cambiar la prioridad al Adm
 
-                //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva   
+                //Validar que el usuario no tenga una reserva ingresada para el mismo dia cuando se ingresa una nueva 
 
                 $camposReservaVehiculoArr =  [
                     'idUser' => $this->idUserSel,
@@ -675,21 +688,14 @@ class SolicitudesReserva extends Component
                     'horaInicio' => $this->horaInicioSel,
                     'horaFin' => $this->horaFinSel,
                     'motivo' => $this->motivoSel,
-                    'codEstado' => $this->codEstadoSel,
+                    'codEstado' => $this->codEstadoSel, 
                     'codVehiculo' => $this->codVehiculoSel,
+                    'rutConductor' => $this->rutConductorSel,
                     'codDivision' => $this->codDivisionSel,
                     'codComuna' => $this->codComunaSel,
                     'cantPasajeros' => $this->cantPasajerosSel,
                     //'fechaConfirmacion' => $this->correoRepLegal, fecha de confirmación se guarda cuando el administrador confirma la reserva
                 ];
-
-                //Se guarda el usuario que crea o modifica
-                if ($this->idReservaSel > 0) {
-                    $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'idUserModificacion', $this->idUserAdmin);
-                } else {
-                    $this->idReservaSel = 0; //Para que no sea null
-                    $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'idUserCreacion', $this->idUserAdmin);
-                }
 
                 if ($this->codEstadoSel == 2) { //Si el estado es Confirmar se agrega la fecha de confirmacion 
                     $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'fechaConfirmacion', now());
@@ -697,15 +703,22 @@ class SolicitudesReserva extends Component
                     $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'fechaConfirmacion', null);
                 }
 
-                // dd($this->codComunaSel, $camposReservaVehiculoArr);
-                //Se crea la nueva reserva o se modifica 
-                $reservaVehiculo = Reservavehiculo::updateOrCreate(
-                    ['idReserva' => $this->idReservaSel],
-                    $camposReservaVehiculoArr
-                );
-
                 $estado = Estado::where('codEstado', '=', $this->codEstadoSel)->first();
 
+                if ($this->idReservaSel > 0) {
+                    $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'idUserModificacion', $this->idUserAdmin);
+                } else {
+                    $this->idReservaSel = 0; //Para que no sea null
+                    $camposReservaVehiculoArr = Arr::add($camposReservaVehiculoArr, 'idUserCreacion', $this->idUserAdmin);
+                }
+                
+                //Se crea la nueva reserva o se modifica 
+                $reservaVehiculo = Reservavehiculo::updateOrCreate( 
+                    ['idReserva' => $this->idReservaSel],
+                    $camposReservaVehiculoArr
+                );                
+
+                $fechaReserva = Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y');
                 //Envío de correo   
                 $mailData = [
                     'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo" : "Notificación: Ingreso de Reserva de Vehículo",
@@ -713,17 +726,25 @@ class SolicitudesReserva extends Component
                     'funcionario' => $this->nameSel,
                     'sexo' => $this->sexoUserSel,
                     'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
-                    'fechaReserva' => Carbon::createFromFormat('Y-m-d', $reservaVehiculo->fechaSolicitud)->format('d/m/Y'),
+                    'fechaReserva' => $fechaReserva,
                     'horaInicio' => $this->horaInicioSel,
                     'horaFin' => $this->horaFinSel,
-                    'descripcionEstado' => $estado->descripcionEstado,
+                    'descripcionEstado' => $estado->descripcionEstado,            
                     'codEstado' => $this->codEstadoSel,
+                    'flgConductor' => false,
                     // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
                     'motivo' => $this->motivoSel,
                 ];
 
-                try {
-                    //Mail al postulante  
+                if ($this->codEstadoSel == 2) {
+                    $vehiculo = Vehiculo::where('codVehiculo', '=', $this->codVehiculoSel)->first();
+                    $mailData['descripcionVehiculo'] =  $vehiculo->descripcionVehiculo; 
+                    $conductor = Conductor::where('rutConductor', '=', $this->rutConductorSel)->first(); 
+                    $mailData['nombreConductor'] = $conductor->nombreConductor;
+                }
+                 
+                //Mail al solicitante  
+                try {                    
                     Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
                 } catch (exception $e) {
                     $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
@@ -734,25 +755,32 @@ class SolicitudesReserva extends Component
 
                 $emailAdmin = "";
                 try {
-                    foreach ($userAdmin as $item) {
+                    foreach ($userAdmin as $item) { 
                         $emailAdmin = $item->email;
                         $mailData['nomAdmin'] = $item->name;
+                        // $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> su reserva para el día ") : ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
 
-                        $mailData['resumen'] = ($this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> su reserva para el día ") : ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
-
+                    //Si el usuario seleccionado es igual al admin no se envia el correo par evitar duplicidad de correos
                         if ($item->id == $this->idUserAdmin && $item->id != $this->idUserSel) {
-                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva de ") : ("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
-                        }
-
-                        Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                            $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva de </span> a nombre de <b>" . $this->nameSel . "</b> para el día") : ("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
+                            Mail::to($item->email)->send(new CorreoNotificacion($mailData));
+                        }                      
                     }
                 } catch (exception $e) {
                     $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">' . $emailAdmin . '</span>';
                     throw $e;
                 }
 
-                DB::commit();
+                //Si la reserva se encuentra en estado Confirmada se le notifica al conductor asignado 
+                if ($this->codEstadoSel == 2) {   
+                    $mailData['asunto'] = "Notificación: Usted ha sido asignado como conductor en una reserva de vehículo"; 
+                    $mailData['resumen'] = "Le informamos que <b>" . $this->usernameLog . "</b> lo ha asignado como conductor en una reserva Confirmada para el día ".$fechaReserva." a nombre de <b>".$this->nameSel."</b>";
+                    $mailData['flgConductor'] = true;
 
+                    Mail::to($conductor->mail)->send(new CorreoNotificacion($mailData));
+                }
+               
+                DB::commit();
 
                 $mensaje = $this->idReservaSel > 0 ? 'La solicitud de reserva de ' . $this->nameSel . ' ha sido modificada.' : 'La solicitud de reserva de ' . $this->nameSel . ' ha sido ingresada y notificada.';
 

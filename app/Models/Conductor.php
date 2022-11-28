@@ -12,7 +12,7 @@ class Conductor extends Model
     protected $primaryKey = 'idConductor';
 
     protected $fillable = [
-        'rutConductor', 'dvRutConductor', 'nombreConductor',
+        'rutConductor', 'dvRutConductor', 'nombreConductor', 'mail',
     ];
 
 }

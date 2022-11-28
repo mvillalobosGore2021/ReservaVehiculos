@@ -48,12 +48,16 @@ hr {
       </td>
     </tr>
     <tr>
-      <td colspan="2" style="padding-top:10px;padding-bottom:11px;color:#3980BB;font-size:25px;font-weight:550;font-family: arial, sans-serif;text-align:justify;">
+      <td colspan="2" style="padding-top:10px;padding-bottom:11px;color:#3980BB;font-size:20px;font-weight:550;font-family: arial, sans-serif;text-align:justify;">
         {{ $mailData['asunto'] }}
       </td>
     </tr>
     <tr>
-      <td colspan="2" style="padding-bottom:10px;padding-left:15px;padding-right:15px;text-align:justify;font-size:15px;">
+    <td colspan="2" style="padding-bottom:10px;padding-left:15px;padding-right:16px;text-align:justify;font-size:15px;">
+    @if ($mailData['flgConductor'] == true)
+       Estimado <b>{{$mailData['nombreConductor']}}</b><br><br>
+       {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!}
+    @else     
       {{ $mailData['sexo'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
@@ -63,7 +67,8 @@ hr {
 
        @if ($mailData['codEstado'] == 3 && empty($mailData['nomAdmin'])) 
          <br><br><span style="background-color:#EF3B2D;color:white;">Motivo de la Anulación:</span> <b>{{ $mailData['motivoAnulacion'] }}</b>
-       @endif
+       @endif       
+    @endif
        <br><br>
        Saludos cordiales.
       </td>
@@ -80,8 +85,8 @@ hr {
     <center>     
   <table id="table2">
   <tr>
-      <td style="color:#3980BB;text-align:center;background-color: #F8F9FA;" height="40" colspan="2">
-         <b>Resumen de su reserva</b>
+      <td style="color:#3980BB;text-align:center;background-color: #F8F9FA;" height="40" colspan="2"> 
+         <b>Resumen de la reserva</b>
       </td>
     </tr>
     <tr> 
@@ -108,6 +113,16 @@ hr {
       <td><b>Estado:</b></td>
       <td style="color:#746873">{{ $mailData['descripcionEstado'] }}</td>
     </tr> 
+    @if ($mailData['codEstado'] == 2) 
+    <tr>
+      <td><b>Vehículo:</b></td>
+      <td style="color:#746873">{{$mailData['descripcionVehiculo']}}</td>
+    </tr> 
+    <tr>
+      <td><b>Conductor:</b></td>
+      <td style="color:#746873">{{$mailData['nombreConductor']}}</td>
+    </tr> 
+    @endif
     <tr>
       <td><b>Motivo:</b></td>
       <td style="color:#746873;text-align:justify;">{{ $mailData['motivo'] }}</td>
