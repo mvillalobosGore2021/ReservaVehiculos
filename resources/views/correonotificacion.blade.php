@@ -122,6 +122,10 @@ hr {
       <td><b>Conductor:</b></td>
       <td style="color:#746873">{{$mailData['nombreConductor']}}</td>
     </tr> 
+    <tr>
+      <td><b>Destino:</b></td>
+      <td style="color:#746873">{{$mailData['nombreComuna']}}</td>
+    </tr> 
     @endif
     <tr>
       <td><b>Motivo:</b></td>

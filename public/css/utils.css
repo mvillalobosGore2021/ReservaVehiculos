@@ -135,7 +135,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     Colores banner Sponsors Laravel News Fondo: #FFFEF0 Titulo text:negro resumen: #656873 Texto:#F89823 Fondo de texto o para color de icono: #591E5D 
     color #7D8AB0 para los botones del menu 
     Color de fondo de la página #F5F8FF
-    Color de letra #6E7895 #21293C
+    Color de letra #6E7895 #3980BB #21293C
     Colores Laravel Welcome: Letra Laravel #EF3B2D Color para estado Anulado #F4645F Border: #AB8462 Fondo Pagina: #F7FAFC #FFFEF0 #7EA29A  Iconos Card: #A0AEC0 Letras Card: #D8DCE2
     Colores freepik para los alert: Fondo: #EFF3F6 Letra: #1273EB   ; Fondo: #EBF7FE  Letras: #153A6B
     
@@ -257,9 +257,9 @@ Efecto Zoom on Hover
 } */
 
 /* Efecto Shake */
-.btnBuscar1 {   
-  transition: all 0.3s ease-in-out;
-  animation: swing 1s ease;
+.shake-effect {   
+  transition: all 1s ease-in-out;
+  animation: swing 0.65s ease;
   animation-iteration-count: 1;
 }
 

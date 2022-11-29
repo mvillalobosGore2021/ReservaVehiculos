@@ -179,26 +179,38 @@
     });
   }
 
-  function movScrollModalById(id) {
+  window.addEventListener('movScrollModalById', event => {
     const modalBody = document.getElementById("modalBody");
-
-    const element = document.querySelector(id);
+    // alert(event.detail.id);
+    const element = document.querySelector(event.detail.id);
     const topPos = element.getBoundingClientRect().top;
 
     modalBody.scrollTo({
       top: topPos - 109,
-      behavior: 'smooth'
+      behavior: 'smooth' 
     });
-  }
+    setTimeout(function() { document.querySelector(event.detail.id+'Error').classList.add("shake-effect");}, 1000);
+    document.querySelector(event.detail.id+'Error').classList.remove("shake-effect");
+  });
+
+
+
+  window.addEventListener('moveScroll', event => {
+    moveScrollById(event.detail.id); 
+  });
+
+  window.addEventListener('moveScrollModal', event => {
+    moveScrollModal();
+  });
 
   function shakeButton() {
     var btnBuscar = document.getElementById('btnBuscar');
-    btnBuscar.classList.add("btnBuscar1");
+    btnBuscar.classList.add("shake-effect"); 
   }
 
   function deleteClassShake() {
     var btnBuscar = document.getElementById('btnBuscar');
-    btnBuscar.classList.remove("btnBuscar1");
+    btnBuscar.classList.remove("shake-effect");
   }
 
   window.addEventListener('swal:information', event => {
@@ -267,24 +279,24 @@
       
 
       // if (document.getElementById("idFuncionario") != null) { 
-        document.getElementById("idFuncionario").disabled = true;
-        document.getElementById("fechaSolicitud").disabled = true;
-        document.getElementById("codEstado").disabled = true;
+        document.getElementById("idUserSel").disabled = true;
+        document.getElementById("fechaSolicitudSel").disabled = true;
+        document.getElementById("codEstadoSel").disabled = true;
         
-      if (document.getElementById("codVehiculo") != undefined) {
-          document.getElementById("codVehiculo").disabled = true; 
+      if (document.getElementById("codVehiculoSel") != undefined) {
+          document.getElementById("codVehiculoSel").disabled = true; 
           document.getElementById("rutConductorSel").disabled = true;  
       }
 
       // }
 
-      document.getElementById("horaInicio").disabled = true; 
-      document.getElementById("horaFin").disabled = true;
-      document.getElementById("motivo").disabled = true;
-      document.getElementById("motivoAnulacion").disabled = true;
-      document.getElementById("codComuna").disabled = true;
-      document.getElementById("codDivision").disabled = true;
-      document.getElementById("cantPasajeros").disabled = true;
+      document.getElementById("horaInicioSel").disabled = true; 
+      document.getElementById("horaFinSel").disabled = true;
+      document.getElementById("motivoSel").disabled = true;
+      document.getElementById("motivoAnulacionSel").disabled = true;
+      document.getElementById("codComunaSel").disabled = true;
+      document.getElementById("codDivisionSel").disabled = true;
+      document.getElementById("cantPasajerosSel").disabled = true;
       // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
     });
   });
