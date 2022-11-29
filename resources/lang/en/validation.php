@@ -167,7 +167,7 @@ return [
             'required' => 'Seleccione Estado de la Reserva.',
             'gt' => 'Seleccione Estado de la Reserva.',
         ],
-        'fechaSolicitudSel' => [
+        'fechaSolicitud*' => [
             'required' => 'Debe ingresar fecha de reserva.',
             'after' => 'Fecha de reserva debe ser posterior o igual a la fecha actual.',
         ],

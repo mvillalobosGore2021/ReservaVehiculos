@@ -11,6 +11,7 @@ use App\Models\Estado;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
+use Illuminate\Validation\Validator;
 
 class Listarreservas extends Component
 {
@@ -126,11 +127,35 @@ class Listarreservas extends Component
     }
 
     public function solicitarReserva() {
-     //Se elimina validacion de busqueda por fechas, para que no valide en el modal
+     //Se elimina validacion de busqueda por fechas, para que no valide esos campos en el modal
        $this->resetValidation(['fechaInicioReserva', 'fechaFinReserva']);
        $this->resetErrorBag(['fechaInicioReserva', 'fechaFinReserva']);
        $reservaService = new ReservaServices();
-       $reservaService->solicitarReserva($this);
+
+       $this->withValidator(function (Validator $validator) {
+        $validator->after(function ($validator) {
+            $fieldsErrors = array_keys($validator->errors()->getMessages()); 
+
+            if (count($fieldsErrors) > 0) {
+              $this->dispatchBrowserEvent('movScrollModalById', ['id' => '#id'.$fieldsErrors[0]/*, 'arrInptError' => $fieldsErrors */]);//Mover Scroll al campo con el error
+            }         
+        });
+    })->validate($reservaService->getArrRules($this));  
+    
+       $flgError = false; 
+      //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
+      if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
+        $flgError = true; 
+        $this->resetValidation(['idUserSel', 'fechaSolicitud']);
+        $this->resetErrorBag(['idUserSel', 'fechaSolicitud']);
+        $this->addError('fechaSolicitud', 'Usted ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.');
+
+        $this->dispatchBrowserEvent('movScrollModalById', ['id' => '#idfechaSolicitud']); 
+    }
+
+    if ($flgError == false) {
+        $reservaService->solicitarReserva($this);
+    }
     }
 
     public function nuevaReserva() {        
@@ -223,7 +248,7 @@ class Listarreservas extends Component
         $this->validateOnly($field, $reservaService->getArrRules($this));
         
        //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada 
-        if ($this->flgNuevaReserva == true) { 
+        if ($this->flgNuevaReserva == true) {
             if (($field == 'fechaSolicitud')) {
                 if (!empty($this->fechaSolicitud)) {
                     if ($this->buscarReservaFuncionario() == true) {
@@ -233,7 +258,7 @@ class Listarreservas extends Component
                     }
                 }
             }
-        }      
+        }    
     }
 
     public function buscarReservaFuncionario() {

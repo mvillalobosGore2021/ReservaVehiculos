@@ -88,9 +88,9 @@ class ReservaServices
     }
 
     public function resetCamposModal($objInput)  {
-        $objInput->reset(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
-        $objInput->resetValidation(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-        $objInput->resetErrorBag(['idReserva', 'codEstado', 'descripcionEstado', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $objInput->reset(['idReserva', 'codEstado', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
+        $objInput->resetValidation(['idReserva', 'codEstado', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $objInput->resetErrorBag(['idReserva', 'codEstado', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
     }
 
     public function confirmAnularReserva($objInput)
@@ -188,45 +188,7 @@ class ReservaServices
     }
 
     public function solicitarReserva($objInput)
-    { 
-        // dd($objInput->horaInicio, $objInput->horaFin); 
-
-        $flgError = false;
-        try {
-            $objInput->validate($this->getArrRules($objInput));
-        } catch (exception $e) {
-            $flgError = true;
-        }
-        
-        if ($flgError == true) {
-            $objInput->dispatchBrowserEvent('swal:information', [
-                'icon' => 'error', //'info',
-                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor revíselos y corríjalos.</span>',
-                //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
-                'timer' => '5000', 
-            ]);
-
-            $objInput->validate($this->getArrRules($objInput)); //Para que se generen nuevamente los msjs            
-        }       
-
-          //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
-          if ($objInput->flgNuevaReserva == true && $objInput->buscarReservaFuncionario() == true) {
-            $flgError = true; 
-            $objInput->resetValidation(['idUserSel', 'fechaSolicitud']);
-            $objInput->resetErrorBag(['idUserSel', 'fechaSolicitud']);
-            $objInput->addError('idUserSel', 'Usted ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $objInput->fechaSolicitud)->format('d-m-Y') . '.');
-
-            $objInput->dispatchBrowserEvent('swal:information', [
-                'icon' => 'error', //'info', 
-                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Usted ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $objInput->fechaSolicitud)->format('d-m-Y') . '.</span>',
-                //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
-                'timer' => '5000',
-            ]);
-
-            $objInput->dispatchBrowserEvent('moveScrollModal');
-        }
-
-        if ($flgError == false) {
+    {    
         $msjException = "";
         try {
             DB::beginTransaction();
@@ -263,6 +225,7 @@ class ReservaServices
                 'fechaReserva' => Carbon::parse($objInput->fechaSolicitud)->format('d/m/Y'), 
                 'horaInicio' => $objInput->horaInicio,
                 'horaFin' => $objInput->horaFin,
+                'flgConductor' => false,
                 'descripcionEstado' => $descripcionEstado,
                 'codEstado' => $reservaVehiculo->codEstado > 0 ? $reservaVehiculo->codEstado : 1/*No Confirmada*/,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
@@ -319,26 +282,29 @@ class ReservaServices
             session()->flash('exceptionMessage', $e->getMessage());
         }
         $objInput->dispatchBrowserEvent('iniTooltips');
-       }
+       
     }
 
     public function getArrRules($objInput) 
     { 
+        
         $rules = [
             // 'horaInicio' => ['required', 'date_format:H:i', new HoraValidator()],            
             'horaInicio' => 'required|date_format:H:i',
             // 'horaFin' => ['required', 'date_format:H:i', new HoraValidator()],            
             'horaFin' => 'required|date_format:H:i|after:horaInicio',
-            'codDivision' => 'required|gt:0',
-            'codComuna' => 'required|gt:0', 
             'cantPasajeros' => 'required|gt:0|integer|digits_between:1,2',
+            'codComuna' => 'required|gt:0', 
+            'codDivision' => 'required|gt:0',
             'motivo' => 'required|max:500',
         ];
         
         if ($objInput->flgNuevaReserva == true) {
-            $rules = Arr::add($rules, 'fechaSolicitud',  'required|date_format:Y-m-d|after:yesterday');
+            // $rules = Arr::add($rules, 'fechaSolicitud',  'required|date_format:Y-m-d|after:yesterday');
+            $rulesPaso = ['fechaSolicitud' => 'required|date_format:Y-m-d|after:yesterday'];
+            $rules = array_merge($rulesPaso, $rules); 
         }
-       
+        
        return $rules;
     }
 }

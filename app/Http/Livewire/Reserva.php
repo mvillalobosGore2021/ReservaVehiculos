@@ -7,8 +7,8 @@ use App\Classes\ReservaServices;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Comuna;
 use App\Models\Division;
-use App\Models\User;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Validator;
 
  
 class Reserva extends Component 
@@ -169,6 +169,38 @@ class Reserva extends Component
 
     public function solicitarReserva()  {
         $reservaService = new ReservaServices();
-        $reservaService->solicitarReserva($this);
+
+        $this->withValidator(function (Validator $validator) {
+            $validator->after(function ($validator) {
+                $fieldsErrors = array_keys($validator->errors()->getMessages()); 
+
+                if (count($fieldsErrors) > 0) {                   
+                    $this->dispatchBrowserEvent('movScrollModalById', ['id' => '#id'.$fieldsErrors[0]]);//Mover Scroll al campo con el error
+                }         
+            });
+        })->validate($reservaService->getArrRules($this));  
+        
+           $flgError = false; 
+          //Se valida si ya existe una reserva para el funcionario en la fecha seleccionada  
+          if ($this->flgNuevaReserva == true && $this->buscarReservaFuncionario() == true) {
+            $flgError = true; 
+            // $this->resetValidation(['idUserSel', 'fechaSolicitud']);
+            // $this->resetErrorBag(['idUserSel', 'fechaSolicitud']);
+            // $this->addError('idUserSel', 'Usted ya realizó una solicitud de reserva para el día ' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.');
+
+            $this->dispatchBrowserEvent('swal:information', [
+                'icon' => 'error', //'info', 
+                'title' => '<span class="fs-6 text-primary" style="font-weight:430;">Usted ya registra una solicitud de reserva para el día </span><span class="fs-6 text-success" style="font-weight:430;">' . Carbon::createFromFormat('Y-m-d', $this->fechaSolicitud)->format('d-m-Y') . '.</span>',
+                //'mensaje' => '<span class="ps-2 fs-6 text-primary" style="font-weight:430;">Algunos campos contienen Errores, por favor reviselos y corrijalos.</span>',
+                'timer' => '5000',
+            ]);
+
+            $this->dispatchBrowserEvent('movScrollModalById', ['id' => '#idfechaReserva']);
+        }
+
+        if ($flgError == false) {
+            $reservaService->solicitarReserva($this);
+        }
+        
     }
 }

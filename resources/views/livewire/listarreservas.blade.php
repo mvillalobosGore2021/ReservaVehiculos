@@ -310,24 +310,18 @@
                   <div class="col-12 col-md-6 py-2 py-md-0">
                     @if ($flgNuevaReserva == true)
                     <!-- Modo Insercion -->
-                    <div class="row" id="fechaSolicitudId">
-                      <div class="col-12">
+                    <div class="row"> 
+                      <div class="col-12" id="idfechaSolicitud">
                         <label class="text-dark">Fecha Reserva</label>
                         <div class="input-group">
                           <span class="input-group-text">
                             <i class="bi bi-calendar4"></i>
                           </span>
-                          <input type="date" wire:model.debounce.500ms="fechaSolicitud" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="date-ini form-control" autocomplete="off">
+                          <input type="date" id="fechaSolicitud" wire:model.debounce.500ms="fechaSolicitud" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="date-ini form-control" autocomplete="off">
                         </div>
                       </div>
-                      @error('fechaSolicitudSel')
-                      <div class="col-12">
-                        @if($flgError == false)
-                        <script>
-                          movScrollModalById('#fechaSolicitudId');
-                        </script>
-                        @php($flgError = true)
-                        @endif
+                      @error('fechaSolicitud')
+                      <div class="col-12" id="idfechaSolicitudError">
                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
@@ -361,47 +355,35 @@
                 <div class="row">
                   <div class="col-12 pb-2 col-md-6 mt-md-0">
                     <div class="row">
-                      <div class="col-12" id="horaInicioId">
+                      <div class="col-12" id="idhoraInicio">
                         <label data-tippy-content="Hora estimada de inicio.">Hora Inicio Reserva</label>
                         <div class="input-group">
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" id="horaInicio" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-ini form-control" wire:model.debounce.500ms="horaInicio" placeholder="Inicio" autocomplete="off">
+                          <input type="time" id="horaInicio" wire:model.debounce.500ms="horaInicio" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-ini form-control" placeholder="Inicio" autocomplete="off">
                         </div>
                       </div>
                       @error('horaInicio')
-                      <div class="col-12 pb-1">
-                        @if($flgError == false)
-                        <script>
-                          movScrollModalById('#horaInicioId');
-                        </script>
-                        @php($flgError = true)
-                        @endif
-                        <span class="colorerror">{{ $message }}</span>
+                      <div class="col-12 pb-1" id="idhoraInicioError">
+                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
                     </div>
                   </div>
-                  <div class="col-12 pb-2 col-md-6" id="horaFinId">
+                  <div class="col-12 pb-2 col-md-6">
                     <div class="row">
-                      <div class="col-12">
+                      <div class="col-12" id="idhoraFin">
                         <label>Hora Fin Reserva</label>
                         <div class="input-group">
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" id="horaFin" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-fin form-control" wire:model.debounce.500ms="horaFin" placeholder="Termino" autocomplete="off">
+                          <input type="time" id="horaFin" wire:model.debounce.500ms="horaFin" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-fin form-control" placeholder="Termino" autocomplete="off">
                         </div>
                       </div>
                       @error('horaFin')
-                      <div class="col-12 pb-1">
-                        @if($flgError == false)
-                        <script>
-                          movScrollModalById('#horaFinId');
-                        </script>
-                        @php($flgError = true)
-                        @endif
+                      <div class="col-12 pb-1" id="idhoraFinError">
                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
@@ -412,23 +394,17 @@
                 <div class="row">
                   <div class="col-12 pb-2 col-md-6 mt-md-0">
                     <div class="row">
-                      <div class="col-12" id="cantPasajerosId">
+                      <div class="col-12" id="idcantPasajeros">
                         <label data-tippy-content="Cantidad de pasajeros.">Cant.Pasajeros</label>
                         <div class="input-group">
                           <span class="input-group-text">
                             <i class="bi bi-people"></i>
                           </span>
-                          <input type="text" id="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:model.debounce.500ms="cantPasajeros" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                          <input type="text" id="cantPasajeros" wire:model.debounce.500ms="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
                         </div>
                       </div>
                       @error('cantPasajeros')
-                      <div class="col-12 pb-1">
-                        @if($flgError == false)
-                        <script>
-                          movScrollModalById('#cantPasajerosId');
-                        </script>
-                        @php($flgError = true)
-                        @endif
+                      <div class="col-12 pb-1" id="idcantPasajerosError">
                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
@@ -436,7 +412,7 @@
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="row">
-                      <div class="col-12" id="codComunaId">
+                      <div class="col-12" id="idcodComuna">
                         <label>Comuna destino</label>
                         <div class="input-group">
                           <span class="input-group-text">
@@ -451,27 +427,20 @@
                         </div>
                       </div>
                       @error('codComuna')
-                      <div class="col-12 pb-1">
-                        @if($flgError == false)
-                        <script>
-                          movScrollModalById('#codComunaId');
-                        </script>
-                        @php($flgError = true)
-                        @endif
-                        <span class="colorerror">{{ $message }}</span>
+                      <div class="col-12 pb-1" id="idcodComunaError">
+                         <span class="colorerror">{{ $message }}</span>
                       </div>
                       @enderror
                     </div>
                   </div>
                 </div>
-                <div class="row pt-2 pt-md-0 pb-2" id="divisionId">
-                  <div class="col-12">
+                <div class="row pt-2 pt-md-0 pb-2">
+                  <div class="col-12" id="idcodDivision">
                     <label>División</label>
                     <div class="input-group">
                       <span class="input-group-text">
                         <i class="bi bi-list-ul"></i>
                       </span>
-
                       <select id="codDivision" wire:model="codDivision" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-select">
                         <option value="">Sel.División</option>
                         @foreach($divisionesCmb as $itemDivision)
@@ -481,30 +450,18 @@
                     </div>
                   </div>
                   @error('codDivision')
-                  <div class="col-12">
-                    @if($flgError == false)
-                    <script>
-                      movScrollModalById('#divisionId');
-                    </script>
-                    @php($flgError = true)
-                    @endif
+                  <div class="col-12" id="idcodDivisionError">
                     <span class="colorerror">{{$message}}</span>
                   </div>
                   @enderror
                 </div>
                 <div class="row pt-md-0 pb-3">
-                  <div class="col-12" id="motivoId">
+                  <div class="col-12" id="idmotivo">
                     <label>Motivo del viaje</label>
-                    <textarea id="motivo" @if($codEstado==3) readonly @endif wire:model.debounce.500ms="motivo" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" onclick="movScrollModalById('#motivoId')" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
+                    <textarea id="motivo" wire:model.debounce.500ms="motivo" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
                   </div>
                   @error('motivo')
-                  <div class="col-12">
-                    @if($flgError == false)
-                    <script>
-                      movScrollModalById('#motivoId');
-                    </script>
-                    @php($flgError = true)
-                    @endif
+                  <div class="col-12" id="idmotivoError">
                     <span class="colorerror">{{$message}}</span>
                   </div>
                   @enderror

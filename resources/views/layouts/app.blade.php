@@ -182,6 +182,8 @@
   window.addEventListener('movScrollModalById', event => {
     const modalBody = document.getElementById("modalBody");
     // alert(event.detail.id);
+  
+  
     const element = document.querySelector(event.detail.id);
     const topPos = element.getBoundingClientRect().top;
 
@@ -191,6 +193,17 @@
     });
     setTimeout(function() { document.querySelector(event.detail.id+'Error').classList.add("shake-effect");}, 1000);
     document.querySelector(event.detail.id+'Error').classList.remove("shake-effect");
+    
+    //Rutina para mover todos los Errors
+    // var arrInptError = (new String(event.detail.arrInptError)).split(',');
+    // for (var i=0; i < arrInptError.length; i++) {
+    //    var elementInptError = document.querySelector("#id"+arrInptError[i]+"Error");
+    // setTimeout(function() { elementInptError.classList.add("shake-effect");}, 100);
+    //    elementInptError.classList.add("shake-effect");
+    //    setTimeout(function() {}, 5000);
+    //    elementInptError.classList.remove("shake-effect");
+    // }
+
   });
 
 
