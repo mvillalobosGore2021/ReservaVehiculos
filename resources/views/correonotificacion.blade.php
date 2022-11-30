@@ -57,7 +57,7 @@ hr {
     @if ($mailData['flgConductor'] == true)
        Estimado <b>{{$mailData['nombreConductor']}}</b><br><br>
        {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!}
-    @else     
+    @else
       {{ $mailData['sexo'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
@@ -65,8 +65,8 @@ hr {
          <br><br><span style="background-color:#EF3B2D;color:white;">Importante!: </span><span style="background-color:#3980BB;color:white;">Su solicitud de reserva aún no se encuentra confirmada, se le notificará a su correo cuando su reserva cambie de estado.</span> 
        @endif
 
-       @if ($mailData['codEstado'] == 3 && empty($mailData['nomAdmin'])) 
-         <br><br><span style="background-color:#EF3B2D;color:white;">Motivo de la Anulación:</span> <b>{{ $mailData['motivoAnulacion'] }}</b>
+       @if ($mailData['codEstado'] == 3)
+         <br><br><span style="background-color:#EF3B2D;color:white;"><b>Motivo de la Anulación:</b></span> {{ $mailData['motivoAnulacion'] }}
        @endif       
     @endif
        <br><br>
@@ -126,11 +126,11 @@ hr {
       <td><b>Destino:</b></td>
       <td style="color:#746873">{{$mailData['nombreComuna']}}</td>
     </tr> 
-    @endif
+    @endif    
     <tr>
       <td><b>Motivo:</b></td>
       <td style="color:#746873;text-align:justify;">{{ $mailData['motivo'] }}</td>
-    </tr>
+    </tr>    
 </table>
 </center>
     <center>

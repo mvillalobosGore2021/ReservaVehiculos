@@ -320,9 +320,7 @@
               </div>
               <div class="modal-body" id="modalBody">
                 <!-- <input type="text" id="myInput" class="form-control"> -->
-                @php($flgError = false)
                 <div class="row">
-
                   <div class="col-12 col-md-6 ps-4">
                     <div class="row mb-2">
                       <div class="col-12 mt-1 mb-2">
@@ -340,7 +338,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-person"></i>
                               </span>
-                              <select id="idUserSel" wire:model="idUserSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
+                              <select id="idUserSel" wire:model="idUserSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select"> 
                                 <option value="">Sel.Funcionario(a)</option>
                                 @if (!empty( $userList))
                                 @foreach($userList as $item)
@@ -369,7 +367,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-calendar4"></i>
                               </span>
-                              <input type="date" id="fechaSolicitudSel" wire:model.debounce.500ms="fechaSolicitudSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="date-ini form-control" autocomplete="off">
+                              <input type="date" id="fechaSolicitudSel" wire:model.debounce.500ms="fechaSolicitudSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="date-ini form-control" autocomplete="off">
                             </div>
                           </div>
                           @error('fechaSolicitudSel')
@@ -405,17 +403,16 @@
                           @enderror
                         </div>
                       </div>
-                    </div>
-                 
+                    </div>                 
                    
                     @if($flgShowMotivoAnulacion == true)  
                      <div class="row pt-3 pt-md-0 pb-3" id="headMotAnul{{$flgShowMotivoAnulacion}}"> 
                       <div class="col-12" id="idmotivoAnulacionSel">
                         <label>Motivo de Anulación</label>
-                        <textarea id="motivoAnulacionSel" wire:model.debounce.250ms="motivoAnulacionSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" placeholder="Motivo de anulación (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
+                        <textarea id="motivoAnulacionSel" wire:model.debounce.250ms="motivoAnulacionSel" @if($codEstadoOrig == 3 ) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" placeholder="Motivo de anulación (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
                       </div>
                       @error('motivoAnulacionSel')
-                      <div class="col-12" id="motivoAnulacionSelError">                       
+                      <div class="col-12" id="idmotivoAnulacionSelError">                       
                         <span class="colorerror">{{$message}}</span>
                       </div>
                       @enderror
@@ -431,7 +428,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-alarm"></i>
                               </span>
-                              <input type="time" id="horaInicioSel" wire:model.debounce.250ms="horaInicioSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="time-ini form-control" placeholder="Inicio" autocomplete="off">
+                              <input type="time" id="horaInicioSel" wire:model.debounce.250ms="horaInicioSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="time-ini form-control" placeholder="Inicio" autocomplete="off">
                             </div>
                           </div>
                           @error('horaInicioSel')
@@ -449,7 +446,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-alarm"></i>
                               </span>
-                              <input type="time" id="horaFinSel" wire:model.debounce.250ms="horaFinSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="time-fin form-control" placeholder="Termino" autocomplete="off">
+                              <input type="time" id="horaFinSel" wire:model.debounce.250ms="horaFinSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="time-fin form-control" placeholder="Termino" autocomplete="off">
                             </div>
                           </div>
                           @error('horaFinSel')
@@ -470,7 +467,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-people"></i>
                               </span>
-                              <input type="text" id="cantPasajerosSel" wire:model.debounce.500ms="cantPasajerosSel" @if($codEstadoSel==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                              <input type="text" id="cantPasajerosSel" wire:model.debounce.500ms="cantPasajerosSel" @if($codEstadoSel==3) disabled @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
                             </div>
                           </div>
                           @error('cantPasajerosSel')
@@ -488,7 +485,7 @@
                               <span class="input-group-text">
                                 <i class="bi bi-signpost-2"></i>
                               </span>
-                              <select id="codComunaSel" wire:model="codComunaSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
+                              <select id="codComunaSel" wire:model="codComunaSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
                                 <option value="">Sel. Comuna destino</option>
                                 @foreach($comunasCmb as $itemComuna)
                                 <option value="{{$itemComuna->codComuna}}">{{$itemComuna->nombreComuna}}</option>
@@ -513,7 +510,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-list-ul"></i>
                           </span>
-                          <select id="codVehiculoSel" wire:model="codVehiculoSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
+                          <select id="codVehiculoSel" wire:model="codVehiculoSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
                             <option value="">Sel.Vehículo</option>
                             @if (!empty( $cmbVehiculos))
                             @foreach($cmbVehiculos as $item)
@@ -536,7 +533,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-list-ul"></i>
                           </span>
-                          <select id="rutConductorSel" wire:model="rutConductorSel" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
+                          <select id="rutConductorSel" wire:model="rutConductorSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
                             <option value="">Sel.Conductor</option>
                             @if (!empty( $conductoresCmb))
                             @foreach($conductoresCmb as $item)
@@ -561,7 +558,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-list-ul"></i>
                           </span>
-                          <select id="codDivisionSel" wire:model="codDivisionSel" @if($codEstadoSel==3) readonly @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
+                          <select id="codDivisionSel" wire:model="codDivisionSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" class="form-select">
                             <option value="">Sel.División</option>
                             @foreach($divisionesCmb as $itemDivision)
                             <option value="{{$itemDivision->codDivision}}">{{$itemDivision->nombreDivision}}</option>
@@ -579,7 +576,7 @@
                     <div class="row pt-3 pt-md-0 pb-3">
                       <div class="col-12" id="idmotivoSel">
                         <label>Motivo del viaje</label>
-                        <textarea id="motivoSel" wire:model.debounce.250ms="motivoSel" onclick="movScrollModalById('#usoVehiculoHead')" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
+                        <textarea id="motivoSel" wire:model.debounce.250ms="motivoSel" @if($codEstadoSel==3) disabled @endif wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReserva, confirmAnularReserva" placeholder="Motivo de la reserva (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="3"></textarea>
                       </div>
                       @error('motivoSel')
                       <div class="col-12" id="idmotivoSelError">

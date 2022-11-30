@@ -194,6 +194,7 @@ class SolicitudesReserva extends Component
         $this->horaFinSel = Carbon::createFromFormat('H:i:s', $reservaSel->horaFin)->format('H:i');
         // $this->flgUsoVehiculoPersSel = $reservaSel->flgUsoVehiculoPersona;
         $this->motivoSel = $reservaSel->motivo;
+        $this->motivoAnulacionSel = $reservaSel->motivoAnulacion; 
         $this->nameSel = $reservaSel->name;
         $this->emailSel = $reservaSel->email;
         $this->sexoUserSel = $reservaSel->sexo;
@@ -519,12 +520,23 @@ class SolicitudesReserva extends Component
 
     public function anularReserva()
     {
+        $this->withValidator(function (Validator $validator) {
+            $validator->after(function ($validator) {  
+                $fieldsErrors = array_keys($validator->errors()->getMessages());  
+
+                if (count($fieldsErrors) > 0) {                   
+                    $this->dispatchBrowserEvent('movScrollModalById', ['id' => '#id'.$fieldsErrors[0]]);//Mover Scroll al campo con el error
+                }         
+            });
+        })->validate(['motivoAnulacionSel' => 'required|max:500']);       
+
+
         $msjException = "";
         // if ($this->codEstadoSel == 3 && $this->flgNuevaReserva == false/*Modo modificacion*/) { //Estado 3 = Anular, no se validan los datos
         try {
             DB::beginTransaction();
 
-            //Cambiando estado de la reserva a Anulada
+            //Cambiando estado de la reserva a Anulada 
             Reservavehiculo::where("idReserva",  $this->idReservaSel)
                 ->update(["codEstado" => 3 /*Anulado*/ /*$this->codEstadoSel*/, "idUserModificacion" => $this->idUserAdmin, "motivoAnulacion" => $this->motivoAnulacionSel]);
 
@@ -533,7 +545,7 @@ class SolicitudesReserva extends Component
             // $user = User::where("id", "=",  $this->idUserSel)->first();
             // $this->nameSel = $user->name; 
             // $this->sexoUserSel = $user->sexo; 
-
+ 
             //Envío de correo  
             $mailData = [
                 'asunto' => "Notificación: Anulación de Reserva de Vehículo",
@@ -553,55 +565,43 @@ class SolicitudesReserva extends Component
             ];
 
             try {
-                //Mail al postulante 
+                //Mail al solicitante  
                 Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
                 throw $e;
             }
 
-            $userAdmin = User::where('flgAdmin', '=', 1)->get();
-
-            // $mailData['titulo'] =  "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio"; 
-            // $mailData['asunto'] = "Se Ha anulado la reserva de " . $this->nameSel;   
-
-            $emailAdmin = "";
-            try {
-                foreach ($userAdmin as $item) {
-                    $emailAdmin = $item->email;
-                    $mailData['nomAdmin'] = $item->name;
-                    $mailData['resumen'] = ($this->sexoUserLog == "F" ? "la funcionaria" : "él funcionario") . " <b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $this->nameSel . "</b> solicitada para el día";
-
-                    if ($item->id == $this->idUserAdmin) {
-                        $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
-                    }
-
-                    Mail::to($item->email)->send(new CorreoNotificacion($mailData));
-                }
-
-               //Correo al Admin que ingresa o modifica la reserva
-                 try{
-                    $user = Auth::user(); 
- 
-                   //Si el usuario seleccionado es igual al admin no se envia el correo para evitar duplicidad de correos
-                   if ($user->id == $this->idUserAdmin && $user->id != $this->idUserSel) {                         
-                     $emailAdmin = $user->email;
-                     $mailData['nomAdmin'] = $user->name;
-                     $mailData['sexo'] = $user->sexo;
-                     $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
-                     Mail::to($user->email)->send(new CorreoNotificacion($mailData));
-                   }     
-                 } catch (exception $e) {
-                     $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">' . $emailAdmin . '</span>';
-                     throw $e;
-                 }
-
-
+          //Correo al Admin que Anula
+            $user = Auth::user();
+            try{
+              //Si el usuario seleccionado es igual al admin no se envia el correo para evitar duplicidad de correos
+              if ($user->id == $this->idUserAdmin && $user->id != $this->idUserSel) {                    
+                $mailData['nomAdmin'] = $user->name;
+                $mailData['sexo'] = $user->sexo;
+                $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
+                Mail::to($user->email)->send(new CorreoNotificacion($mailData));
+              }      
             } catch (exception $e) {
-                $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">' . $emailAdmin . '</span>';
+                $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">' . $user->email . '</span>';
                 throw $e;
             }
 
+        //Si la reserva tenia asignado un conductor se le notifica que la reserva ha sido Anulada 
+              if (!empty($reservaVehiculo->rutConductor)) {
+                $vehiculo = Vehiculo::where('codVehiculo', '=', $this->codVehiculoSel)->first();
+                $mailData['descripcionVehiculo'] =  $vehiculo->descripcionVehiculo; 
+                $comuna = Comuna::where('codComuna', '=', $this->codComunaSel)->first();
+                $mailData['nombreComuna'] = $comuna->nombreComuna;
+                $conductor = Conductor::where('rutConductor', '=', $this->rutConductorSel)->first(); 
+                $mailData['nombreConductor'] = $conductor->nombreConductor;
+                $mailData['asunto'] = "Notificación: Se ha anulado una reserva de vehículo en la cual usted estaba asignado como conductor."; 
+                $mailData['resumen'] = "Le informamos que <b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> una reserva de vehículo para el día ".$mailData['fechaReserva']." a nombre de <b>".$this->nameSel."</b>. En la cual usted estaba asignado como conductor.";
+                $mailData['flgConductor'] = true;
+
+                Mail::to($conductor->mail)->send(new CorreoNotificacion($mailData));
+            }
+           
             $this->dispatchBrowserEvent('swal:information', [
                 'icon' => '', //'info',
                 'mensaje' => '<i class="bi bi-send-check-fill text-success fs-4"></i><span class="ps-2 fs-6 text-primary" style="font-weight:430;">La reserva ha sido <span style="background-color:#EF3B2D;color:white;font-style:italic;padding-left:4px;padding-right:4px;"><b>Anulada</b></span> y notificada ' . ($this->sexoUserSel == "M" ? "al funcionario " : "a la funcionaria ") . '<b>' . $this->nameSel . '</b></span>',
@@ -721,7 +721,7 @@ class SolicitudesReserva extends Component
                 //Envío de correo   
                 $mailData = [
                     'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo." : "Notificación: Ingreso de Reserva de Vehículo.",
-                    'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> su reserva solicitada para el día") : ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a su nombre para el día"),
+                    'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> su reserva solicitada para el día") : ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a su nombre para el día"),
                     'funcionario' => $this->nameSel,
                     'sexo' => $this->sexoUserSel,
                     'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
@@ -746,7 +746,7 @@ class SolicitudesReserva extends Component
                 }
                  
                 //Mail al solicitante  
-                try {                    
+                try {
                     Mail::to($this->emailSel)->send(new CorreoNotificacion($mailData));
                 } catch (exception $e) {
                     $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $this->emailSel . '</span>';
@@ -762,7 +762,7 @@ class SolicitudesReserva extends Component
                     $emailAdmin = $user->email;
                     $mailData['nomAdmin'] = $user->name;
                     $mailData['sexo'] = $user->sexo;
-                    $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva </span> a nombre de <b>" . $this->nameSel . "</b> para el día") : ("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
+                    $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva </span> a nombre de <b>" . $this->nameSel . "</b> para el día") : ("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
                     Mail::to($user->email)->send(new CorreoNotificacion($mailData));
                   }     
                 } catch (exception $e) {
@@ -823,7 +823,7 @@ class SolicitudesReserva extends Component
             'horaInicioSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'horaFinSel' => ['required', 'date_format:H:i', new HoraValidator()],
             'cantPasajerosSel' => 'required|gt:0|integer|digits_between:1,2',
-            'codComunaSel' => 'required|gt:0',
+            'codComunaSel' => 'required|gt:0', 
         ];
 
         if ($this->codEstadoSel == 2/* Si se seleccionado estado confirmada se validan los sgtes campos */) {

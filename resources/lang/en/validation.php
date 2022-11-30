@@ -144,8 +144,11 @@ return [
     'custom' => [
         'attribute-name' => [
             'rule-name' => 'custom-message',
+        ],        
+        'motivoAnulacion*' => [
+            'required' => 'Debe ingresar motivo de la anulación.',
+            'max' => 'El largo máximo para el motivo es de :max caracteres.',
         ],
-
         'motivo*' => [
             'required' => 'Debe ingresar motivo de la reserva.',
             'max' => 'El largo máximo para el motivo es de :max caracteres.',

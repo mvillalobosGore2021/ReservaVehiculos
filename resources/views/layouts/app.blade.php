@@ -282,34 +282,39 @@
       element2.classList.add("d-none");
 
       document.getElementById("btnCerrar").disabled = true;
-      document.getElementById("btnIconClose").disabled = true;
+      document.getElementById("btnIconClose").disabled = true;     
 
-      // if (document.getElementById("btnGuardar") != undefined) {
-      //   document.getElementById("btnGuardar").disabled = true;
-      // }
-
-      document.getElementById("btnAnularReserva").disabled = true;
-      
-
-      // if (document.getElementById("idFuncionario") != null) { 
-        document.getElementById("idUserSel").disabled = true;
-        document.getElementById("fechaSolicitudSel").disabled = true;
-        document.getElementById("codEstadoSel").disabled = true;
-        
-      if (document.getElementById("codVehiculoSel") != undefined) {
-          document.getElementById("codVehiculoSel").disabled = true; 
-          document.getElementById("rutConductorSel").disabled = true;  
+      if (document.getElementById("btnGuardar") != undefined) {
+        document.getElementById("btnGuardar").disabled = true;
       }
 
-      // }
+      if (document.getElementById("btnAnularReserva") != undefined) {
+          document.getElementById("btnAnularReserva").disabled = true;
+      }
+      
+      if (document.getElementById("idUserSel") != undefined) {
+           document.getElementById("idUserSel").disabled = true;
+           document.getElementById("fechaSolicitudSel").disabled = true;
+           document.getElementById("codEstadoSel").disabled = true;
+      }
+        
+      if (document.getElementById("codVehiculoSel") != undefined) {
+           document.getElementById("codVehiculoSel").disabled = true; 
+           document.getElementById("rutConductorSel").disabled = true;  
+      }
 
-      document.getElementById("horaInicioSel").disabled = true; 
-      document.getElementById("horaFinSel").disabled = true;
-      document.getElementById("motivoSel").disabled = true;
-      document.getElementById("motivoAnulacionSel").disabled = true;
-      document.getElementById("codComunaSel").disabled = true;
-      document.getElementById("codDivisionSel").disabled = true;
-      document.getElementById("cantPasajerosSel").disabled = true;
+      if (document.getElementById("motivoAnulacionSel") != undefined) {
+          document.getElementById("motivoAnulacionSel").disabled = true;
+      }
+      
+      if (document.getElementById("horaInicioSel") != undefined) {
+          document.getElementById("horaInicioSel").disabled = true; 
+          document.getElementById("horaFinSel").disabled = true;
+          document.getElementById("motivoSel").disabled = true;    
+          document.getElementById("codComunaSel").disabled = true;
+          document.getElementById("codDivisionSel").disabled = true;
+          document.getElementById("cantPasajerosSel").disabled = true;
+      }
       // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
     });
   });
