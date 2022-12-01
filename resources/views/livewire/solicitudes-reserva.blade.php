@@ -681,7 +681,7 @@
                 @else
                   <!-- Si la reserva esta anulada se bloquea el botón Anular -->                 
                   <div @if($codEstadoOrig == 3 ) data-tippy-content="La reserva ya se encuentra anulada" @endif >
-                  <button type="button" class="btn btn-primary"  @if($codEstadoOrig == 3 ) disabled style="cursor:context-menu;" @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReserva" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReservaAdm, confirmAnularReserva">
+                  <button type="button" class="btn btn-primary"  @if($codEstadoOrig == 3 ) disabled style="cursor:context-menu;" @endif id="btnAnularReserva" style="width:175px;" wire:click="confirmAnularReservaAdm" wire:loading.attr="disabled" wire:target="guardarReservaSel, anularReservaAdm, confirmAnularReserva">
                     Anular Reserva 
                     <span id="anularIcon"><i class="bi bi-x-circle"></i></i></span> 
                     <span id="spinnerAnularReserva"></span>
@@ -724,9 +724,84 @@
       //   // myInput.focus() 
       // })
 
-      document.addEventListener('livewire:load', () => {
-        deleteClassShake();
-      });
+   window.addEventListener('swal:confirmAnularAdm', event => {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-primary m-2',
+        cancelButton: 'btn btn-danger m-2'
+      },
+      buttonsStyling: false
+    })
+
+    swalWithBootstrapButtons.fire({
+      title: event.detail.title,
+      html: event.detail.text,
+      icon: 'warning',
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.livewire.emit('anularReservaAdm');
+      }
+    })
+  });
+
+  
+  document.addEventListener('livewire:load', () => {
+   // Anular desde el perfil Admin
+   window.livewire.on('anularReservaAdm', () => {
+      var element = document.getElementById("spinnerAnularReserva");
+      var element2 = document.getElementById("anularIcon");
+      element.classList.add("spinner-border");
+      element.classList.add("spinner-border-sm");
+      element2.classList.add("d-none");
+
+      document.getElementById("btnCerrar").disabled = true;
+      document.getElementById("btnIconClose").disabled = true;     
+
+     
+
+      if (document.getElementById("btnGuardar") != undefined) {
+        document.getElementById("btnGuardar").disabled = true;
+      }
+
+      if (document.getElementById("btnAnularReserva") != undefined) {
+          document.getElementById("btnAnularReserva").disabled = true;
+      }
+      
+      if (document.getElementById("idUserSel") != undefined) {
+           document.getElementById("idUserSel").disabled = true;
+           document.getElementById("fechaSolicitudSel").disabled = true;
+           document.getElementById("codEstadoSel").disabled = true;
+      }
+        
+      if (document.getElementById("codVehiculoSel") != undefined) {
+           document.getElementById("codVehiculoSel").disabled = true; 
+           document.getElementById("rutConductorSel").disabled = true;  
+      }
+
+      if (document.getElementById("motivoAnulacionSel") != undefined) {
+          document.getElementById("motivoAnulacionSel").disabled = true;
+      }
+      
+      if (document.getElementById("horaInicioSel") != undefined) {
+          document.getElementById("horaInicioSel").disabled = true; 
+          document.getElementById("horaFinSel").disabled = true;
+          document.getElementById("motivoSel").disabled = true;    
+          document.getElementById("codComunaSel").disabled = true;
+          document.getElementById("codDivisionSel").disabled = true;
+          document.getElementById("cantPasajerosSel").disabled = true;
+      }
+      // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
+    });
+  });
+
+    // document.addEventListener('livewire:load', () => {
+    //     deleteClassShake();
+    //   });
 
       // window.addEventListener('swal:information', event => { 
       //   const Toast = Swal.mixin({

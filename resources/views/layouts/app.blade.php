@@ -247,6 +247,8 @@
     })
   });
 
+  
+
   window.addEventListener('swal:confirmAnular', event => {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -267,59 +269,14 @@
       reverseButtons: false
     }).then((result) => {
       if (result.isConfirmed) {
-        window.livewire.emit('anularReservaAdm');
+        window.livewire.emit('anularReserva');
       }
     })
   });
 
 
   document.addEventListener('livewire:load', () => {
-    // Anular desde el perfil Admin
-    window.livewire.on('anularReservaAdm', () => {
-      var element = document.getElementById("spinnerAnularReserva");
-      var element2 = document.getElementById("anularIcon");
-      element.classList.add("spinner-border");
-      element.classList.add("spinner-border-sm");
-      element2.classList.add("d-none");
-
-      document.getElementById("btnCerrar").disabled = true;
-      document.getElementById("btnIconClose").disabled = true;     
-
-      if (document.getElementById("btnGuardar") != undefined) {
-        document.getElementById("btnGuardar").disabled = true;
-      }
-
-      if (document.getElementById("btnAnularReserva") != undefined) {
-          document.getElementById("btnAnularReserva").disabled = true;
-      }
-      
-      if (document.getElementById("idUserSel") != undefined) {
-           document.getElementById("idUserSel").disabled = true;
-           document.getElementById("fechaSolicitudSel").disabled = true;
-           document.getElementById("codEstadoSel").disabled = true;
-      }
-        
-      if (document.getElementById("codVehiculoSel") != undefined) {
-           document.getElementById("codVehiculoSel").disabled = true; 
-           document.getElementById("rutConductorSel").disabled = true;  
-      }
-
-      if (document.getElementById("motivoAnulacionSel") != undefined) {
-          document.getElementById("motivoAnulacionSel").disabled = true;
-      }
-      
-      if (document.getElementById("horaInicioSel") != undefined) {
-          document.getElementById("horaInicioSel").disabled = true; 
-          document.getElementById("horaFinSel").disabled = true;
-          document.getElementById("motivoSel").disabled = true;    
-          document.getElementById("codComunaSel").disabled = true;
-          document.getElementById("codDivisionSel").disabled = true;
-          document.getElementById("cantPasajerosSel").disabled = true;
-      }
-      // document.getElementById("flgUsoVehiculoPersonal").disabled = true;
-    });
-
-//Anular desde el perfil User
+    //Anular desde el perfil User
     window.livewire.on('anularReserva', () => {
       var element = document.getElementById("spinnerAnularReserva");
       var element2 = document.getElementById("anularIcon");
@@ -337,8 +294,11 @@
       if (document.getElementById("btnAnularReserva") != undefined) {
           document.getElementById("btnAnularReserva").disabled = true;
       } 
-      
-      document.getElementById("fechaSolicitud").disabled = true; 
+
+      if (document.getElementById("fechaSolicitud") != undefined) {
+          document.getElementById("fechaSolicitud").disabled = true; 
+      } 
+
       document.getElementById("horaInicio").disabled = true;
       document.getElementById("horaFin").disabled = true;    
       document.getElementById("cantPasajeros").disabled = true;

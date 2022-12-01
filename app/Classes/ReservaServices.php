@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use App\Models\Reservavehiculo;
 use App\Models\Estado;
+use App\Models\Comuna;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -136,6 +137,9 @@ class ReservaServices
                 'horaFin' => $reservaVehiculo->horaFin,
                 'descripcionEstado' => "Anulada",
                 'codEstado' => $reservaVehiculo->codEstado,
+                'flgConductor' => false,
+                'motivoAnulacion' => '', 
+                'descripcionVehiculo' => '',
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
                 'motivo' => $reservaVehiculo->motivo,
             ];
@@ -213,9 +217,24 @@ class ReservaServices
                 ]
             );
 
-            $descripcionEstado = $reservaVehiculo->codEstado > 0 ? (Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first())->descripcionEstado : "No Confirmada";
+            $descripcionEstado = "";
+            $descripcionVehiculo = "";
+            $nombreConductor = "";            
+        if ($reservaVehiculo->codEstado == 2) {/*Confirmada*/
+            $reservaVehiculo = Reservavehiculo::leftjoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')
+            ->leftjoin('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
+            ->leftjoin('conductors', 'conductors.rutConductor', '=', 'reservavehiculos.rutConductor')
+            ->where('idReserva', '=', $objInput->idReserva)->first();
+         
+            $descripcionVehiculo = $reservaVehiculo->descripcionVehiculo;
+            $nombreConductor = $reservaVehiculo->nombreConductor;   
+            $nombreComuna = $reservaVehiculo->nombreComuna;
+        }
 
-            //Envío de correo
+        $descripcionEstado = $reservaVehiculo->codEstado > 0 ? (Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first())->descripcionEstado : "No Confirmada";
+        $nombreComuna = (Comuna::where('codComuna', '=',  $reservaVehiculo->codComuna)->first())->nombreComuna;
+
+         //Envío de correo
             $mailData = [
                 'asunto' => $objInput->idReserva > 0 ? "Notificación: Modificación de Reserva de Vehículo" : "Notificación: Solicitud de Reserva de Vehículo",
                 'resumen' => $objInput->idReserva > 0 ? "se ha <span style='background-color:#EF3B2D;color:white;'>Modificado</span> su reserva solicitada para el día" : "se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una nueva solicitud de reserva a su nombre para el día",
@@ -226,7 +245,11 @@ class ReservaServices
                 'horaInicio' => $objInput->horaInicio,
                 'horaFin' => $objInput->horaFin,
                 'flgConductor' => false,
+                'motivoAnulacion' => '',  
                 'descripcionEstado' => $descripcionEstado,
+                'descripcionVehiculo' => $descripcionVehiculo, 
+                'nombreConductor' => $nombreConductor,
+                'nombreComuna' => $nombreComuna,
                 'codEstado' => $reservaVehiculo->codEstado > 0 ? $reservaVehiculo->codEstado : 1/*No Confirmada*/,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
                 'motivo' => $objInput->motivo,

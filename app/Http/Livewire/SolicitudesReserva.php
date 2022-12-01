@@ -508,9 +508,9 @@ class SolicitudesReserva extends Component
         return $reservaVehiculo;
     }
 
-    public function confirmAnularReserva()
+    public function confirmAnularReservaAdm()
     {
-        $this->dispatchBrowserEvent('swal:confirmAnular', [
+        $this->dispatchBrowserEvent('swal:confirmAnularAdm', [
             'type' => 'warning',
             'title' => 'Anulación de Reserva',
             'text' => '¿Está seguro(a) que desea Anular la reserva?',
