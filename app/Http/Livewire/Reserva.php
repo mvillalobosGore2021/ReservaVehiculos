@@ -57,7 +57,7 @@ class Reserva extends Component
 
     public function calculoDespliegue60Dias() {
          //Inicio Calculo Despliege de 60 dias
-         $this->fechaActual = Carbon::now();
+         $this->fechaActual = Carbon::now();  
        
          //dd($this->fechaActual->firstOfMonth()->dayOfWeek);                                          
         
@@ -65,7 +65,9 @@ class Reserva extends Component
           $this->mesSel = $this->fechaActual->month;
           $this->mesActual = $this->fechaActual->month;
          
-          $this->mesSelStr = $this->arrMeses[$this->fechaActual->month];
+        //   dd($this->arrMeses, $this->fechaActual->month);
+
+          $this->mesSelStr = $this->arrMeses[($this->fechaActual->month)-1];
           $this->agnoSel = $this->fechaActual->year;
           $this->cantDaysMonth = $this->fechaActual->daysInMonth;
           $this->firstDayMonth = $this->fechaActual->firstOfMonth()->dayOfWeek; 
@@ -82,6 +84,7 @@ class Reserva extends Component
               $this->arrMonthDisplay = Arr::add($this->arrMonthDisplay, $this->fechaUltima->month.'_'.$this->fechaUltima->year, ['mesNumber'=>$this->fechaUltima->month, 'mes'=>$this->arrMeses[$this->fechaUltima->month-1], 'agno' => $this->fechaUltima->year, 'primerDiaSemana' => $this->fechaUltima->firstOfMonth()->dayOfWeek == 0?7:$this->fechaUltima->firstOfMonth()->dayOfWeek, 'ultimoDiaSemana' => $this->fechaUltima->lastOfMonth()->dayOfWeek == 0?7:$this->fechaUltima->lastOfMonth()->dayOfWeek, 'cantDiasMes' => $this->fechaUltima->daysInMonth]);     
           }
         //Fin Calculo Despliege de 60 dias  
+       
     }
     
     public function getCalendarMonth($mesSel, $flgMoveScroll)
@@ -89,6 +92,8 @@ class Reserva extends Component
         $this->calculoDespliegue60Dias();
         $reservaService = new ReservaServices();
         $reservaService->getReservas($this);
+
+        // dd($this->arrMonthDisplay, $mesSel);
 
           $this->diasMesesAnt = 0;
         if ($this->arrMonthDisplay[$mesSel]['mes'] == last($this->arrMonthDisplay)['mes']) {

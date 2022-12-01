@@ -557,7 +557,7 @@
               Cerrar <i class="bi bi-x-lg"></i>
             </button>
             <button type="button" id="btnGuardar" @if($codEstado==3) disabled @endif class="btn btn-primary" style="width:175px;" wire:click="solicitarReserva()" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva">
-              {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}} 
+              {{$idReserva > 0 ? 'Modificar Reserva':'Solicitar Reserva'}}
               <span wire:loading.remove wire:target="solicitarReserva,anularReserva"><i class="bi bi-send pt-1"></i></span>
               <span wire:loading.class="spinner-border spinner-border-sm" wire:target="solicitarReserva,anularReserva" role="status" aria-hidden="true"></span>
             </button>

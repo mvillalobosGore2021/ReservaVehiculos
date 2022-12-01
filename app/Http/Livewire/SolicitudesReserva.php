@@ -43,7 +43,7 @@ class SolicitudesReserva extends Component
 
     public $reservasFechaSelPaso;
 
-    protected $listeners = ['anularReserva'];
+    protected $listeners = ['anularReservaAdm'];
 
     public function mount()
     {
@@ -518,7 +518,7 @@ class SolicitudesReserva extends Component
         $this->dispatchBrowserEvent('iniTooltips');
     }
 
-    public function anularReserva()
+    public function anularReservaAdm()
     {
         $this->withValidator(function (Validator $validator) {
             $validator->after(function ($validator) {  
