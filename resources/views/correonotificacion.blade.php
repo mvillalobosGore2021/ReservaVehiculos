@@ -65,8 +65,8 @@ hr {
          <br><br><span style="background-color:#EF3B2D;color:white;">Importante!: </span><span style="background-color:#3980BB;color:white;">Su solicitud de reserva aún no se encuentra confirmada, se le notificará a su correo cuando su reserva cambie de estado.</span> 
        @endif
 
-       @if ($mailData['codEstado'] == 3)
-         <br><br><span style="background-color:#FDBF08;color:white;"><b>Motivo de la Anulación:</b></span> {{ $mailData['motivoAnulacion'] }}
+       @if ($mailData['codEstado'] == 3 && !empty($mailData['nomAdmin']))
+         <br><br><span style="background-color:#EF3B2D;color:white;"><b>Motivo de la Anulación:</b></span> <span style="background-color:#3980BB;color:white;">{{ $mailData['motivoAnulacion'] }}</span>
        @endif       
     @endif
        <br><br>
