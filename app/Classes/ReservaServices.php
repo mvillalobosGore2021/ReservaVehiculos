@@ -140,7 +140,7 @@ class ReservaServices
                 'descripcionEstado' => "Anulada",
                 'codEstado' => $reservaVehiculo->codEstado,
                 'flgConductor' => false,
-                'motivoAnulacion' => $reservaVehiculo->motivoAnulacion,  
+                'motivoAnulacion' => null,  
                 'descripcionVehiculo' => $reservaVehiculo->descripcionVehiculo,
                 'nombreComuna' => $reservaVehiculo->nombreComuna,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
