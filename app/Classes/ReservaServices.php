@@ -111,7 +111,9 @@ class ReservaServices
 
             Reservavehiculo::where("idReserva",  $objInput->idReserva)->update(["codEstado" => 3]); //Estado 3 = Anular
 
-            $reservaVehiculo = Reservavehiculo::where("idReserva",  $objInput->idReserva)->first();
+            $reservaVehiculo = Reservavehiculo::join('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
+              ->leftjoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')
+              ->where("idReserva",  $objInput->idReserva)->first();
             //Envío de correo
             //  $mailData = [
             //     'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
@@ -138,8 +140,9 @@ class ReservaServices
                 'descripcionEstado' => "Anulada",
                 'codEstado' => $reservaVehiculo->codEstado,
                 'flgConductor' => false,
-                'motivoAnulacion' => '', 
-                'descripcionVehiculo' => '',
+                'motivoAnulacion' => $reservaVehiculo->motivoAnulacion,  
+                'descripcionVehiculo' => $reservaVehiculo->descripcionVehiculo,
+                'nombreComuna' => $reservaVehiculo->nombreComuna,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
                 'motivo' => $reservaVehiculo->motivo,
             ];
