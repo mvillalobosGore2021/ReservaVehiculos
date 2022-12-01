@@ -70,7 +70,7 @@ hr {
        @endif       
     @endif
        <br><br>
-       Saludos cordiales..
+       Saludos cordiales.
       </td>
     </tr>
 
