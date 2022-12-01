@@ -61,7 +61,7 @@ hr {
       {{ $mailData['sexo'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
-       @if ($mailData['codEstado'] == 1 && empty($mailData['nomAdmin'])) 
+       @if ($mailData['codEstado'] == 1 && empty($mailData['nomAdmin']))
          <br><br><span style="background-color:#EF3B2D;color:white;">Importante!: </span><span style="background-color:#3980BB;color:white;">Su solicitud de reserva aún no se encuentra confirmada, se le notificará a su correo cuando su reserva cambie de estado.</span> 
        @endif
 
@@ -70,7 +70,7 @@ hr {
        @endif       
     @endif
        <br><br>
-       Saludos cordiales.
+       Saludos cordiales..
       </td>
     </tr>
 
