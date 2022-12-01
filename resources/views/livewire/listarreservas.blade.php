@@ -291,9 +291,20 @@
           </div>
           <div class="modal-body" id="modalBody">
             <!-- <input type="text" id="myInput" class="form-control"> -->
-            <div class="row">
+            <div class="row">           
               <div class="col-12 col-md-6 ps-4">
                 <div class="row pb-md-1 text-success">
+                  
+                @if($codEstado==3) 
+              <div class="col-12" >
+              <div class="alert alert-info border border-info pb-0" role="alert">               
+                  <p class="fst-italic" style="font-size:0.99rem;text-align:justify;text-indent: 10px;">
+                  <span class="fw-bold text-white" style="font-size:1.2rem;background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">
+                  S</span>u reserva se encuentra <span style="color:#EF3B2D;"><b>{{$descripcionEstado}}</b></span>. Si desea modificar el estado  de su reserva lo debe solicitar a <b>Darwin Figueroa</b> dfigueroa@gorebiobio.cl o a <b>Alvaro Olate</b> aolate@gorebiobio.cl.
+              </p>
+             </div>
+            </div>
+            @endif
                   <div class="col-12 col-md-6 pb-md-1" id="funcionarioId">
                     <div class="row">
                       <div class="col-12">
@@ -360,7 +371,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" id="horaInicio" wire:model.debounce.500ms="horaInicio" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-ini form-control" placeholder="Inicio" autocomplete="off">
+                          <input type="time" id="horaInicio" wire:model.debounce.500ms="horaInicio" @if($codEstado==3) disabled @endif data-tippy-content="Hora estimada de salida" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-ini form-control" placeholder="Inicio" autocomplete="off">
                         </div>
                       </div>
                       @error('horaInicio')
@@ -378,7 +389,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-alarm"></i>
                           </span>
-                          <input type="time" id="horaFin" wire:model.debounce.500ms="horaFin" @if($codEstado==3) readonly @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-fin form-control" placeholder="Termino" autocomplete="off">
+                          <input type="time" id="horaFin" wire:model.debounce.500ms="horaFin" @if($codEstado==3) disabled @endif data-tippy-content="Hora estimada de regreso" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="time-fin form-control" placeholder="Termino" autocomplete="off">
                         </div>
                       </div>
                       @error('horaFin')
@@ -399,7 +410,7 @@
                           <span class="input-group-text">
                             <i class="bi bi-people"></i>
                           </span>
-                          <input type="text" id="cantPasajeros" wire:model.debounce.500ms="cantPasajeros" @if($codEstado==3) readonly @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
+                          <input type="text" id="cantPasajeros" wire:model.debounce.500ms="cantPasajeros" @if($codEstado==3) disabled @endif onkeydown="return onlyNumberKey(event, this);" maxlength="2" wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" class="form-control" placeholder="Cantidad" data-tippy-content="Indique el n&uacute;mero de pasajeros." autocomplete="off">
                         </div>
                       </div>
                       @error('cantPasajeros')
@@ -457,7 +468,7 @@
                 <div class="row pt-md-0 pb-3">
                   <div class="col-12" id="idmotivo">
                     <label>Motivo del viaje</label>
-                    <textarea id="motivo" wire:model.debounce.500ms="motivo" @if($codEstado==3) readonly @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
+                    <textarea id="motivo" wire:model.debounce.500ms="motivo" @if($codEstado==3) disabled @endif wire:loading.attr="disabled" wire:target="solicitarReserva,anularReserva" placeholder="Motivo/justificación del viaje (Máximo 500 caracteres)" class="form-control" maxlength="500" rows="4"></textarea>
                   </div>
                   @error('motivo')
                   <div class="col-12" id="idmotivoError">

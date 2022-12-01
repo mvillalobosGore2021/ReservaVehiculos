@@ -129,7 +129,7 @@
               <div class="alert alert-info border border-info pb-0" role="alert">               
                   <p class="fst-italic" style="font-size:0.99rem;text-align:justify;text-indent: 10px;">
                   <span class="fw-bold text-white" style="font-size:1.2rem;background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">
-                  S</span>u reserva se encuentra <span style="color:#EF3B2D;"><b>{{$descripcionEstado}}</b></span>. Si desea modificar el estado  de su reserva lo debe solicitar a Darwin Figueroa dfigueroa@gorebiobio.cl o a Alvaro Olate aolate@gorebiobio.cl.
+                  S</span>u reserva se encuentra <span style="color:#EF3B2D;"><b>{{$descripcionEstado}}</b></span>. Si desea modificar el estado  de su reserva lo debe solicitar a <b>Darwin Figueroa</b> dfigueroa@gorebiobio.cl o a <b>Alvaro Olate</b> aolate@gorebiobio.cl.
               </p>
              </div>
             </div>
