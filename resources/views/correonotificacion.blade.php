@@ -66,7 +66,7 @@ hr {
        @endif
 
        @if ($mailData['codEstado'] == 3)
-         <br><br><span style="background-color:#EF3B2D;color:white;"><b>Motivo de la Anulación:</b></span> {{ $mailData['motivoAnulacion'] }}
+         <br><br><span style="background-color:#FDBF08;color:white;"><b>Motivo de la Anulación:</b></span> {{ $mailData['motivoAnulacion'] }}
        @endif       
     @endif
        <br><br>

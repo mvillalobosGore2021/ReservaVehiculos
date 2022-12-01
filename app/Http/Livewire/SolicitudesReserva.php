@@ -540,12 +540,14 @@ class SolicitudesReserva extends Component
             Reservavehiculo::where("idReserva",  $this->idReservaSel)
                 ->update(["codEstado" => 3 /*Anulado*/ /*$this->codEstadoSel*/, "idUserModificacion" => $this->idUserAdmin, "motivoAnulacion" => $this->motivoAnulacionSel]);
 
-            $reservaVehiculo = Reservavehiculo::where("idReserva",  $this->idReservaSel)->first();
+            $reservaVehiculo = Reservavehiculo::join('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
+                                ->where("idReserva",  $this->idReservaSel)->first();
 
             // $user = User::where("id", "=",  $this->idUserSel)->first();
             // $this->nameSel = $user->name; 
             // $this->sexoUserSel = $user->sexo; 
  
+
             //Envío de correo  
             $mailData = [
                 'asunto' => "Notificación: Anulación de Reserva de Vehículo",
@@ -557,6 +559,7 @@ class SolicitudesReserva extends Component
                 'horaInicio' => $reservaVehiculo->horaInicio,
                 'horaFin' => $reservaVehiculo->horaFin,
                 'descripcionEstado' => "Anulada",
+                'nombreComuna' => $reservaVehiculo->nombreComuna,
                 'codEstado' => $reservaVehiculo->codEstado,
                 'flgConductor' => false,
                 // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
@@ -721,7 +724,7 @@ class SolicitudesReserva extends Component
                 //Envío de correo   
                 $mailData = [
                     'asunto' => $this->idReservaSel > 0 ? "Notificación: Modificación de Reserva de Vehículo." : "Notificación: Ingreso de Reserva de Vehículo.",
-                    'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> su reserva solicitada para el día") : ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a su nombre para el día"),
+                    'resumen' => $this->idReservaSel > 0 ? ("<b>" . $this->usernameLog . "</b> ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> su reserva solicitada para el día") : ("<b>" . $this->usernameLog . "</b> ha <span style='background-color:#FFD42F;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a su nombre para el día"),
                     'funcionario' => $this->nameSel,
                     'sexo' => $this->sexoUserSel,
                     'fechaCreacion' =>  Carbon::parse($reservaVehiculo->created_at)->format('d/m/Y H:i'),
@@ -762,7 +765,7 @@ class SolicitudesReserva extends Component
                     $emailAdmin = $user->email;
                     $mailData['nomAdmin'] = $user->name;
                     $mailData['sexo'] = $user->sexo;
-                    $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva </span> a nombre de <b>" . $this->nameSel . "</b> para el día") : ("se ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
+                    $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva </span> a nombre de <b>" . $this->nameSel . "</b> para el día") : ("se ha <span style='background-color:#FFD42F;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
                     Mail::to($user->email)->send(new CorreoNotificacion($mailData));
                   }     
                 } catch (exception $e) {

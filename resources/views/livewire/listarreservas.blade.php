@@ -291,7 +291,6 @@
           </div>
           <div class="modal-body" id="modalBody">
             <!-- <input type="text" id="myInput" class="form-control"> -->
-            @php($flgError = false)
             <div class="row">
               <div class="col-12 col-md-6 ps-4">
                 <div class="row pb-md-1 text-success">

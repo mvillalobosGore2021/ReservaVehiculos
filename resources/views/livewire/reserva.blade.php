@@ -128,24 +128,24 @@
               <div class="col-12" >
               <div class="alert alert-info border border-info pb-0" role="alert">               
                   <p class="fst-italic" style="font-size:0.99rem;text-align:justify;text-indent: 10px;">
-                  <span class="fw-bold text-white" style="font-size:1rem;background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">
-                  S</span>u reserva se encuentra en estado <span style="color:#EF3B2D;"><b>{{$descripcionEstado}}</b></span>. Si desea modificar el estado lo debe solicitar a un administrador.
+                  <span class="fw-bold text-white" style="font-size:1.2rem;background-color:#17a2b8;border:2px solid;border-radius:5px;padding-left:4px;padding-right:8px;">
+                  S</span>u reserva se encuentra <span style="color:#EF3B2D;"><b>{{$descripcionEstado}}</b></span>. Si desea modificar el estado  de su reserva lo debe solicitar a Darwin Figueroa dfigueroa@gorebiobio.cl o a Alvaro Olate aolate@gorebiobio.cl.
               </p>
              </div>
             </div>
             @endif
 
               <div class="col-12 pb-md-1" id="funcionarioId">
-                <span class="text-primary">{{$sexo == "F" ? "Funcionaria":"Funcionario"}}:</span> {{$userName}}
+                <span class="text-primary"><b>{{$sexo == "F" ? "Funcionaria":"Funcionario"}}:</b></span> {{$userName}}
               </div>
               <div class="col-12 col-md-6 py-2 py-md-0" id="idfechaReserva">
                 <span id="idfechaReservaError">
-                <span class="text-primary">Fecha Reserva:</span> 
+                <span class="text-primary"><b>Fecha Reserva:</b></span> 
                 {{\Carbon\Carbon::parse($fechaSolicitud)->format('d/m/Y')}}
                 </span>
               </div>
               <div class="col-12 col-md-6 pb-2 pb-md-0" id="estadoId">
-                <span class="text-primary">Estado:</span> {{$descripcionEstado}}
+                <span class="text-primary"><b>Estado:</b></span> {{$descripcionEstado}}
               </div>
             </div>
             <div class="row">
