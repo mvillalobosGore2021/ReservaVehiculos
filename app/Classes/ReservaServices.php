@@ -115,6 +115,7 @@ class ReservaServices
 
             $reservaVehiculo = Reservavehiculo::join('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
               ->leftjoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')
+              ->leftjoin('conductors', 'conductors.rutConductor', '=', 'reservavehiculos.rutConductor')
               ->where("idReserva",  $objInput->idReserva)->first();
 
             //Envío de correo
@@ -163,18 +164,15 @@ class ReservaServices
             }
 
             //Si la reserva tenia asignado un conductor y el estado anterior era Confirmado, se le notifica que la reserva ha sido Anulada 
-             if (!empty($reservaVehiculo->rutConductor) && $this->codEstadoOrig == 2) {
-                $vehiculo = Vehiculo::where('codVehiculo', '=', $this->codVehiculoSel)->first();
-                $mailData['descripcionVehiculo'] =  $vehiculo->descripcionVehiculo; 
-                $comuna = Comuna::where('codComuna', '=', $this->codComunaSel)->first();
-                $mailData['nombreComuna'] = $comuna->nombreComuna;
-                $conductor = Conductor::where('rutConductor', '=', $this->rutConductorSel)->first(); 
-                $mailData['nombreConductor'] = $conductor->nombreConductor;
+             if (!empty($reservaVehiculo->rutConductor) && $objInput->codEstadoOrig == 2) {
+                $mailData['descripcionVehiculo'] =  $reservaVehiculo->descripcionVehiculo;
+                $mailData['nombreComuna'] = $reservaVehiculo->nombreComuna;
+                $mailData['nombreConductor'] = $reservaVehiculo->nombreConductor;
                 $mailData['asunto'] = "Notificación: Se ha anulado una reserva de vehículo en la cual usted estaba asignado como conductor."; 
                 $mailData['resumen'] = "Le informamos que <b>" . $objInput->userName . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> una reserva de vehículo para el día ".$mailData['fechaReserva'].". En la cual usted estaba asignado como conductor.";
                 $mailData['flgConductor'] = true;
 
-                Mail::to($conductor->mail)->send(new CorreoNotificacion($mailData));
+                Mail::to($reservaVehiculo->mail)->send(new CorreoNotificacion($mailData));
             }
 
 
