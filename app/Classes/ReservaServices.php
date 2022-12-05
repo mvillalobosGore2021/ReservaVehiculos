@@ -5,6 +5,8 @@ namespace App\Classes;
 use App\Models\Reservavehiculo;
 use App\Models\Estado;
 use App\Models\Comuna;
+use App\Models\Vehiculo;
+use App\Models\Conductor;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -61,7 +63,7 @@ class ReservaServices
         //Si existe una reserva del usuario conectado para el dia seleccionado, si asignan los datos para su edicion
         $reservasFechaUser = $objInput->reservasFechaSel->where('idUser', '=', $objInput->idUser)->first();
 
-        $this->resetCamposModal($objInput);
+        $this->resetCamposModal($objInput); 
 
         $objInput->fechaSolicitud = Carbon::createFromFormat('d/m/Y', Carbon::parse($fechaSel)->format('d/m/Y'))->format('Y-m-d'); 
 
@@ -90,8 +92,8 @@ class ReservaServices
 
     public function resetCamposModal($objInput)  {
         $objInput->reset(['idReserva', 'codEstado', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros', 'flgUsoVehiculoPersonal']);
-        $objInput->resetValidation(['idReserva', 'codEstado', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
-        $objInput->resetErrorBag(['idReserva', 'codEstado', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $objInput->resetValidation(['idReserva', 'codEstado', 'codEstadoOrig', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
+        $objInput->resetErrorBag(['idReserva', 'codEstado', 'codEstadoOrig', 'descripcionEstado', 'fechaSolicitud', 'horaInicio', 'horaFin', 'motivo', 'codDivision', 'codComuna', 'cantPasajeros']);
     }
 
     public function confirmAnularReserva($objInput)
@@ -114,18 +116,6 @@ class ReservaServices
             $reservaVehiculo = Reservavehiculo::join('comunas', 'comunas.codComuna', '=', 'reservavehiculos.codComuna')
               ->leftjoin('vehiculos', 'vehiculos.codVehiculo', '=', 'reservavehiculos.codVehiculo')
               ->where("idReserva",  $objInput->idReserva)->first();
-            //Envío de correo
-            //  $mailData = [
-            //     'asunto' => "Anulación de Reserva de Vehículo - Gobierno Regional del Bio Bio",
-            //     'titulo' => "Su reserva ha sido anulada",
-            //     'funcionario' => $objInput->userName,
-            //     'fechaReserva' => $objInput->fechaModal, 
-            //     'fechaAnulacion' => Carbon::now()->format('d/m/Y'), 
-            //     'horaInicio' => $objInput->horaInicio,           
-            //     'horaFin' => $objInput->horaFin,
-            //     'descripcionEstado' => Estado::where('codEstado', '=',  $reservaVehiculo->codEstado)->first(),
-            //     // 'usaVehiculoPersonal' => $objInput->flgUsoVehiculoPersonal == 0?'No':'Si',
-            // ];
 
             //Envío de correo
             $mailData = [
@@ -153,13 +143,11 @@ class ReservaServices
             } catch (exception $e) {
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a : <span class="fs-6 text-success" style="font-weight:500;">' . $objInput->correoUser . '</span>';
                 throw $e;
-            }
+            } 
 
             $userAdmin = User::where('flgAdmin', '=', 1)->get();
 
-            // $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
-            // $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
-            $mailData['resumen'] = ($objInput->userName == "F" ? "la funcionaria" : "el funcionario") . " <b>" . $mailData['funcionario'] . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día";
+            $mailData['resumen'] = ($objInput->sexo == "F" ? "la funcionaria" : "el funcionario") . " <b>" . $mailData['funcionario'] . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día";
 
             $emailAdmin = "";
             try {
@@ -173,6 +161,22 @@ class ReservaServices
                 $msjException = 'Se ha producido un error al intentar enviar el correo de notificación a :  <span class="fs-6 text-success" style="font-weight:500;">' . $emailAdmin . '</span>';
                 throw $e;
             }
+
+            //Si la reserva tenia asignado un conductor y el estado anterior era Confirmado, se le notifica que la reserva ha sido Anulada 
+             if (!empty($reservaVehiculo->rutConductor) && $this->codEstadoOrig == 2) {
+                $vehiculo = Vehiculo::where('codVehiculo', '=', $this->codVehiculoSel)->first();
+                $mailData['descripcionVehiculo'] =  $vehiculo->descripcionVehiculo; 
+                $comuna = Comuna::where('codComuna', '=', $this->codComunaSel)->first();
+                $mailData['nombreComuna'] = $comuna->nombreComuna;
+                $conductor = Conductor::where('rutConductor', '=', $this->rutConductorSel)->first(); 
+                $mailData['nombreConductor'] = $conductor->nombreConductor;
+                $mailData['asunto'] = "Notificación: Se ha anulado una reserva de vehículo en la cual usted estaba asignado como conductor."; 
+                $mailData['resumen'] = "Le informamos que <b>" . $objInput->userName . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> una reserva de vehículo para el día ".$mailData['fechaReserva'].". En la cual usted estaba asignado como conductor.";
+                $mailData['flgConductor'] = true;
+
+                Mail::to($conductor->mail)->send(new CorreoNotificacion($mailData));
+            }
+
 
             $objInput->dispatchBrowserEvent('swal:information', [
                 'icon' => '', //'info',
@@ -270,7 +274,7 @@ class ReservaServices
 
             // $mailData['titulo'] =  $objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo" :"Solicitud de Reserva de Vehiculo";
             // $mailData['asunto'] = ($objInput->idReserva > 0 ? "Modificación de Reserva de Vehículo de " :"Solicitud de Reserva de Vehiculo de ").$objInput->userName;
-            $mailData['resumen'] = ($objInput->userName == "F" ? "la funcionaria" : "el funcionario") . " <b>" . $mailData['funcionario'] . "</b>" . ($objInput->idReserva > 0 ? " ha <span style='background-color:#EF3B2D;color:white;'>Modificado</span> su reserva solicitada para el día" : " ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una nueva solicitud de reserva para el día");
+            $mailData['resumen'] = ($objInput->sexo == "F" ? "la funcionaria" : "el funcionario") . " <b>" . $mailData['funcionario'] . "</b>" . ($objInput->idReserva > 0 ? " ha <span style='background-color:#EF3B2D;color:white;'>Modificado</span> su reserva solicitada para el día" : " ha <span style='background-color:#EF3B2D;color:white;'>Ingresado</span> una nueva solicitud de reserva para el día");
 
             $emailAdmin = "";
             try {
