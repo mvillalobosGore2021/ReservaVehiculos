@@ -191,6 +191,7 @@
       top: topPos - 109,
       behavior: 'smooth' 
     });
+    
     setTimeout(function() { document.querySelector(event.detail.id+'Error').classList.add("shake-effect");}, 1000);
     document.querySelector(event.detail.id+'Error').classList.remove("shake-effect");
     
