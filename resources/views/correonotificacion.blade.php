@@ -37,11 +37,7 @@ hr {
     </tr>
     <tr>      
       <td colspan="2" style="margin:0px;padding:0px;">
-        <img alt="" height="160" width="650" src="{{ public_path('images/encabezadocorreo.png')}}">
-       Public: {{ public_path('images/encabezadocorreo.png')}} 
-       Asset: {{ asset('images/encabezadocorreo.png') }}
-
-        <!-- <img alt="" height="160" width="650" src="{{ asset('images/encabezadocorreo.png') }}"> -->
+        <img alt="" height="160" width="650" src="{{ asset('images/encabezadocorreo.png')}}">
       </td>
     </tr>
     <tr>
@@ -139,8 +135,7 @@ hr {
   <table width="640">
     <tr>
     <td colspan="2" style="padding-top:50px;">
-        <img alt="" height="160" width="650" src="{{ public_path('images/footer_gore.jpg')}}">
-        {{ public_path('images/footer_gore.jpg')}}
+        <img alt="" height="160" width="650" src="{{ asset('images/footer_gore.jpg')}}">
     </td>
     </tr>
     <tr>
