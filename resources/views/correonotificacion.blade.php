@@ -38,7 +38,8 @@ hr {
     <tr>      
       <td colspan="2" style="margin:0px;padding:0px;">
         <img alt="" height="160" width="650" src="{{ public_path('images/encabezadocorreo.png')}}">
-        {{ public_path('images/encabezadocorreo.png')}}
+       Public: {{ public_path('images/encabezadocorreo.png')}} 
+       Asset: {{ asset('images/encabezadocorreo.png') }}
 
         <!-- <img alt="" height="160" width="650" src="{{ asset('images/encabezadocorreo.png') }}"> -->
       </td>
