@@ -16,7 +16,7 @@
     <div class="pt-0 pt-md-1"></div>
     <div class="card mt-2 mb-4 mt-md-3 mb-md-5">
       <div class="card-header py-3 text-center h3">
-        Gestionar Solicitudes de Reserva
+         Gestionar Solicitudes de Reserva
         <span class="d-block fst-italic text-secondary pt-1" style="font-size:15px;">
           Fecha Actual: <i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse(now())->format('d/m/Y')}}
         </span>
@@ -227,7 +227,7 @@
                 <th scope="col" class="text-start">Estado</th>
                 <th scope="col" class="text-start">Destino</th>
                 <th scope="col" class="text-start">Vehículo</th>
-                <th scope="col" class="text-start">Motivo</th>
+                <th scope="col" class="text-start">Conductor</th>
                 <!-- <th scope="col" style="width:170px;">Acción</th> -->
               </tr>
             </thead>
@@ -250,7 +250,7 @@
                 <td class="text-start">{{$item->codVehiculo > 0 ? $item->descripcionVehiculo: 'No Asignado'}}</td>
                 <td class="glosaTable pe-4">
                   <!-- <i class="bi bi-eye-fill size-icon" id="id{{$loop->index.rand()}}" data-tippy-content="{{$item->motivo}}"></i> -->
-                  {{$item->motivo}}
+                  {{!empty($item->nombreConductor) ? $item->nombreConductor: 'No Asignado'}}
                 </td>
               </tr>
               @endforeach
