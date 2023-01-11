@@ -127,7 +127,7 @@ class SolicitudesReserva extends Component
             }
         }
 
-        $reservasTotales = $reservasTotales->paginate(5);
+        $reservasTotales = $reservasTotales->paginate(10);
 
         $estadosCmb = null;
 
