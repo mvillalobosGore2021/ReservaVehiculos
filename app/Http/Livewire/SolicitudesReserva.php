@@ -577,7 +577,7 @@ class SolicitudesReserva extends Component
               //Si el usuario seleccionado es igual al admin no se envia el correo para evitar duplicidad de correos
               if ($user->id == $this->idUserAdmin && $user->id != $this->idUserSel) {                    
                 $mailData['nomAdmin'] = $user->name;
-                $mailData['sexo'] = $user->sexo;
+                $mailData['sexoAdmin'] = $user->sexo;
                 $mailData['resumen'] = "se ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> la reserva de <b>" . $mailData['funcionario'] . "</b> solicitada para el día";
                 Mail::to($user->email)->send(new CorreoNotificacion($mailData));
               }      
@@ -760,7 +760,7 @@ class SolicitudesReserva extends Component
                   if ($user->id == $this->idUserAdmin && $user->id != $this->idUserSel) {                         
                     $emailAdmin = $user->email;
                     $mailData['nomAdmin'] = $user->name;
-                    $mailData['sexo'] = $user->sexo;
+                    $mailData['sexoAdmin'] = $user->sexo;
                     $mailData['resumen'] = ($this->idReservaSel > 0 ? ("se ha ".($this->codEstadoSel == 1?"dejado en estado ":" ")."<span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripAccionEstado . "</span> la reserva </span> a nombre de <b>" . $this->nameSel . "</b> para el día") : ("se ha <span style='background-color:#FDBF08;color:white;'>Ingresado</span> una reserva en estado <span style='background-color:" . $estado->codColor . ";color:white;'>" . $estado->descripcionEstado . "</span> a nombre de <b>") . $this->nameSel . "</b> para el día");
                     Mail::to($user->email)->send(new CorreoNotificacion($mailData));
                   }     

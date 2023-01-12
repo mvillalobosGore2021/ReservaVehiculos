@@ -56,7 +56,14 @@ hr {
        Estimado <b>{{$mailData['nombreConductor']}}</b><br><br>
        {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!}
     @else
-      {{ $mailData['sexo'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{ !empty($mailData['nomAdmin']) ? $mailData['nomAdmin'] : $mailData['funcionario'] }}</b>: <br><br>
+
+       @if (!empty($mailData['nomAdmin']))
+          {{ $mailData['sexoAdmin'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{$mailData['nomAdmin']}}</b>:
+       @else
+          {{ $mailData['sexo'] == 'F' ? 'Estimada': 'Estimado' }} <b>{{$mailData['funcionario']}}</b>:
+       @endif
+         <br><br>
+                 
        Le informamos que {!! htmlspecialchars_decode(nl2br($mailData['resumen'])) !!} <b>{{ $mailData['fechaReserva'] }}</b>.
        
        @if ($mailData['codEstado'] == 1 && empty($mailData['nomAdmin']))

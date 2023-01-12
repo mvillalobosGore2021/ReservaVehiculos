@@ -150,11 +150,13 @@ class ReservaServices
 
             $mailData['resumen'] = ($objInput->sexo == "F" ? "la funcionaria" : "el funcionario") . " <b>" . $mailData['funcionario'] . "</b> ha <span style='background-color:#EF3B2D;color:white;'>Anulado</span> su reserva solicitada para el día";
 
+
             $emailAdmin = "";
             try {
                 foreach ($userAdmin as $item) {
                     $emailAdmin = $item->email;
                     $mailData['nomAdmin'] = $item->name;
+                    $mailData['sexoAdmin'] = $item->sexo;
 
                     Mail::to($item->email)->send(new CorreoNotificacion($mailData));
                 }
@@ -279,7 +281,7 @@ class ReservaServices
                 foreach ($userAdmin as $item) {
                     $emailAdmin = $item->email;
                     $mailData['nomAdmin'] = $item->name;
-
+                    $mailData['sexoAdmin'] = $item->sexo;
                     Mail::to($item->email)->send(new CorreoNotificacion($mailData));
                 }
             } catch (exception $e) {
